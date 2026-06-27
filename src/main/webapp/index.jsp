@@ -52,7 +52,7 @@
             <div class="retro-window release-card"></div>
             <div class="retro-window release-card"></div>
         </div>
-        <a href="#" class="catalog-link">VER CATÁLOGO COMPLETO ></a>
+        <a href="catalogo.jsp" class="catalog-link">VER CATÁLOGO COMPLETO ></a>
     </section>
 </div>
 
