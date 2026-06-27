@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -93,10 +93,10 @@
             
             <select name="genero" class="retro-search select-filter">
                 <option value="">Todos los géneros</option>
-                <option value="Accion" ${param.genero == 'Accion' ? 'selected' : ''}>Acción</option>
-                <option value="Terror" ${param.genero == 'Terror' ? 'selected' : ''}>Terror</option>
-                <option value="Sci-Fi" ${param.genero == 'Sci-Fi' ? 'selected' : ''}>Sci-Fi</option>
-                <option value="Comedia" ${param.genero == 'Comedia' ? 'selected' : ''}>Comedia</option>
+                <option value="Accion" <c:if test="${param.genero == 'Accion'}">selected</c:if>>Acción</option>
+                <option value="Terror" <c:if test="${param.genero == 'Terror'}">selected</c:if>>Terror</option>
+                <option value="Sci-Fi" <c:if test="${param.genero == 'Sci-Fi'}">selected</c:if>>Sci-Fi</option>
+                <option value="Comedia" <c:if test="${param.genero == 'Comedia'}">selected</c:if>>Comedia</option>
             </select>
             
             <button type="submit" class="retro-button">FILTRAR</button>
@@ -116,9 +116,14 @@
                     </div>
                     
                     <!-- Portada dinámica -->
-                    <div class="placeholder-img card-img" 
-                         style="background-image: url('${not empty pelicula.imagen ? pelicula.imagen : 'img/vhs_placeholder.jpg'}');">
-                    </div>
+                    <c:choose>
+                        <c:when test="${not empty pelicula.imagen}">
+                            <div class="placeholder-img card-img" style="background-image: url('${pelicula.imagen}');"></div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="placeholder-img card-img" style="background-image: url('img/vhs_placeholder.jpg');"></div>
+                        </c:otherwise>
+                    </c:choose>
                     
                     <div class="card-body">
                         <h3 class="card-title">
