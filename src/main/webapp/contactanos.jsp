@@ -38,10 +38,10 @@
         <div class="team-grid">
             <div class="retro-window member-card">
                 <div class="member-photo">
-                    <img src="foto.jpg" alt="Foto">
+                    <img src="imgs/alison.jpeg" alt="Foto">
                 </div>
                 <div class="member-details">
-                    <h3>Nombre Apellido</h3>
+                    <h3>Alisson Aguire</h3>
                     <p class="role">Software Engineer</p>
                     <ul class="member-data-list">
                         <li><strong>ID:</strong> 001-DEV</li>
@@ -50,11 +50,130 @@
                         <li><strong>Hobby:</strong> League of Legends</li>
                         <li><strong>Status:</strong> [ONLINE]</li>
                     </ul>
-                    <div class="member-contact-footer">user@utp.ac.pa</div>
+
+                    <div class="member-contact-footer">
+                        alisson.aguirre@utp.ac.pa
+                    </div>
                 </div>
             </div>
-            
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/fabian.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Fabian Rodriguez</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 002-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Gym</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        fabian.rodriguez@utp.ac.pa
+                    </div>
+                </div>
             </div>
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/helen.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Helen Bolaños</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 003-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Salir con los amigos</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        Helen.bolanos@utp.ac.pa
+                    </div>
+                </div>
+            </div>
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/leandro.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Leandro Barrios</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 004-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Videojuegos</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        leandro.barrios@utp.ac.pa
+                    </div>
+                </div>
+            </div>
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/aramys.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Aramys Cedeño</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 005-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Gym</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        Aramys.cedeno@utp.ac.pa
+                    </div>
+                </div>
+            </div>
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/reinier.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Martin Aguilar</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 006-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Apuestas deportivas</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        martin.aguilar@utp.ac.pa
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
     </div>
 
     <div class="retro-window store-window">
@@ -64,7 +183,7 @@
         </div>
         <div class="store-content">
             <h3>Centro de Soporte Técnico</h3>
-            <p><strong>Ubicación:</strong> Av. VHS, Edificio 1980, Local 3, Ciudad de Panamá.</p>
+            <p><strong>Ubicación:</strong> Facultad de Sistemas, Edificio 3, Ciudad de Panamá.</p>
             <p><strong>Soporte Directo:</strong> soporte@rewindrelive.com</p>
             <p><strong>Horario:</strong> Lunes - Viernes / 08:00 - 17:00</p>
         </div>
