@@ -1,185 +1,226 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles_index.css"> 
+    <link rel="stylesheet" href="style.css">
     <title>Rewind & Relive | Catálogo</title>
-
-    <style>
-        /* Estilos específicos para la sección de catálogo */
-        .catalog-container {
-            margin-top: 40px;
-        }
-        .filter-form {
-            display: flex; 
-            gap: 10px; 
-            width: 100%;
-        }
-        .select-filter {
-            width: auto; 
-            max-width: 200px;
-        }
-        .catalog-grid .release-card {
-            display: flex; 
-            flex-direction: column; 
-            height: auto; 
-            padding-bottom: 15px;
-        }
-        .catalog-grid .card-img {
-            background-size: cover; 
-            background-position: center; 
-            flex-grow: 1; 
-            min-height: 220px;
-        }
-        .catalog-grid .card-body {
-            padding: 10px; 
-            font-family: 'Courier Prime', monospace;
-        }
-        .catalog-grid .card-title {
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 1.1rem; 
-            margin: 5px 0; 
-            text-transform: uppercase;
-        }
-        .catalog-grid .card-meta {
-            margin: 3px 0; 
-            font-size: 0.9rem;
-        }
-        .catalog-grid .card-price {
-            margin: 5px 0 10px 0; 
-            font-size: 1rem; 
-            color: #ff0055; 
-            font-weight: bold;
-        }
-        .catalog-grid .btn-full {
-            width: 100%; 
-            font-size: 0.85rem;
-        }
-        .empty-catalog-message {
-            text-align: center; 
-            padding: 40px; 
-            font-family: 'Courier Prime', monospace;
-        }
-        .logo-link {
-            text-decoration: none; 
-            color: inherit;
-        }
-    </style>
 </head>
 <body>
 
-<!-- Navegación -->
 <nav class="navbar retro-window">
     <div class="logo">
         <a href="index.jsp" class="logo-link">Rewind & Relive</a>
     </div>
     <ul class="nav-links">
-        <li><a href="catalogo.jsp" class="active">Catálogo</a></li>
-        <li><a href="#">Novedades</a></li>
-        <li><a href="#">Contáctanos</a></li>
+        <li><a href="catalogo.jsp">Catálogo</a></li>
+        <li><a href="novedades.jsp">Novedades</a></li>
+        <li><a href="contactanos.jsp">Contáctanos</a></li>
         <li><button class="retro-button btn-register">Registrarse</button></li>
     </ul>
 </nav>
 
 <div class="content-section catalog-container">
-    <!-- Barra de Búsqueda y Filtros -->
+
     <div class="search-section">
-        <form action="CatalogoServlet" method="GET" class="filter-form">
-            <input type="text" name="buscar" class="retro-search" placeholder="Buscar por título, director..." value="${param.buscar}">
-            
-            <select name="genero" class="retro-search select-filter">
-                <option value="">Todos los géneros</option>
-                <option value="Accion" <c:if test="${param.genero == 'Accion'}">selected</c:if>>Acción</option>
-                <option value="Terror" <c:if test="${param.genero == 'Terror'}">selected</c:if>>Terror</option>
-                <option value="Sci-Fi" <c:if test="${param.genero == 'Sci-Fi'}">selected</c:if>>Sci-Fi</option>
-                <option value="Comedia" <c:if test="${param.genero == 'Comedia'}">selected</c:if>>Comedia</option>
+        <div class="filter-form">
+            <input type="text" class="retro-search" placeholder="Buscar por título...">
+
+            <select class="retro-search select-filter">
+                <option value="">Géneros</option>
+                <option value="Accion">Acción</option>
+                <option value="Terror">Terror</option>
+                <option value="Comedia">Comedia</option>
             </select>
-            
-            <button type="submit" class="retro-button">FILTRAR</button>
-        </form>
+
+            <button class="retro-button">FILTRAR</button>
+        </div>
     </div>
 
-    <!-- Sección del Catálogo Dinámico -->
     <section class="releases">
-        <h2>Catálogo de Casetes</h2>
-        
+        <h2>Catálogo de VHS</h2>
+
         <div class="release-grid catalog-grid">
-            <c:forEach var="pelicula" items="${listaPeliculas}">
-                <div class="retro-window release-card">
-                    <div class="window-header">
-                        <span>${pelicula.codigo}.vhs</span>
-                        <span>_ □ X</span>
-                    </div>
-                    
-                    <!-- Portada dinámica -->
-                    <c:choose>
-                        <c:when test="${not empty pelicula.imagen}">
-                            <div class="placeholder-img card-img" style="background-image: url('${pelicula.imagen}');"></div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="placeholder-img card-img" style="background-image: url('img/vhs_placeholder.jpg');"></div>
-                        </c:otherwise>
-                    </c:choose>
-                    
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            <c:out value="${pelicula.titulo}" />
-                        </h3>
-                        <p class="card-meta"><strong>Año:</strong> ${pelicula.anio}</p>
-                        <p class="card-meta"><strong>Género:</strong> ${pelicula.genero}</p>
-                        <p class="card-price">$${pelicula.precioAlquiler} / 48hrs</p>
-                        
-                        <form action="RentServlet" method="POST">
-                            <input type="hidden" name="idPelicula" value="${pelicula.id}">
-                            <button type="submit" class="retro-button btn-rent btn-full">
-                                ALQUILAR
-                            </button>
-                        </form>
-                    </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
                 </div>
-            </c:forEach>
-        </div>
-        
-        <!-- Mensaje si no hay resultados -->
-        <c:if test="${empty listaPeliculas}">
-            <div class="retro-window empty-catalog-message">
-                <h3>[ ERROR 404: Cintas No Encontradas ]</h3>
-                <p>No se encontraron casetes que coincidan con tu búsqueda. Intenta rebobinar e intentar de nuevo.</p>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
             </div>
-        </c:if>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+            <div class="retro-window release-card">
+                <div class="window-header">
+                    <span>VHS_001.vhs</span>
+                    <span>_ □ X</span>
+                </div>
+
+                <div class="placeholder-img card-img"></div>
+
+                <div class="card-body">
+                    <h3 class="card-title">Título Ejemplo</h3>
+                    <p class="card-meta">Año: 1990</p>
+                    <p class="card-price">$5.00 / 48hrs</p>
+                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                </div>
+            </div>
+
+        </div>
     </section>
+
 </div>
 
-<!-- Footer -->
 <footer class="footer">
     <div class="footer-content">
+
         <div class="footer-col">
             <h4>Rewind & Relive</h4>
-            <p>El hogar definitivo de los clásicos en VHS.</p>
+            <p>El hogar de los clásicos.</p>
         </div>
+
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
                 <li><a href="catalogo.jsp">Catálogo</a></li>
-                <li><a href="#">Novedades</a></li>
             </ul>
         </div>
+
         <div class="footer-col">
             <h4>Contacto</h4>
             <p>📍 Av. VHS, #1980</p>
-            <p>📧 hola@rewind.com</p>
         </div>
+
     </div>
-    <hr>
+
     <div class="copyright">
-        © 2026 Rewind & Relive. Todos los derechos reservados.
+        © 2026 Rewind & Relive.
     </div>
 </footer>
 
-<script src="js/script_index.js"></script>
 </body>
 </html>
