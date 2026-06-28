@@ -35,20 +35,46 @@
         </div>
 
         <div class="team-grid">
-            <%-- Lista de integrantes --%>
-            <% String[][] equipo = {
-                {"Alisson Aguire", "alisson.aguirre@utp.ac.pa", "alison.jpeg", "001-DEV", "League of Legends"},
-                {"Fabian Rodriguez", "fabian.rodriguez@utp.ac.pa", "fabian.jpeg", "002-DEV", "Gym"},
-                {"Helen Bolaños", "Helen.bolanos@utp.ac.pa", "helen.jpeg", "003-DEV", "Salir con los amigos"},
-                {"Leandro Barrios", "leandro.barrios@utp.ac.pa", "leandro.jpeg", "004-DEV", "Videojuegos"},
-                {"Aramys Cedeño", "Aramys.cedeno@utp.ac.pa", "aramys.jpeg", "005-DEV", "Gym"},
-                {"Martin Aguilar", "martin.aguilar@utp.ac.pa", "reinier.jpeg", "006-DEV", "Apuestas deportivas"}
-            }; 
-            
-            for(String[] miembro : equipo) { %>
-                <div class="retro-window member-card">
-                    <div class="member-photo">
-                        <img src="${pageContext.request.contextPath}/imgs/<%= miembro[2] %>" alt="<%= miembro[0] %>">
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/alison.jpeg" alt="Foto">
+                </div>
+                <div class="member-details">
+                    <h3>Alisson Aguirre</h3>
+                    <p class="role">Software Engineer</p>
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 001-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> League of Legends</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        alisson.aguirre@utp.ac.pa
+                    </div>
+                </div>
+            </div>
+
+            <div class="retro-window member-card">
+                <div class="member-photo">
+                    <img src="imgs/fabian.jpeg" alt="Foto">
+                </div>
+
+                <div class="member-details">
+                    <h3>Fabian Rodriguez</h3>
+                    <p class="role">Software Engineer</p>
+
+                    <ul class="member-data-list">
+                        <li><strong>ID:</strong> 002-DEV</li>
+                        <li><strong>Área:</strong> Frontend / Backend</li>
+                        <li><strong>Tech:</strong> Java, Oracle, CSS</li>
+                        <li><strong>Hobby:</strong> Gym</li>
+                        <li><strong>Status:</strong> [ONLINE]</li>
+                    </ul>
+
+                    <div class="member-contact-footer">
+                        fabian.rodriguez@utp.ac.pa
                     </div>
                     <div class="member-details">
                         <h3><%= miembro[0] %></h3>

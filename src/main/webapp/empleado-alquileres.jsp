@@ -17,13 +17,14 @@
     <title>Gestión de Alquileres | Rewind & Relive</title>
 </head>
 <body>
-<nav class="navbar retro-window">
+<nav class="navbar retro-window employee-nav">
     <div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
     <ul class="nav-links">
         <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
         <li><a href="empleado-devolucion.jsp">Devolución</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
+        <li><a href="empleado-agregar-pelicula.jsp">Agregar pelicula</a></li>
     </ul>
 </nav>
 
@@ -135,5 +136,6 @@
         <% } %>
     </section>
 </main>
+<script src="js/empleado-responsive.js"></script>
 </body>
 </html>

@@ -192,6 +192,7 @@ INSERT INTO Genero (desc_genero) VALUES ('Animacion');
 
 /*insercion de peliculas*/
 
+ALTER TABLE Publicacion MODIFY id_usuario_empleado NUMBER NULL;
 
 INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
 VALUES (
