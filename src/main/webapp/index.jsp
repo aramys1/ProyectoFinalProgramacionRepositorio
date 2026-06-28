@@ -21,7 +21,11 @@
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contáctanos</a></li>
         <li><a href="empleado-dashboard.jsp">Dashboard Empleado</a></li>
-        <li><button class="retro-button btn-register">Iniciar Sesión</button></li>
+        <li>
+            <a href="login.jsp">
+                <button class="retro-button btn-register">Iniciar Sesión</button>
+            </a>
+        </li>
     </ul>
 </nav>
 
