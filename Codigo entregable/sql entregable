@@ -172,15 +172,68 @@ CREATE TABLE Transaccion (
 );
 
 
-/*insertamos clasifiaciones*/
+/*insertamos generos y clasificaciones*/
+-- Clasificaciones
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('G', 0);
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('PG', 7);
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('PG-13', 13);
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('R', 17);
 
-/*insertamos generos*/
-INSERT INTO Genero (desc_genero) VALUES ('Acción');
+-- Géneros
 INSERT INTO Genero (desc_genero) VALUES ('Drama');
-INSERT INTO Genero (desc_genero) VALUES ('Ciencia Ficción');
+INSERT INTO Genero (desc_genero) VALUES ('Ciencia Ficcion');
 INSERT INTO Genero (desc_genero) VALUES ('Aventura');
+INSERT INTO Genero (desc_genero) VALUES ('Accion');
+INSERT INTO Genero (desc_genero) VALUES ('Comedia');
+INSERT INTO Genero (desc_genero) VALUES ('Terror');
+INSERT INTO Genero (desc_genero) VALUES ('Romance');
+INSERT INTO Genero (desc_genero) VALUES ('Animacion');
 
+
+/*insercion de peliculas*/
+
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Viernes 13 Parte VI: Jason Vive',
+    2.99,
+    TO_DATE('1986-08-01', 'YYYY-MM-DD'),
+    'Tommy Jarvis regresa al cementerio para destruir el cuerpo de Jason Voorhees, pero accidentalmente lo resucita. Jason despierta mas fuerte que nunca y comienza una nueva masacre en el campamento Crystal Lake.',
+    'posters/viernes13_6ta_poster.jpeg',
+    4
+);
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Tiburon 4: La Venganza',
+    2.99,
+    TO_DATE('1987-07-17', 'YYYY-MM-DD'),
+    'Ellen Brody esta convencida de que el gran tiburon blanco esta persiguiendo a su familia deliberadamente. Cuando su hijo es atacado en las Bahamas, Ellen viaja hasta alli para enfrentarse al tiburon en una batalla final.',
+    'posters/tiburon4.jpeg',
+    3
+);
+
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Terminator 2: El Juicio Final',
+    2.99,
+    TO_DATE('1991-07-03', 'YYYY-MM-DD'),
+    'Un cyborg T-800 es enviado desde el futuro para proteger a John Connor del nuevo y mas avanzado Terminator T-1000 capaz de imitar cualquier forma.',
+    'posters/terminator2.jpg',
+    4
+);
+
+/*insercion de generos por pelicula*/
+-- Viernes 13 (id 1): Terror principal
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (6, 1, 1);
+
+-- Tiburon 4 (id 2): Terror principal, Accion secundario
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (6, 2, 1);
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (4, 2, 2);
+
+-- Terminator 2 (id 3): Accion principal, Ciencia Ficcion secundario
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (4, 3, 1);
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (2, 3, 2);
+
+COMMIT;
