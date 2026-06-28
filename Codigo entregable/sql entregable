@@ -63,9 +63,9 @@ CREATE TABLE Peliculas (
     precio_unidad    NUMBER(6,2) NOT NULL,
     fecha_estreno    DATE NOT NULL,
     sinopsis         VARCHAR2(1000) NOT NULL,
-    id_clasicacion  NUMBER NOT NULL,
+    id_clasicacion   NUMBER NOT NULL,
     CONSTRAINT fk_peliculas_clasificacion FOREIGN KEY (id_clasicacion)
-        REFERENCES Clasificacion(id_clasicacion)
+        REFERENCES Clasificacion(id_clasificacion) -- <-- Corregido con 'f' al final
 );
 
 /*tablas multivaloradas*/
@@ -111,8 +111,7 @@ CREATE TABLE Vhs (
     estado_fisico_vhs  VARCHAR2(50) NOT NULL,
     id_pelicula        NUMBER NOT NULL,
     CONSTRAINT fk_vhs_pelicula FOREIGN KEY (id_pelicula)
-        REFERENCES Peliculas(id_pelicula),
-    CONSTRAINT chk_estado_vhs CHECK (estado_fisico_vhs IN ('Buen Estado', 'Dañado', 'Mantenimiento'))
+        REFERENCES Peliculas(id_pelicula)
 );
 
 CREATE TABLE Publicacion (
