@@ -12,30 +12,30 @@ CREATE SEQUENCE seq_alquiler START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_multa START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_pago START WITH 1 INCREMENT BY 1;
 
-*/creacion de tabls independientes*/
+/*creacion de tablas independientes*/
 CREATE TABLE tipo_telefonos (
-    id_tipo_telefono   NUMBER PRIMARY KEY,
+    id_tipo_telefono   NUMBER DEFAULT seq_tipo_telefono.NEXTVAL PRIMARY KEY,
     desc_tipo_telefono    VARCHAR2(50) NOT NULL
 );
 
 CREATE TABLE tipo_email (
-    id_tipo_email   NUMBER PRIMARY KEY,
+    id_tipo_email   NUMBER DEFAULT seq_tipo_email.NEXTVAL PRIMARY KEY,
     desc_tipo_email  VARCHAR2(50) NOT NULL
 );
 
 CREATE TABLE Clasificacion (
-    id_clasificacion    NUMBER PRIMARY KEY,
+    id_clasificacion    NUMBER DEFAULT seq_clasificacion.NEXTVAL PRIMARY KEY,
     desc_clasicacion  VARCHAR2(50) NOT NULL,
     edad_minima        NUMBER NOT NULL
 );
 
 CREATE TABLE Genero (
-    id_genero     NUMBER PRIMARY KEY,
+    id_genero     NUMBER DEFAULT seq_genero.NEXTVAL PRIMARY KEY,
     desc_genero   VARCHAR2(50) NOT NULL
 );
 
 CREATE TABLE Usuario (
-    id_usuario               NUMBER PRIMARY KEY,
+    id_usuario               NUMBER DEFAULT seq_usuario.NEXTVAL PRIMARY KEY,
     ced_usuario              VARCHAR2(20) NOT NULL UNIQUE,
     primer_nombre_usuario    VARCHAR2(20) NOT NULL,
     segundo_nombre_usuario   VARCHAR2(20),
@@ -47,7 +47,7 @@ CREATE TABLE Usuario (
 
 /*creacion de tablas con dependencias*/
 CREATE TABLE TarjetaUsuario (
-    id_tarjeta        NUMBER PRIMARY KEY,
+    id_tarjeta        NUMBER DEFAULT seq_tarjeta.NEXTVAL PRIMARY KEY,
     numero            VARCHAR2(16) NOT NULL,
     fecha_expiracion  VARCHAR2(5) NOT NULL,
     tipo_tarjeta      VARCHAR2(20) NOT NULL,
@@ -58,14 +58,14 @@ CREATE TABLE TarjetaUsuario (
 );
 
 CREATE TABLE Peliculas (
-    id_pelicula      NUMBER PRIMARY KEY,
+    id_pelicula      NUMBER DEFAULT seq_pelicula.NEXTVAL PRIMARY KEY,
     titulo           VARCHAR2(100) NOT NULL,
     precio_unidad    NUMBER(6,2) NOT NULL,
     fecha_estreno    DATE NOT NULL,
     sinopsis         VARCHAR2(1000) NOT NULL,
-    id_clasicacion  NUMBER NOT NULL,
+    id_clasicacion   NUMBER NOT NULL,
     CONSTRAINT fk_peliculas_clasificacion FOREIGN KEY (id_clasicacion)
-        REFERENCES Clasificacion(id_clasicacion)
+        REFERENCES Clasificacion(id_clasificacion)
 );
 
 /*tablas multivaloradas*/
@@ -105,14 +105,12 @@ CREATE TABLE PeliculasGeneros (
         REFERENCES Peliculas(id_pelicula)
 );
 
-
 CREATE TABLE Vhs (
-    id_vhs             NUMBER PRIMARY KEY,
+    id_vhs             NUMBER DEFAULT seq_vhs.NEXTVAL PRIMARY KEY,
     estado_fisico_vhs  VARCHAR2(50) NOT NULL,
     id_pelicula        NUMBER NOT NULL,
     CONSTRAINT fk_vhs_pelicula FOREIGN KEY (id_pelicula)
-        REFERENCES Peliculas(id_pelicula),
-    CONSTRAINT chk_estado_vhs CHECK (estado_fisico_vhs IN ('Buen Estado', 'Dañado', 'Mantenimiento'))
+        REFERENCES Peliculas(id_pelicula)
 );
 
 CREATE TABLE Publicacion (
@@ -126,9 +124,8 @@ CREATE TABLE Publicacion (
         REFERENCES Peliculas(id_pelicula)
 );
 
-
 CREATE TABLE Alquiler (
-    id_alquiler            NUMBER PRIMARY KEY,
+    id_alquiler            NUMBER DEFAULT seq_alquiler.NEXTVAL PRIMARY KEY,
     estado_alquiler        VARCHAR2(20) NOT NULL,
     fecha_alquiler         DATE DEFAULT SYSDATE NOT NULL,
     fecha_limite           DATE NOT NULL,
@@ -145,7 +142,7 @@ CREATE TABLE Alquiler (
 );
 
 CREATE TABLE Multas (
-    id_multa       NUMBER PRIMARY KEY,
+    id_multa       NUMBER DEFAULT seq_multa.NEXTVAL PRIMARY KEY,
     monto_multa    NUMBER(6,2) NOT NULL,
     motivo_multa   VARCHAR2(255) NOT NULL,
     estado_multa   VARCHAR2(20) NOT NULL,
@@ -156,7 +153,7 @@ CREATE TABLE Multas (
 );
 
 CREATE TABLE Transaccion (
-    id_pago              NUMBER PRIMARY KEY,
+    id_pago              NUMBER DEFAULT seq_pago.NEXTVAL PRIMARY KEY,
     fecha_pago           DATE DEFAULT SYSDATE NOT NULL,
     monto                NUMBER(6,2) NOT NULL,
     tipo_pago            VARCHAR2(20) NOT NULL,
