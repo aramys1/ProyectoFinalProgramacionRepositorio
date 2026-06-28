@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -29,14 +29,12 @@
     <div class="search-section">
         <div class="filter-form">
             <input type="text" class="retro-search" placeholder="Buscar por título...">
-
             <select class="retro-search select-filter">
                 <option value="">Géneros</option>
                 <option value="Accion">Acción</option>
                 <option value="Terror">Terror</option>
                 <option value="Comedia">Comedia</option>
             </select>
-
             <button class="retro-button">FILTRAR</button>
         </div>
     </div>
@@ -46,149 +44,52 @@
 
         <div class="release-grid catalog-grid">
 
+            <%
+                int contador = 1;
+                try (Connection con = ConexionDB.obtenerConexion();
+                     PreparedStatement ps = con.prepareStatement(
+                             "SELECT p.id_pelicula, p.titulo, p.precio_unidad, p.imagen_url, " +
+                                     "TO_CHAR(p.fecha_estreno, 'YYYY') AS anio " +
+                                     "FROM Peliculas p"
+                     );
+                     ResultSet rs = ps.executeQuery()) {
+
+                    while (rs.next()) {
+                        String titulo = rs.getString("titulo");
+                        String precio = rs.getString("precio_unidad");
+                        String anio = rs.getString("anio");
+                        String imagen = rs.getString("imagen_url");
+                        int idPelicula = rs.getInt("id_pelicula");
+                        String nombreArchivo = "VHS_" + String.format("%03d", contador) + ".vhs";
+            %>
             <div class="retro-window release-card">
                 <div class="window-header">
-                    <span>VHS_001.vhs</span>
+                    <span><%= nombreArchivo %></span>
                     <span>_ □ X</span>
                 </div>
 
+                <% if (imagen != null && !imagen.isEmpty()) { %>
+                <img src="recursos/<%= imagen %>" alt="<%= titulo %>" class="card-img">
+                <% } else { %>
                 <div class="placeholder-img card-img"></div>
+                <% } %>
 
                 <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                    <h3 class="card-title"><%= titulo %></h3>
+                    <p class="card-meta">Año: <%= anio %></p>
+                    <p class="card-price">$<%= precio %> / 48hrs</p>
+                    <a href="pelicula-detalle.jsp?id=<%= idPelicula %>">
+                        <button class="retro-button btn-rent btn-full">ALQUILAR</button>
+                    </a>
                 </div>
             </div>
+            <%
+                    contador++;
+                }
 
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
-
-            <div class="retro-window release-card">
-                <div class="window-header">
-                    <span>VHS_001.vhs</span>
-                    <span>_ □ X</span>
-                </div>
-
-                <div class="placeholder-img card-img"></div>
-
-                <div class="card-body">
-                    <h3 class="card-title">Título Ejemplo</h3>
-                    <p class="card-meta">Año: 1990</p>
-                    <p class="card-price">$5.00 / 48hrs</p>
-                    <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                </div>
-            </div>
+            } catch (SQLException e) { %>
+            <p style="color:red;">Error cargando catálogo: <%= e.getMessage() %></p>
+            <% } %>
 
         </div>
     </section>
@@ -197,26 +98,21 @@
 
 <footer class="footer">
     <div class="footer-content">
-
         <div class="footer-col">
             <h4>Rewind & Relive</h4>
             <p>El hogar de los clásicos.</p>
         </div>
-
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
                 <li><a href="catalogo.jsp">Catálogo</a></li>
             </ul>
         </div>
-
         <div class="footer-col">
             <h4>Contacto</h4>
             <p>📍 Av. VHS, #1980</p>
         </div>
-
     </div>
-
     <div class="copyright">
         © 2026 Rewind & Relive.
     </div>
