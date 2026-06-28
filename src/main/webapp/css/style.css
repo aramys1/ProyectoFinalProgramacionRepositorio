@@ -1,6 +1,3 @@
-/* ============================================================
-   VARIABLES GLOBALES
-   ============================================================ */
 :root {
     --page-bg: #c78857;
     --window-bg: #fce4d6;
@@ -9,10 +6,6 @@
     --section-bg: #d8a47f;
 }
 
-
-/* ============================================================
-   BASE
-   ============================================================ */
 html, body {
     height: 100%;
     margin: 0;
@@ -25,12 +18,6 @@ body {
     flex-direction: column;
 }
 
-
-/* ============================================================
-   COMPONENTES REUTILIZABLES
-   ============================================================ */
-
-/* --- Ventana Retro --- */
 .retro-window {
     background-color: var(--window-bg);
     border: 3px solid #000;
@@ -47,7 +34,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* --- Botones --- */
 .retro-button {
     background-color: rgb(5, 209, 5);
     border: 2px solid #000;
@@ -57,7 +43,9 @@ body {
     cursor: pointer;
 }
 
-.btn-register { background-color: var(--accent-register); }
+.btn-register {
+    background-color: var(--accent-register);
+}
 
 .btn-rent {
     background-color: var(--accent-rent);
@@ -69,7 +57,6 @@ body {
     border: 3px solid #000;
 }
 
-/* --- Categorías (Etiquetas) --- */
 .category-badge {
     padding: 3px 10px;
     font-size: 0.7rem;
@@ -78,14 +65,21 @@ body {
     text-transform: uppercase;
 }
 
-.cat-noticia { background: #ffeb3b; color: #000; }
-.cat-tecnico { background: #b3e5fc; color: #000; }
-.cat-inventario { background: #c8e6c9; color: #000; }
+.cat-noticia {
+    background: #ffeb3b;
+    color: #000;
+}
 
+.cat-tecnico {
+    background: #b3e5fc;
+    color: #000;
+}
 
-/* ============================================================
-   INDEX — NAVBAR
-   ============================================================ */
+.cat-inventario {
+    background: #c8e6c9;
+    color: #000;
+}
+
 .navbar {
     margin: 20px 20px 30px 20px;
     display: flex;
@@ -103,7 +97,6 @@ body {
     font-weight: 900;
     font-size: 1.5rem;
     font-family: 'Montserrat', sans-serif;
-    transition: none;
 }
 
 .nav-links {
@@ -120,30 +113,8 @@ body {
     font-weight: 800;
     font-size: 1.1rem;
     position: relative;
-    transition: all 0.3s ease;
 }
 
-.nav-links a:hover {
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-}
-
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background: #000;
-    transition: width 0.3s ease;
-}
-
-.nav-links a:hover::after { width: 100%; }
-
-
-/* ============================================================
-   INDEX — HERO
-   ============================================================ */
 .hero {
     display: flex;
     justify-content: center;
@@ -159,9 +130,6 @@ body {
     flex: 1;
     min-width: 400px;
     max-width: 600px;
-    opacity: 1;
-    transform: none;
-    transition: none;
 }
 
 .hero-text-inner h1 {
@@ -169,68 +137,14 @@ body {
     font-weight: 900;
     font-size: 5.5rem;
     line-height: 0.9;
-    margin: 0 0 30px 0;
+    margin-bottom: 30px;
     color: #000;
-    letter-spacing: -3px;
     text-shadow: 2px 2px 0px #ff9800;
 }
 
-.hero-text-inner p {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #3e2723;
-    border-left: 6px solid #ff9800;
-    padding-left: 20px;
-    margin: 0;
-}
-
-.hero-image-container {
-    flex: 0 0 350px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-}
-
-.placeholder-img {
-    width: 350px;
-    height: 400px;
-    background-color: #bc8f8f;
-    border: 2px solid #000;
-}
-
-
-/* ============================================================
-   INDEX — SECCIÓN NOVEDADES / RELEASES
-   ============================================================ */
 .content-section {
     background-color: #ffffff;
     padding: 60px 20px;
-    font-family: 'Courier Prime', monospace;
-}
-
-.search-section {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 50px;
-}
-
-.retro-search {
-    width: 300px;
-    padding: 10px;
-    border: 3px solid #000;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    box-shadow: 4px 4px 0px #000;
-}
-
-.releases { text-align: center; }
-
-.releases h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 3rem;
-    margin-bottom: 40px;
 }
 
 .release-grid {
@@ -241,28 +155,6 @@ body {
     margin: 40px auto;
 }
 
-.release-card {
-    height: auto;
-    padding: 0;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    transition: transform 0.2s;
-}
-
-.release-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 4px 4px 0px #000;
-}
-
-.card-content {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .movie-img {
     width: 100%;
     height: 180px;
@@ -271,152 +163,26 @@ body {
     margin-bottom: 10px;
 }
 
-.release-card h3 {
-    margin: 5px 0;
-    font-size: 1.1rem;
-    font-family: 'Montserrat', sans-serif;
+.news-window {
+    max-width: 1000px;
+    margin: 40px auto;
 }
 
-.release-card p {
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-}
-
-.catalog-link {
-    display: inline-block;
-    margin-top: 30px;
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: #000;
-    text-decoration: none;
-    border-bottom: 4px solid #ff9800;
-}
-
-
-/* ============================================================
-   INDEX — SECCIÓN NEWS (LOG)
-   ============================================================ */
-.news-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.5rem;
-    text-align: center;
-    color: #000;
-    margin-bottom: 20px;
-}
-
-.news-section {
-    padding: 80px 20px;
-}
-
-.news-section .retro-window {
-    max-width: 900px;
-    margin: 0 auto;
-    border: 2px outset #ffffff;
-    padding: 3px;
-    background-color: #c0c0c0;
-}
-
-.news-content {
-    padding: 25px;
-    background-color: #fff;
-    border: 2px inset #555;
-    height: 250px;
-    overflow-y: scroll;
-    font-family: 'Courier Prime', monospace;
-}
-
-.news-content::-webkit-scrollbar { width: 12px; }
-.news-content::-webkit-scrollbar-track { background: #e0e0e0; }
-.news-content::-webkit-scrollbar-thumb { background: #c0c0c0; border: 1px solid #fff; }
-
-.log-entry {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-}
-
-.log-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.log-title {
-    margin: 0;
-    font-size: 1rem;
-    color: #000;
-}
-
-
-/* ============================================================
-   INDEX — SECCIÓN ABOUT
-   ============================================================ */
-.about-section {
+.log-content {
     background-color: #ffffff;
-    padding: 60px 20px;
-    margin: 0;
-    text-align: center;
-}
-
-.about-section .retro-window {
-    max-width: 800px;
-    margin: 0 auto;
     padding: 30px;
+    height: 500px;
+    overflow-y: scroll;
+    border: 2px inset #555;
 }
 
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.footer {
-    background-color: #000;
-    color: #fce4d6;
-    padding: 60px 10% 20px 10%;
-    margin-top: auto;
-    width: 100%;
-    box-sizing: border-box;
+.log-content::-webkit-scrollbar {
+    width: 12px;
 }
 
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 50px;
-    align-items: start;
-}
-
-.footer-col h4 {
-    border-bottom: 2px solid #ff9800;
-    display: inline-block;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-}
-
-.footer-desc {
-    font-size: 0.85rem;
-    opacity: 0.5;
-    line-height: 1.6;
-    margin: 0;
-}
-
-.footer-col ul { list-style: none; padding: 0; margin: 0; }
-
-.footer-col ul li { margin-bottom: 8px; }
-
-.footer-col a { color: #fce4d6; text-decoration: none; }
-
-.copyright {
-    text-align: center;
-    font-size: 0.7rem;
-    opacity: 0.6;
-    margin-top: 30px;
-}
-/* ============================================================
-   CATÁLOGO
-   ============================================================ */
-.catalog-container {
-    padding: 40px 20px;
-    background-color: #f0f0f0;
+.log-content::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px solid #fff;
 }
 
 .catalog-grid {
@@ -435,297 +201,10 @@ body {
     border-bottom: 2px solid #000;
 }
 
-.card-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.3rem;
-    margin: 10px 0;
-    text-transform: uppercase;
-}
-
-.card-price {
-    font-weight: 900;
-    font-size: 1.1rem;
-    color: #d32f2f;
-    margin: 5px 0 10px 0;
-}
-
-.btn-full {
-    width: 30%;
-    padding: 8px;
-    font-weight: bold;
-    border: 2px solid #000;
-}
-
-
-/* ============================================================
-   EQUIPO
-   ============================================================ */
-
-/* --- Título --- */
-.team-header-container {
-    text-align: center;
-    margin: 40px 0;
-}
-
-.glitch-title {
-    font-family: 'Courier Prime', monospace;
-    font-size: 2.5rem;
-    color: #000;
-    border-bottom: 5px solid #ff9800;
-    display: inline-block;
-}
-
-/* --- Ventana Principal --- */
-.team-main-window {
-    max-width: 1000px;
-    margin: 40px auto;
-    background-color: #c0c0c0;
-    padding: 10px;
-}
-
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 20px;
-    background: #e0e0e0;
-}
-
-/* --- Ficha Miembro --- */
-.member-card {
-    background-color: #ffffff;
-    border: 2px solid #000;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: 0.2s;
-}
-
-.member-card:hover {
-    transform: scale(1.02);
-}
-
-.member-photo {
-    width: 100px;
-    height: 100px;
-    border: 2px inset #000;
-    margin-bottom: 15px;
-    background: #bc8f8f;
-    overflow: hidden;
-}
-
-.member-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.member-details h3 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.role {
-    color: #d32f2f;
-    font-weight: bold;
-    font-size: 0.8rem;
-    margin: 5px 0;
-}
-
-.member-data-list {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0;
-    width: 100%;
-    font-size: 0.8rem;
-    font-family: 'Courier Prime', monospace;
-    text-align: left;
-    border-top: 1px solid #ccc;
-}
-
-.member-data-list li {
-    padding: 4px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.member-contact-footer {
-    width: 100%;
-    background: #000;
-    color: #0f0;
-    padding: 5px;
-    font-size: 0.75rem;
-    text-align: center;
-    font-family: 'Courier Prime', monospace;
-    margin-top: 10px;
-}
-
-
-/* ============================================================
-   NOVEDADES
-   ============================================================ */
-
-/* --- Ventana Tienda --- */
-.store-window {
-    max-width: 600px;
-    margin: 0 auto 40px auto;
-    background-color: #c0c0c0;
-    padding: 10px;
-}
-
-.store-content {
-    background: #fff;
-    padding: 20px;
-    border: 2px inset #000;
-    text-align: center;
-}
-
-/* --- Log de Novedades --- */
-.news-window {
-    max-width: 1000px;
-    margin: 40px auto;
-}
-
-.log-content {
-    background-color: #ffffff;
-    padding: 30px;
-    height: 500px;
-    overflow-y: scroll;
-    border: 2px inset #555;
-}
-
-.log-content::-webkit-scrollbar { width: 12px; }
-.log-content::-webkit-scrollbar-track { background: #e0e0e0; }
-.log-content::-webkit-scrollbar-thumb { background: #c0c0c0; border: 1px solid #fff; }
-
-.log-date {
-    color: #666;
-    font-size: 0.8rem;
-    display: block;
-    margin-bottom: 10px;
-}
-
-
-/* ============================================================
-   EMPLEADO
-   ============================================================ */
 .employee-page {
     background: #ffffff;
     padding: 40px 20px 70px;
     flex: 1;
-}
-
-.employee-header {
-    max-width: 1100px;
-    margin: 0 auto 30px;
-}
-
-.employee-kicker {
-    display: inline-block;
-    margin: 0 0 8px;
-    padding: 4px 10px;
-    background: #ffeb3b;
-    border: 2px solid #000;
-    font-size: 0.8rem;
-    font-weight: 900;
-    text-transform: uppercase;
-}
-
-.employee-header h1 {
-    margin: 0 0 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.8rem;
-}
-
-.employee-header p {
-    margin: 0;
-    max-width: 760px;
-    font-size: 1rem;
-    color: #3e2723;
-}
-
-.employee-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-    max-width: 1100px;
-    margin: 0 auto 30px;
-}
-
-.employee-metric-card {
-    background: #ffffff;
-}
-
-.employee-metric-body {
-    min-height: 190px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
-}
-
-.employee-metric-body strong {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 4rem;
-    line-height: 1;
-}
-
-.metric-danger .employee-metric-body strong {
-    color: #d32f2f;
-}
-
-.employee-link,
-.employee-clear,
-.employee-mini-button {
-    color: #000;
-    font-weight: 900;
-    text-decoration: none;
-    border-bottom: 3px solid #ff9800;
-}
-
-.employee-actions {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.employee-action {
-    display: inline-block;
-    color: #000;
-    text-decoration: none;
-}
-
-.employee-panel {
-    max-width: 1100px;
-    margin: 0 auto 28px;
-    background: #ffffff;
-}
-
-.employee-toolbar,
-.employee-form {
-    padding: 20px;
-}
-
-.employee-toolbar {
-    display: grid;
-    grid-template-columns: minmax(220px, 1fr) 220px 180px auto auto;
-    gap: 12px;
-    align-items: center;
-}
-
-.employee-toolbar .retro-search,
-.employee-form .retro-search {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.employee-table-wrap {
-    width: 100%;
-    overflow-x: auto;
 }
 
 .employee-table {
@@ -734,159 +213,44 @@ body {
     min-width: 760px;
 }
 
-.employee-table th,
+.employee-table th {
+    background: #ff9800;
+    padding: 12px 10px;
+    border-bottom: 2px solid #000;
+}
+
 .employee-table td {
     padding: 12px 10px;
     border-bottom: 2px solid #000;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.employee-table th {
-    background: #ff9800;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem;
-}
-
-.employee-table tr:nth-child(even) td {
-    background: #fff7ec;
 }
 
 .status-badge {
-    display: inline-block;
-    min-width: 74px;
     padding: 4px 8px;
     border: 2px solid #000;
     font-weight: 900;
-    text-align: center;
 }
 
-.status-ok {
-    background: #c8e6c9;
-}
-
-.status-danger {
-    background: #ffcdd2;
-    color: #b00020;
-}
-
-.employee-empty {
-    padding: 28px;
-    text-align: center;
-    font-weight: 900;
-    color: #555;
-}
-
-.employee-alert {
-    max-width: 1060px;
-    margin: 0 auto 20px;
-    padding: 14px 18px;
-    border: 3px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    font-weight: 900;
-}
-
-.employee-alert-ok {
-    background: #c8e6c9;
-}
-
-.employee-alert-error {
-    background: #ffcdd2;
-    color: #8b0000;
-}
-
-.employee-split {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: minmax(280px, 420px) 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-.employee-inline-form {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    align-items: center;
-}
-
-.employee-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 900;
-}
-
-.employee-summary {
-    margin-bottom: 18px;
-    padding: 14px;
-    background: #fff7ec;
-    border: 2px inset #555;
-}
-
-.employee-summary p {
-    margin: 6px 0;
-}
-
-.employee-check {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin: 12px 0;
-}
-
-.employee-check input {
-    width: 18px;
-    height: 18px;
-}
-
-.employee-submit {
+.footer {
+    background-color: #000;
+    color: #fce4d6;
+    padding: 60px 10% 20px 10%;
+    margin-top: auto;
     width: 100%;
-    margin-top: 12px;
+    box-sizing: border-box;
 }
 
-.employee-row-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.employee-row-actions form {
-    margin: 0;
-}
-
-.employee-icon-button {
-    width: 36px;
-    height: 36px;
-    border: 2px solid #000;
-    background: rgb(5, 209, 5);
-    box-shadow: 3px 3px 0 #000;
-    font-size: 1.2rem;
-    font-weight: 900;
-    cursor: pointer;
-}
-
-.employee-icon-button:disabled {
-    background: #c0c0c0;
-    color: #666;
-    cursor: not-allowed;
-    box-shadow: none;
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
 }
 
 @media (max-width: 900px) {
-    .employee-metrics,
-    .employee-split {
+    .employee-metrics, .employee-split {
         grid-template-columns: 1fr;
     }
-
-    .employee-toolbar {
-        grid-template-columns: 1fr;
-    }
-
-    .employee-header h1 {
-        font-size: 2.1rem;
-    }
-
-    .employee-inline-form {
-        grid-template-columns: 1fr;
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
     }
 }
