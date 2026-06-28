@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Rewind & Relive | Novedades</title>
 </head>
 
