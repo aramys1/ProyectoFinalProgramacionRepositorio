@@ -8,23 +8,20 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Rewind & Relive | Inicio</title>
 </head>
 <body>
 
+<%-- Nav, Header y otras secciones estáticas se mantienen igual --%>
 <nav class="navbar retro-window">
-    <div class="logo">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="logo-link">Rewind & Relive</a>
-    </div>
+    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
     <ul class="nav-links">
-        <li><a href="${pageContext.request.contextPath}/catalogo.jsp">Catálogo</a></li>
-        <li><a href="${pageContext.request.contextPath}/novedades.jsp">Novedades</a></li>
-        <li><a href="${pageContext.request.contextPath}/contactanos.jsp">Contáctanos</a></li>
-        <li><a href="${pageContext.request.contextPath}/empleado-dashboard.jsp">Dashboard Empleado</a></li>
-        <li>
-            <a href="${pageContext.request.contextPath}/login.jsp" class="retro-button btn-register">Iniciar Sesión</a>
-        </li>
+        <li><a href="catalogo.jsp">Catálogo</a></li>
+        <li><a href="novedades.jsp">Novedades</a></li>
+        <li><a href="contactanos.jsp">Contáctanos</a></li>
+        <li><a href="empleado-dashboard.jsp">Dashboard Empleado</a></li>
+        <li><button class="retro-button btn-register">Iniciar Sesión</button></li>
     </ul>
 </nav>
 
@@ -48,17 +45,18 @@
     <section class="releases">
         <h2>Últimos Lanzamientos</h2>
         <div class="release-grid">
-            <% 
-                // Aquí mantienes la lógica de carga de datos
-                List<String> peliculas = new ArrayList<>(); 
-                peliculas.add("The Terminator"); 
-                
-                for(String peli : peliculas) { 
+            <%
+                // AQUÍ: Reemplazarás esto por tu llamada a base de datos:
+                // List<Pelicula> peliculas = PeliculaDAO.obtenerRecientes();
+                List<String> peliculas = new ArrayList<>();
+                peliculas.add("The Terminator");
+
+                for(String peli : peliculas) {
             %>
             <div class="retro-window release-card">
                 <div class="window-header"><span>Película.exe</span></div>
                 <div class="card-content">
-                    <img src="${pageContext.request.contextPath}/imgs/ruta_imagen.jpg" alt="Portada" class="movie-img">
+                    <img src="ruta_imagen.jpg" alt="Portada" class="movie-img">
                     <h3><%= peli %></h3>
                     <p>1984 | Acción</p>
                     <button class="retro-button">VER MAS</button>
@@ -66,7 +64,7 @@
             </div>
             <% } %>
         </div>
-        <a href="${pageContext.request.contextPath}/catalogo.jsp" class="catalog-link">VER CATÁLOGO COMPLETO ></a>
+        <a href="catalogo.jsp" class="catalog-link">VER CATÁLOGO COMPLETO ></a>
     </section>
 </div>
 
@@ -75,11 +73,13 @@
     <div class="retro-window">
         <div class="window-header"><span>Noticias_Rewind.txt</span><span>_ □ X</span></div>
         <div class="news-content">
-            <% 
+            <%
+                // AQUÍ: Reemplazarás esto por: List<Noticia> noticias = NoticiaDAO.listar();
+                // Ejemplo de estructura de datos para el bucle:
                 List<String> noticias = new ArrayList<>();
                 noticias.add("[2026-06-27] Nueva llegada: Clásicos de terror disponibles.");
-                
-                for(String noticia : noticias) { 
+
+                for(String noticia : noticias) {
             %>
             <div class="log-entry">
                 <div class="log-header">
@@ -101,8 +101,8 @@
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/catalogo.jsp">Catálogo</a></li>
-                <li><a href="${pageContext.request.contextPath}/novedades.jsp">Novedades</a></li>
+                <li><a href="catalogo.jsp">Catálogo</a></li>
+                <li><a href="novedades.jsp">Novedades</a></li>
             </ul>
         </div>
         <div class="footer-col">
@@ -117,6 +117,5 @@
     </div>
 </footer>
 
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>
