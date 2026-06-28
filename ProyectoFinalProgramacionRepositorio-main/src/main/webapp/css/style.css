@@ -1,0 +1,606 @@
+/* ============================================================
+   VARIABLES GLOBALES
+   ============================================================ */
+:root {
+    --page-bg: #c78857;
+    --window-bg: #fce4d6;
+    --accent-register: #4caf50;
+    --accent-rent: #d32f2f;
+    --section-bg: #d8a47f;
+}
+
+
+/* ============================================================
+   BASE
+   ============================================================ */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Courier Prime', monospace;
+}
+
+body {
+    background-color: var(--page-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ============================================================
+   COMPONENTES REUTILIZABLES
+   ============================================================ */
+
+/* --- Ventana Retro --- */
+.retro-window {
+    background-color: var(--window-bg);
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px #000;
+}
+
+.window-header {
+    background-color: #ff9800;
+    border-bottom: 3px solid #000;
+    padding: 5px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+/* --- Botones --- */
+.retro-button {
+    background-color: rgb(5, 209, 5);
+    border: 2px solid #000;
+    padding: 10px 20px;
+    font-weight: bold;
+    box-shadow: 3px 3px 0px #000;
+    cursor: pointer;
+}
+
+.btn-register { background-color: var(--accent-register); }
+
+.btn-rent {
+    background-color: var(--accent-rent);
+    color: white;
+    width: 100%;
+    max-width: 350px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border: 3px solid #000;
+}
+
+/* --- Categorías (Etiquetas) --- */
+.category-badge {
+    padding: 3px 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border: 1px solid #000;
+    text-transform: uppercase;
+}
+
+.cat-noticia { background: #ffeb3b; color: #000; }
+.cat-tecnico { background: #b3e5fc; color: #000; }
+.cat-inventario { background: #c8e6c9; color: #000; }
+
+
+/* ============================================================
+   INDEX — NAVBAR
+   ============================================================ */
+.navbar {
+    margin: 20px 20px 30px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: var(--window-bg);
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px #000;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: #000;
+    font-weight: 900;
+    font-size: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: none;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    align-items: center;
+    margin: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 800;
+    font-size: 1.1rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #000;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after { width: 100%; }
+
+
+/* ============================================================
+   INDEX — HERO
+   ============================================================ */
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    flex-wrap: wrap;
+}
+
+.hero-content {
+    flex: 1;
+    min-width: 400px;
+    max-width: 600px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+.hero-text-inner h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 5.5rem;
+    line-height: 0.9;
+    margin: 0 0 30px 0;
+    color: #000;
+    letter-spacing: -3px;
+    text-shadow: 2px 2px 0px #ff9800;
+}
+
+.hero-text-inner p {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #3e2723;
+    border-left: 6px solid #ff9800;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.hero-image-container {
+    flex: 0 0 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.placeholder-img {
+    width: 350px;
+    height: 400px;
+    background-color: #bc8f8f;
+    border: 2px solid #000;
+}
+
+
+/* ============================================================
+   INDEX — SECCIÓN NOVEDADES / RELEASES
+   ============================================================ */
+.content-section {
+    background-color: #ffffff;
+    padding: 60px 20px;
+    font-family: 'Courier Prime', monospace;
+}
+
+.search-section {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.retro-search {
+    width: 300px;
+    padding: 10px;
+    border: 3px solid #000;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.releases { text-align: center; }
+
+.releases h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 40px;
+}
+
+.release-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.release-card {
+    height: auto;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    transition: transform 0.2s;
+}
+
+.release-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 4px 4px 0px #000;
+}
+
+.card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.movie-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border: 2px inset #999;
+    margin-bottom: 10px;
+}
+
+.release-card h3 {
+    margin: 5px 0;
+    font-size: 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.release-card p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.catalog-link {
+    display: inline-block;
+    margin-top: 30px;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #000;
+    text-decoration: none;
+    border-bottom: 4px solid #ff9800;
+}
+
+
+/* ============================================================
+   INDEX — SECCIÓN NEWS (LOG)
+   ============================================================ */
+.news-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    text-align: center;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.news-section {
+    padding: 80px 20px;
+}
+
+.news-section .retro-window {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 2px outset #ffffff;
+    padding: 3px;
+    background-color: #c0c0c0;
+}
+
+.news-content {
+    padding: 25px;
+    background-color: #fff;
+    border: 2px inset #555;
+    height: 250px;
+    overflow-y: scroll;
+    font-family: 'Courier Prime', monospace;
+}
+
+.news-content::-webkit-scrollbar { width: 12px; }
+.news-content::-webkit-scrollbar-track { background: #e0e0e0; }
+.news-content::-webkit-scrollbar-thumb { background: #c0c0c0; border: 1px solid #fff; }
+
+.log-entry {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.log-title {
+    margin: 0;
+    font-size: 1rem;
+    color: #000;
+}
+
+
+/* ============================================================
+   INDEX — SECCIÓN ABOUT
+   ============================================================ */
+.about-section {
+    background-color: #ffffff;
+    padding: 60px 20px;
+    margin: 0;
+    text-align: center;
+}
+
+.about-section .retro-window {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+    background-color: #000;
+    color: #fce4d6;
+    padding: 60px 10% 20px 10%;
+    margin-top: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    align-items: start;
+}
+
+.footer-col h4 {
+    border-bottom: 2px solid #ff9800;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.footer-desc {
+    font-size: 0.85rem;
+    opacity: 0.5;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.footer-col ul { list-style: none; padding: 0; margin: 0; }
+
+.footer-col ul li { margin-bottom: 8px; }
+
+.footer-col a { color: #fce4d6; text-decoration: none; }
+
+.copyright {
+    text-align: center;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-top: 30px;
+}
+/* ============================================================
+   CATÁLOGO
+   ============================================================ */
+.catalog-container {
+    padding: 40px 20px;
+    background-color: #f0f0f0;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card-img {
+    width: 100%;
+    height: 250px;
+    background-color: #d1d1d1;
+    border-bottom: 2px solid #000;
+}
+
+.card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    margin: 10px 0;
+    text-transform: uppercase;
+}
+
+.card-price {
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: #d32f2f;
+    margin: 5px 0 10px 0;
+}
+
+.btn-full {
+    width: 30%;
+    padding: 8px;
+    font-weight: bold;
+    border: 2px solid #000;
+}
+
+
+/* ============================================================
+   EQUIPO
+   ============================================================ */
+
+/* --- Título --- */
+.team-header-container {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.glitch-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 2.5rem;
+    color: #000;
+    border-bottom: 5px solid #ff9800;
+    display: inline-block;
+}
+
+/* --- Ventana Principal --- */
+.team-main-window {
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #c0c0c0;
+    padding: 10px;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    background: #e0e0e0;
+}
+
+/* --- Ficha Miembro --- */
+.member-card {
+    background-color: #ffffff;
+    border: 2px solid #000;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.member-card:hover {
+    transform: scale(1.02);
+}
+
+.member-photo {
+    width: 100px;
+    height: 100px;
+    border: 2px inset #000;
+    margin-bottom: 15px;
+    background: #bc8f8f;
+    overflow: hidden;
+}
+
+.member-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member-details h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.role {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin: 5px 0;
+}
+
+.member-data-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    width: 100%;
+    font-size: 0.8rem;
+    font-family: 'Courier Prime', monospace;
+    text-align: left;
+    border-top: 1px solid #ccc;
+}
+
+.member-data-list li {
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.member-contact-footer {
+    width: 100%;
+    background: #000;
+    color: #0f0;
+    padding: 5px;
+    font-size: 0.75rem;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+    margin-top: 10px;
+}
+
+
+/* ============================================================
+   NOVEDADES
+   ============================================================ */
+
+/* --- Ventana Tienda --- */
+.store-window {
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    background-color: #c0c0c0;
+    padding: 10px;
+}
+
+.store-content {
+    background: #fff;
+    padding: 20px;
+    border: 2px inset #000;
+    text-align: center;
+}
+
+/* --- Log de Novedades --- */
+.news-window {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.log-content {
+    background-color: #ffffff;
+    padding: 30px;
+    height: 500px;
+    overflow-y: scroll;
+    border: 2px inset #555;
+}
+
+.log-content::-webkit-scrollbar { width: 12px; }
+.log-content::-webkit-scrollbar-track { background: #e0e0e0; }
+.log-content::-webkit-scrollbar-thumb { background: #c0c0c0; border: 1px solid #fff; }
+
+.log-date {
+    color: #666;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 10px;
+}
