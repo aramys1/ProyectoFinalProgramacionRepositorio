@@ -1,0 +1,239 @@
+/*creacion de secuencias*/
+
+CREATE SEQUENCE seq_usuario START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_tipo_telefono START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_tipo_email START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_clasificacion START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_genero START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_pelicula START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_tarjeta START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_vhs START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_alquiler START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_multa START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_pago START WITH 1 INCREMENT BY 1;
+
+/*creacion de tablas independientes*/
+CREATE TABLE tipo_telefonos (
+    id_tipo_telefono   NUMBER DEFAULT seq_tipo_telefono.NEXTVAL PRIMARY KEY,
+    desc_tipo_telefono    VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE tipo_email (
+    id_tipo_email   NUMBER DEFAULT seq_tipo_email.NEXTVAL PRIMARY KEY,
+    desc_tipo_email  VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE Clasificacion (
+    id_clasificacion    NUMBER DEFAULT seq_clasificacion.NEXTVAL PRIMARY KEY,
+    desc_clasicacion  VARCHAR2(50) NOT NULL,
+    edad_minima        NUMBER NOT NULL
+);
+
+CREATE TABLE Genero (
+    id_genero     NUMBER DEFAULT seq_genero.NEXTVAL PRIMARY KEY,
+    desc_genero   VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE Usuario (
+    id_usuario               NUMBER DEFAULT seq_usuario.NEXTVAL PRIMARY KEY,
+    ced_usuario              VARCHAR2(20) NOT NULL UNIQUE,
+    primer_nombre_usuario    VARCHAR2(20) NOT NULL,
+    segundo_nombre_usuario   VARCHAR2(20),
+    primer_apellido_usuario  VARCHAR2(20) NOT NULL,
+    segundo_apellido_usuario VARCHAR2(20),
+    fecha_registro           DATE DEFAULT SYSDATE NOT NULL,
+    rol                      VARCHAR2(20) NOT NULL
+);
+
+/*creacion de tablas con dependencias*/
+CREATE TABLE TarjetaUsuario (
+    id_tarjeta        NUMBER DEFAULT seq_tarjeta.NEXTVAL PRIMARY KEY,
+    numero            VARCHAR2(16) NOT NULL,
+    fecha_expiracion  VARCHAR2(5) NOT NULL,
+    tipo_tarjeta      VARCHAR2(20) NOT NULL,
+    cvv               NUMBER NOT NULL,
+    id_usuario        NUMBER NOT NULL,
+    CONSTRAINT fk_tarjeta_usuario FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+);
+
+CREATE TABLE Peliculas (
+    id_pelicula      NUMBER DEFAULT seq_pelicula.NEXTVAL PRIMARY KEY,
+    titulo           VARCHAR2(100) NOT NULL,
+    precio_unidad    NUMBER(6,2) NOT NULL,
+    fecha_estreno    DATE NOT NULL,
+    sinopsis         VARCHAR2(1000) NOT NULL,
+    imagen_url       VARCHAR2(255),
+    id_clasicacion   NUMBER NOT NULL,
+    CONSTRAINT fk_peliculas_clasificacion FOREIGN KEY (id_clasicacion)
+        REFERENCES Clasificacion(id_clasificacion)
+);
+
+/*tablas multivaloradas*/
+
+CREATE TABLE UsuarioEmail (
+    email          VARCHAR2(100) NOT NULL,
+    id_tipo_email  NUMBER,
+    id_usuario     NUMBER,
+    CONSTRAINT pk_usuario_email PRIMARY KEY (id_tipo_email, id_usuario),
+    CONSTRAINT fk_email_tipo FOREIGN KEY (id_tipo_email)
+        REFERENCES tipo_email(id_tipo_email),
+    CONSTRAINT fk_email_usuario FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+);
+
+CREATE TABLE UsuarioTelefono (
+    telefono          VARCHAR2(20) NOT NULL,
+    id_tipo_telefono  NUMBER,
+    id_usuario        NUMBER,
+    CONSTRAINT pk_usuario_telefono PRIMARY KEY (id_tipo_telefono, id_usuario),
+    CONSTRAINT fk_telef_tipo FOREIGN KEY (id_tipo_telefono)
+        REFERENCES tipo_telefonos(id_tipo_telefono),
+    CONSTRAINT fk_telef_usuario FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+);
+
+/*tablas de catalogo*/
+
+CREATE TABLE PeliculasGeneros (
+    id_genero    NUMBER,
+    id_pelicula  NUMBER,
+    prioridad    NUMBER NOT NULL,
+    CONSTRAINT pk_peliculas_generos PRIMARY KEY (id_genero, id_pelicula),
+    CONSTRAINT fk_peligen_genero FOREIGN KEY (id_genero)
+        REFERENCES Genero(id_genero),
+    CONSTRAINT fk_peligen_pelicula FOREIGN KEY (id_pelicula)
+        REFERENCES Peliculas(id_pelicula)
+);
+
+CREATE TABLE Vhs (
+    id_vhs             NUMBER DEFAULT seq_vhs.NEXTVAL PRIMARY KEY,
+    estado_fisico_vhs  VARCHAR2(50) NOT NULL,
+    id_pelicula        NUMBER NOT NULL,
+    CONSTRAINT fk_vhs_pelicula FOREIGN KEY (id_pelicula)
+        REFERENCES Peliculas(id_pelicula)
+);
+
+CREATE TABLE Publicacion (
+    id_usuario_empleado  NUMBER,
+    id_pelicula          NUMBER,
+    fecha_publicacion    DATE DEFAULT SYSDATE,
+    CONSTRAINT pk_publicacion PRIMARY KEY (id_usuario_empleado, id_pelicula, fecha_publicacion),
+    CONSTRAINT fk_pub_empleado FOREIGN KEY (id_usuario_empleado)
+        REFERENCES Usuario(id_usuario),
+    CONSTRAINT fk_pub_pelicula FOREIGN KEY (id_pelicula)
+        REFERENCES Peliculas(id_pelicula)
+);
+
+CREATE TABLE Alquiler (
+    id_alquiler            NUMBER DEFAULT seq_alquiler.NEXTVAL PRIMARY KEY,
+    estado_alquiler        VARCHAR2(20) NOT NULL,
+    fecha_alquiler         DATE DEFAULT SYSDATE NOT NULL,
+    fecha_limite           DATE NOT NULL,
+    fecha_devolucion       DATE,
+    id_usuario_cliente     NUMBER NOT NULL,
+    id_vhs                 NUMBER NOT NULL,
+    id_usuario_empleado    NUMBER NOT NULL,
+    CONSTRAINT fk_alq_cliente FOREIGN KEY (id_usuario_cliente)
+        REFERENCES Usuario(id_usuario),
+    CONSTRAINT fk_alq_vhs FOREIGN KEY (id_vhs)
+        REFERENCES Vhs(id_vhs),
+    CONSTRAINT fk_alq_empleado FOREIGN KEY (id_usuario_empleado)
+        REFERENCES Usuario(id_usuario)
+);
+
+CREATE TABLE Multas (
+    id_multa       NUMBER DEFAULT seq_multa.NEXTVAL PRIMARY KEY,
+    monto_multa    NUMBER(6,2) NOT NULL,
+    motivo_multa   VARCHAR2(255) NOT NULL,
+    estado_multa   VARCHAR2(20) NOT NULL,
+    fecha_multa    DATE DEFAULT SYSDATE NOT NULL,
+    id_alquiler    NUMBER NOT NULL,
+    CONSTRAINT fk_multas_alquiler FOREIGN KEY (id_alquiler)
+        REFERENCES Alquiler(id_alquiler)
+);
+
+CREATE TABLE Transaccion (
+    id_pago              NUMBER DEFAULT seq_pago.NEXTVAL PRIMARY KEY,
+    fecha_pago           DATE DEFAULT SYSDATE NOT NULL,
+    monto                NUMBER(6,2) NOT NULL,
+    tipo_pago            VARCHAR2(20) NOT NULL,
+    estado_pago          VARCHAR2(20) NOT NULL,
+    id_alquiler          NUMBER NOT NULL,
+    id_usuario_empleado  NUMBER NOT NULL,
+    id_multa             NUMBER NOT NULL,
+    CONSTRAINT fk_trans_alquiler FOREIGN KEY (id_alquiler)
+        REFERENCES Alquiler(id_alquiler),
+    CONSTRAINT fk_trans_empleado FOREIGN KEY (id_usuario_empleado)
+        REFERENCES Usuario(id_usuario),
+    CONSTRAINT fk_trans_multa FOREIGN KEY (id_multa)
+        REFERENCES Multas(id_multa),
+    CONSTRAINT chk_estado_pago CHECK (estado_pago IN ('Aprobado', 'Rechazado'))
+);
+
+
+/*insertamos generos y clasificaciones*/
+-- Clasificaciones
+INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('G', 0);
+INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('PG', 7);
+INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('PG-13', 13);
+INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('R', 17);
+
+-- Géneros
+INSERT INTO Genero (desc_genero) VALUES ('Drama');
+INSERT INTO Genero (desc_genero) VALUES ('Ciencia Ficcion');
+INSERT INTO Genero (desc_genero) VALUES ('Aventura');
+INSERT INTO Genero (desc_genero) VALUES ('Accion');
+INSERT INTO Genero (desc_genero) VALUES ('Comedia');
+INSERT INTO Genero (desc_genero) VALUES ('Terror');
+INSERT INTO Genero (desc_genero) VALUES ('Romance');
+INSERT INTO Genero (desc_genero) VALUES ('Animacion');
+
+
+/*insercion de peliculas*/
+
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Viernes 13 Parte VI: Jason Vive',
+    2.99,
+    TO_DATE('1986-08-01', 'YYYY-MM-DD'),
+    'Tommy Jarvis regresa al cementerio para destruir el cuerpo de Jason Voorhees, pero accidentalmente lo resucita. Jason despierta mas fuerte que nunca y comienza una nueva masacre en el campamento Crystal Lake.',
+    'posters/viernes13_6ta_poster.jpeg',
+    4
+);
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Tiburon 4: La Venganza',
+    2.99,
+    TO_DATE('1987-07-17', 'YYYY-MM-DD'),
+    'Ellen Brody esta convencida de que el gran tiburon blanco esta persiguiendo a su familia deliberadamente. Cuando su hijo es atacado en las Bahamas, Ellen viaja hasta alli para enfrentarse al tiburon en una batalla final.',
+    'posters/tiburon4.jpeg',
+    3
+);
+
+
+INSERT INTO Peliculas (titulo, precio_unidad, fecha_estreno, sinopsis, imagen_url, id_clasicacion)
+VALUES (
+    'Terminator 2: El Juicio Final',
+    2.99,
+    TO_DATE('1991-07-03', 'YYYY-MM-DD'),
+    'Un cyborg T-800 es enviado desde el futuro para proteger a John Connor del nuevo y mas avanzado Terminator T-1000 capaz de imitar cualquier forma.',
+    'posters/terminator2.jpg',
+    4
+);
+
+/*insercion de generos por pelicula*/
+-- Viernes 13 (id 1): Terror principal
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (6, 1, 1);
+
+-- Tiburon 4 (id 2): Terror principal, Accion secundario
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (6, 2, 1);
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (4, 2, 2);
+
+-- Terminator 2 (id 3): Accion principal, Ciencia Ficcion secundario
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (4, 3, 1);
+INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (2, 3, 2);
+
+COMMIT;
