@@ -145,17 +145,49 @@
                          ResultSet rs = con.createStatement().executeQuery(sql)) {
                         while(rs.next()) {
                 %>
+
                 <tr>
                     <td>#<%=rs.getInt("id_vhs")%></td>
                     <td><%=rs.getString("titulo")%></td>
-                    <td><span class="status-badge <%= "DAÑADO".equals(rs.getString("estado_fisico_vhs")) ? "status-danger" : "status-ok" %>">
-                        <%=rs.getString("estado_fisico_vhs")%>
-                    </span></td>
                     <td>
+        <span class="status-badge <%= "DAÑADO".equals(rs.getString("estado_fisico_vhs")) ? "status-danger" : "status-ok" %>">
+            <%=rs.getString("estado_fisico_vhs")%>
+        </span>
+                    </td>
+                    <td class="employee-row-actions">
                         <form method="post" action="empleado-inventario.jsp">
                             <input type="hidden" name="id_vhs" value="<%=rs.getInt("id_vhs")%>">
                             <button type="submit" class="employee-icon-button" title="Eliminar/Retirar">×</button>
                         </form>
+
+                        <button type="button" class="retro-button" onclick="openModal('modal-<%=rs.getInt("id_vhs")%>')">INFO</button>
+
+                        <div id="modal-<%=rs.getInt("id_vhs")%>" class="modal">
+                            <div class="modal-content retro-window">
+                                <div class="window-header">
+                                    <span>Info_Pelicula.info</span>
+                                    <span class="close-modal" onclick="closeModal('modal-<%=rs.getInt("id_vhs")%>')">X</span>
+                                </div>
+                                <div style="padding: 15px;">
+                                    <%
+                                        // Nota: Usamos 'con' que ya está abierto en el bucle principal de la tabla
+                                        String sqlInfo = "SELECT p.titulo, p.fecha_estreno, c.desc_clasificacion, g.desc_genero " +
+                                                "FROM Peliculas p " +
+                                                "JOIN Clasificacion c ON p.id_clasificacion = c.id_clasificacion " +
+                                                "JOIN PeliculasGeneros pg ON p.id_pelicula = pg.id_pelicula " +
+                                                "JOIN Genero g ON pg.id_genero = g.id_genero " +
+                                                "WHERE p.id_pelicula = (SELECT id_pelicula FROM Vhs WHERE id_vhs = " + rs.getInt("id_vhs") + ")";
+                                        try (ResultSet rsInfo = con.createStatement().executeQuery(sqlInfo)) {
+                                            if(rsInfo.next()) {
+                                    %>
+                                    <p><strong>Título:</strong> <%=rsInfo.getString("titulo")%></p>
+                                    <p><strong>Estreno:</strong> <%=rsInfo.getDate("fecha_estreno")%></p>
+                                    <p><strong>Clasificación:</strong> <%=rsInfo.getString("desc_clasificacion")%></p>
+                                    <p><strong>Género:</strong> <%=rsInfo.getString("desc_genero")%></p>
+                                    <% } } catch(Exception e) { } %>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <% } } catch(Exception e) {} %>
@@ -182,5 +214,13 @@
 </footer>
 
 <script src="js/empleado-responsive.js"></script>
+<script>
+    function openModal(id) { document.getElementById(id).style.display = "block"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+    // Cerrar si hacen clic fuera del modal
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') { event.target.style.display = "none"; }
+    }
+</script>
 </body>
 </html>
