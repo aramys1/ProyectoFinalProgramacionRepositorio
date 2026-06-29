@@ -84,6 +84,7 @@
                 <label>Confirmar Contraseña</label> <input id="confirmPassword" class="retro-input" type="password" required>
 
                 <button type="submit" class="retro-button login-submit">CREAR CUENTA</button>
+                <a href="login.jsp" class="login-back">Ya tengo cuenta</a>
             </form>
         </div>
     </section>

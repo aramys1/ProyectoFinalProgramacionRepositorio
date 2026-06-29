@@ -201,6 +201,29 @@ INSERT INTO tipo_email (desc_tipo_email) VALUES ('Otro');
 
 COMMIT;
 
+/*insertamos admin unico*/
+
+INSERT INTO USUARIO (
+    CED_USUARIO,
+    PRIMER_NOMBRE_USUARIO,
+    SEGUNDO_NOMBRE_USUARIO,
+    PRIMER_APELLIDO_USUARIO,
+    SEGUNDO_APELLIDO_USUARIO,
+    ROL,
+    CONTRASENA
+) VALUES (
+    '1-234-56',   -- CED_USUARIO
+    'ADMIN',      -- PRIMER_NOMBRE
+    'ADMIN',      -- SEGUNDO_NOMBRE
+    'ADMIN',      -- PRIMER_APELLIDO
+    'ADMIN',      -- SEGUNDO_APELLIDO
+    '3',          -- ROL (Asumiendo que 3 es ADMIN, cámbialo si es otro)
+    'admin'       -- CONTRASENA
+);
+
+COMMIT;
+/
+
 
 /*insercion de peliculas*/
 
@@ -250,3 +273,4 @@ INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (4, 3, 1
 INSERT INTO PeliculasGeneros (id_genero, id_pelicula, prioridad) VALUES (2, 3, 2);
 
 COMMIT;
+

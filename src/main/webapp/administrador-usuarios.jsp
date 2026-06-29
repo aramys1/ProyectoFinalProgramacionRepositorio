@@ -1,119 +1,110 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%
+    // Lógica de procesamiento de roles
+    String mensaje = "";
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+        String cedula = request.getParameter("cedula");
+        String nuevoRol = request.getParameter("nuevoRol");
+        if (cedula != null && nuevoRol != null) {
+            String sqlUpd = "UPDATE USUARIO SET ROL = ? WHERE CED_USUARIO = ? AND ROL != '3'";
+            try (Connection conn = ConexionDB.obtenerConexion();
+                 PreparedStatement ps = conn.prepareStatement(sqlUpd)) {
+                ps.setString(1, nuevoRol);
+                ps.setString(2, cedula);
+                ps.executeUpdate();
+                mensaje = "Operación realizada con éxito.";
+            } catch (Exception e) { mensaje = "Error: " + e.getMessage(); }
+        }
+    }
+
+    // Lógica de búsqueda
+    String busqueda = request.getParameter("buscar");
+    String sqlSelect = (busqueda != null && !busqueda.isEmpty())
+            ? "SELECT * FROM USUARIO WHERE CED_USUARIO LIKE '%" + busqueda + "%' AND ROL != '3'"
+            : "SELECT * FROM USUARIO WHERE ROL = '2'";
+%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/admin-usuario.css">
-    <title>Rewind & Relive | Admin</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-usuario.css">
+    <title>Rewind & Relive | Admin Usuarios</title>
 </head>
 <body>
 
 <nav class="navbar retro-window">
-    <div class="logo">
-        <a href="index.jsp" class="logo-link">ADMIN PANEL</a>
-    </div>
+    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
     <ul class="nav-links">
-        <li><a href="admin-dashboard.jsp">Dashboard</a></li>
-        <li><a href="admin-usuarios.jsp">Usuarios</a></li>
-        <li><a href="admin-reportes.jsp">Reportes</a></li>
+        <li><a href="catalogo.jsp">Catalogo</a></li>
+        <li><a href="empleado-dashboard.jsp">Dashboard Empleado</a></li>
     </ul>
 </nav>
 
-<div class="admin-page">
-
-    <span class="page-tag">GESTION DE EMPLEADOS</span>
-    <h1 class="page-title">Roles de Empleado</h1>
-    <p class="page-subtitle">Busca un usuario y otorga o revoca el rol de empleado.</p>
-
-    <div class="retro-window admin-window">
-        <div class="window-header">
-            <span>Empleados_DB.view</span>
-            <span>_ □ X</span>
-        </div>
-
-        <div class="search-bar">
-            <input type="text" id="buscarInput" placeholder="Buscar usuario por nombre o cedula...">
-            <button class="btn-filter" onclick="buscarUsuario()">BUSCAR</button>
-            <button class="btn-clear" onclick="limpiarBusqueda()">Limpiar</button>
-        </div>
-
-        <table class="users-table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Cedula</th>
-                <th>Nombre</th>
-                <th>Rol Actual</th>
-                <th>Accion</th>
-            </tr>
-            </thead>
-            <tbody id="tbodyUsuarios">
-
-            <!-- Empleados visibles por defecto -->
-            <tr data-rol="EMPLEADO" data-nombre="aramys cedeno" data-cedula="8-1039-59">
-                <td>2</td>
-                <td>8-1039-59</td>
-                <td>Aramys Cedeno</td>
-                <td><span class="role-badge role-EMPLEADO">EMPLEADO</span></td>
-                <td><button class="btn-revocar" onclick="cambiarRol(this, 'CLIENTE')">REVOCAR</button></td>
-            </tr>
-
-            <tr data-rol="EMPLEADO" data-nombre="fabian rodriguez" data-cedula="2-756-805">
-                <td>4</td>
-                <td>2-756-805</td>
-                <td>Fabian Rodriguez</td>
-                <td><span class="role-badge role-EMPLEADO">EMPLEADO</span></td>
-                <td><button class="btn-revocar" onclick="cambiarRol(this, 'CLIENTE')">REVOCAR</button></td>
-            </tr>
-
-            <!-- Clientes ocultos por defecto, visibles solo al buscar -->
-            <tr data-rol="CLIENTE" data-nombre="alisson aguirre" data-cedula="8-1032-1714" class="fila-oculta">
-                <td>1</td>
-                <td>8-1032-1714</td>
-                <td>Alisson Aguirre</td>
-                <td><span class="role-badge role-CLIENTE">CLIENTE</span></td>
-                <td><button class="btn-otorgar" onclick="cambiarRol(this, 'EMPLEADO')">OTORGAR</button></td>
-            </tr>
-
-            <tr data-rol="CLIENTE" data-nombre="leandro barrios" data-cedula="20-16-8080" class="fila-oculta">
-                <td>5</td>
-                <td>20-16-8080</td>
-                <td>Leandro Barrios</td>
-                <td><span class="role-badge role-CLIENTE">CLIENTE</span></td>
-                <td><button class="btn-otorgar" onclick="cambiarRol(this, 'EMPLEADO')">OTORGAR</button></td>
-            </tr>
-
-            </tbody>
-        </table>
-
+<main class="employee-page">
+    <div class="employee-header">
+        <h1>Gestión de Usuarios</h1>
+        <p>Administración de roles y accesos del sistema.</p>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <% if (!mensaje.isEmpty()) { %><div class="employee-alert employee-alert-ok"><%= mensaje %></div><% } %>
+
+    <div class="retro-window employee-panel">
+        <form method="GET" class="employee-toolbar">
+            <input type="text" name="buscar" class="retro-search" placeholder="Buscar cédula..." value="<%= busqueda != null ? busqueda : "" %>">
+            <button type="submit" class="retro-button">BUSCAR</button>
+            <a href="administrador-usuarios.jsp" class="employee-clear">LIMPIAR</a>
+        </form>
+
+        <div class="employee-table-wrap">
+            <table class="employee-table">
+                <thead>
+                <tr><th>ID</th><th>Cédula</th><th>Nombre</th><th>Rol</th><th>Acción</th></tr>
+                </thead>
+                <tbody>
+                <%
+                    try (Connection conn = ConexionDB.obtenerConexion();
+                         Statement st = conn.createStatement();
+                         ResultSet rs = st.executeQuery(sqlSelect)) {
+                        while (rs.next()) {
+                            String id = rs.getString("ID_USUARIO");
+                            String cedula = rs.getString("CED_USUARIO");
+                            String nombre = rs.getString("PRIMER_NOMBRE_USUARIO");
+                            String rol = rs.getString("ROL");
+                            String nombreRol = "1".equals(rol) ? "CLIENTE" : "EMPLEADO";
+                %>
+                <tr>
+                    <td><%= id %></td>
+                    <td><%= cedula %></td>
+                    <td><%= nombre %></td>
+                    <td><span class="status-badge"><%= nombreRol %></span></td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="cedula" value="<%= cedula %>">
+                            <input type="hidden" name="nuevoRol" value="<%= "1".equals(rol) ? "2" : "1" %>">
+                            <button type="submit" class="retro-button <%= "1".equals(rol) ? "" : "btn-revocar" %>">
+                                <%= "1".equals(rol) ? "OTORGAR" : "REVOCAR" %>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <% }
+                } catch (Exception e) {} %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
 
 <footer class="footer">
     <div class="footer-content">
-        <div class="footer-col">
-            <h4>Rewind & Relive</h4>
-            <p>Panel de Administracion.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Navegacion</h4>
-            <ul>
-                <li><a href="admin-dashboard.jsp" style="color:#fce4d6;">Dashboard</a></li>
-                <li><a href="admin-usuarios.jsp" style="color:#fce4d6;">Usuarios</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Contacto</h4>
-            <p>Av. VHS, #1980</p>
-        </div>
+        <div class="footer-col"><h4>Rewind & Relive</h4><p>Gestión interna.</p></div>
     </div>
-    <div class="copyright">© 2026 Rewind & Relive.</div>
+    <div class="copyright">2026 Rewind & Relive.</div>
 </footer>
 
-<script src="js/admin.js"></script>
 </body>
 </html>
