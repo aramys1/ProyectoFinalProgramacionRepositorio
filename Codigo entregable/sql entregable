@@ -172,7 +172,7 @@ CREATE TABLE Transaccion (
 );
 
 
-/*insertamos generos y clasificaciones*/
+/*insertamos generos, clasificacion, telefonoes e email (tipos)*/
 -- Clasificaciones
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('G', 0);
 INSERT INTO Clasificacion (desc_clasicacion, edad_minima) VALUES ('PG', 7);
@@ -188,6 +188,18 @@ INSERT INTO Genero (desc_genero) VALUES ('Comedia');
 INSERT INTO Genero (desc_genero) VALUES ('Terror');
 INSERT INTO Genero (desc_genero) VALUES ('Romance');
 INSERT INTO Genero (desc_genero) VALUES ('Animacion');
+
+-- Tipos de telefono
+INSERT INTO tipo_telefonos (desc_tipo_telefono) VALUES ('Movil');
+INSERT INTO tipo_telefonos (desc_tipo_telefono) VALUES ('Casa');
+INSERT INTO tipo_telefonos (desc_tipo_telefono) VALUES ('Trabajo');
+
+-- Tipos de email
+INSERT INTO tipo_email (desc_tipo_email) VALUES ('Personal');
+INSERT INTO tipo_email (desc_tipo_email) VALUES ('Trabajo');
+INSERT INTO tipo_email (desc_tipo_email) VALUES ('Otro');
+
+COMMIT;
 
 
 /*insercion de peliculas*/

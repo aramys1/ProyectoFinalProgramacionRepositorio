@@ -67,3 +67,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+//funcion usada en el registro
+function validarContrasenas() {
+    if (document.getElementById('password').value !== document.getElementById('confirmPassword').value) {
+        alert("Las contraseñas no coinciden");
+        return false;
+    }
+    return true;
+}
