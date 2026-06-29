@@ -1,5 +1,22 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+
+<%-- 1. LÓGICA DE ELIMINACIÓN (Solo se ejecuta si llega 'id_vhs') --%>
+<%
+    String idVhsEliminar = request.getParameter("id_vhs");
+    if (idVhsEliminar != null && !idVhsEliminar.isEmpty()) {
+        try (Connection con = ConexionDB.obtenerConexion()) {
+            PreparedStatement ps = con.prepareStatement("UPDATE Vhs SET estado_fisico_vhs = 'RETIRADO' WHERE id_vhs = ?");
+            ps.setInt(1, Integer.parseInt(idVhsEliminar));
+            ps.executeUpdate();
+            // Redirigir a la misma página sin parámetros para limpiar la URL
+            response.sendRedirect("empleado-inventario.jsp?mensaje=exito");
+            return; // IMPORTANTE: Detener la carga para procesar la redirección
+        } catch(Exception e) {
+            // Manejar error silenciosamente o con un parámetro
+        }
+    }
+%>
 <%
     String mensaje = "";
     String tipoMensaje = "";
@@ -95,6 +112,59 @@
             </div>
         </form>
     </section>
+
+    <section class="retro-window employee-panel">
+        <div class="window-header"><span>Gestion_Inventario.table</span><span>_ [] X</span></div>
+
+        <div class="employee-toolbar">
+            <form method="get">
+                <input type="text" name="busqueda" class="retro-search" placeholder="Buscar por título...">
+                <button type="submit" class="retro-button">BUSCAR</button>
+            </form>
+        </div>
+
+        <div class="employee-table-wrap">
+            <table class="employee-table">
+                <thead>
+                <tr>
+                    <th>ID VHS</th>
+                    <th>Título</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    String filtro = request.getParameter("busqueda");
+                    String sql = "SELECT v.id_vhs, p.titulo, v.estado_fisico_vhs FROM Vhs v JOIN Peliculas p ON v.id_pelicula = p.id_pelicula";
+                    if(filtro != null && !filtro.isEmpty()) {
+                        sql += " WHERE UPPER(p.titulo) LIKE UPPER('%" + filtro + "%')";
+                    }
+
+                    try (Connection con = ConexionDB.obtenerConexion();
+                         ResultSet rs = con.createStatement().executeQuery(sql)) {
+                        while(rs.next()) {
+                %>
+                <tr>
+                    <td>#<%=rs.getInt("id_vhs")%></td>
+                    <td><%=rs.getString("titulo")%></td>
+                    <td><span class="status-badge <%= "DAÑADO".equals(rs.getString("estado_fisico_vhs")) ? "status-danger" : "status-ok" %>">
+                        <%=rs.getString("estado_fisico_vhs")%>
+                    </span></td>
+                    <td>
+                        <form method="post" action="empleado-inventario.jsp">
+                            <input type="hidden" name="id_vhs" value="<%=rs.getInt("id_vhs")%>">
+                            <button type="submit" class="employee-icon-button" title="Eliminar/Retirar">×</button>
+                        </form>
+                    </td>
+                </tr>
+                <% } } catch(Exception e) {} %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
 </main>
 
 <footer class="footer">
