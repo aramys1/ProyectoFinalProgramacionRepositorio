@@ -7,25 +7,22 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <title>Rewind & Relive | Catálogo</title>
 </head>
 <body>
 
 <nav class="navbar retro-window">
-    <div class="logo">
-        <a href="index.jsp" class="logo-link">Rewind & Relive</a>
-    </div>
+    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
     <ul class="nav-links">
         <li><a href="catalogo.jsp">Catálogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contáctanos</a></li>
-        <li><button class="retro-button btn-register">Registrarse</button></li>
+        <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li>
     </ul>
 </nav>
 
 <div class="content-section catalog-container">
-
     <div class="search-section">
         <div class="filter-form">
             <input type="text" class="retro-search" placeholder="Buscar por título...">
@@ -40,7 +37,7 @@
     </div>
 
     <section class="releases">
-        <h2>Catálogo de VHS</h2>
+        <h1 class="glitch-title">Catálogo de VHS</h1>
 
         <div class="release-grid catalog-grid">
             <%
@@ -63,7 +60,7 @@
             <div class="retro-window release-card">
                 <div class="window-header">
                     <span><%= nombreArchivo %></span>
-                    <span>_ □ X</span>
+                    <span>_ [] X</span>
                 </div>
                 <% if (imagen != null && !imagen.isEmpty()) { %>
                 <img src="recursos/<%= imagen %>" alt="<%= titulo %>" class="card-img">
@@ -87,28 +84,32 @@
             <% } %>
         </div>
     </section>
-
 </div>
 
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-col">
             <h4>Rewind & Relive</h4>
-            <p>El hogar de los clásicos.</p>
+            <p>El hogar de los clásicos para volver a vivir el cine en formato VHS.</p>
         </div>
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
+                <li><a href="index.jsp">Inicio</a></li>
                 <li><a href="catalogo.jsp">Catálogo</a></li>
+                <li><a href="novedades.jsp">Novedades</a></li>
             </ul>
         </div>
         <div class="footer-col">
             <h4>Contacto</h4>
-            <p>📍 Av. VHS, #1980</p>
+            <ul>
+                <li><a href="#">Av. VHS, #1980</a></li>
+                <li><a href="mailto:soporte@rewindrelive.com">soporte@rewindrelive.com</a></li>
+            </ul>
         </div>
     </div>
     <div class="copyright">
-        © 2026 Rewind & Relive.
+        © 2026 Rewind & Relive. Todos los derechos reservados.
     </div>
 </footer>
 

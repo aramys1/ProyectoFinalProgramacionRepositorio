@@ -1,64 +1,60 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registrar Usuario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <title>Prueba | Rewind & Relive</title>
 </head>
 <body>
-<h2>Registrar Usuario</h2>
+<nav class="navbar retro-window">
+    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
+    <ul class="nav-links">
+        <li><a href="index.jsp">Inicio</a></li>
+        <li><a href="catalogo.jsp">Catalogo</a></li>
+    </ul>
+</nav>
 
-<%
-    if ("POST".equals(request.getMethod())) {
-        try (Connection con = ConexionDB.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(
-                     "INSERT INTO Usuario (ced_usuario, primer_nombre_usuario, segundo_nombre_usuario, " +
-                             "primer_apellido_usuario, segundo_apellido_usuario, fecha_registro, rol) " +
-                             "VALUES (?, ?, ?, ?, ?, SYSDATE, ?)")) {
+<main class="account-page">
+    <section class="employee-header">
+        <p class="employee-kicker">Pagina de prueba</p>
+        <h1>Formulario demo</h1>
+        <p>Esta pagina queda solo como vista de presentacion. No registra usuarios ni usa base de datos.</p>
+    </section>
 
-            ps.setString(1, request.getParameter("ced_usuario"));
-            ps.setString(2, request.getParameter("primer_nombre_usuario"));
-            ps.setString(3, request.getParameter("segundo_nombre_usuario"));
-            ps.setString(4, request.getParameter("primer_apellido_usuario"));
-            ps.setString(5, request.getParameter("segundo_apellido_usuario"));
-            ps.setString(6, request.getParameter("rol"));
-            ps.executeUpdate();
-%>
-<p> Usuario registrado correctamente.</p>
-<%
-} catch (SQLException e) {
-%>
-<p> Error: <%= e.getMessage() %></p>
-<%
-        }
-    }
-%>
-
-<form method="post">
-    <label>Cédula:</label><br>
-    <input type="text" name="ced_usuario" required><br><br>
-
-    <label>Primer Nombre:</label><br>
-    <input type="text" name="primer_nombre_usuario" required><br><br>
-
-    <label>Segundo Nombre:</label><br>
-    <input type="text" name="segundo_nombre_usuario"><br><br>
-
-    <label>Primer Apellido:</label><br>
-    <input type="text" name="primer_apellido_usuario" required><br><br>
-
-    <label>Segundo Apellido:</label><br>
-    <input type="text" name="segundo_apellido_usuario"><br><br>
-
-    <label>Rol:</label><br>
-    <select name="rol" required>
-        <option value="CLIENTE">Cliente</option>
-        <option value="EMPLEADO">Empleado</option>
-        <option value="ADMIN">Admin</option>
-    </select><br><br>
-
-    <button type="submit">Registrar</button>
-</form>
+    <section class="retro-window employee-panel employee-form-panel">
+        <div class="window-header"><span>registro_demo.form</span><span>_ [] X</span></div>
+        <form class="employee-form employee-movie-form" action="#" method="get">
+            <div class="employee-form-grid">
+                <label>
+                    Cedula
+                    <input type="text" class="retro-search" placeholder="000-0000000-0">
+                </label>
+                <label>
+                    Rol
+                    <select class="retro-search">
+                        <option>Cliente</option>
+                        <option>Empleado</option>
+                        <option>Admin</option>
+                    </select>
+                </label>
+                <label>
+                    Primer nombre
+                    <input type="text" class="retro-search" placeholder="Nombre">
+                </label>
+                <label>
+                    Primer apellido
+                    <input type="text" class="retro-search" placeholder="Apellido">
+                </label>
+            </div>
+            <div class="employee-form-actions">
+                <button type="button" class="retro-button">REGISTRAR DEMO</button>
+                <a href="index.jsp" class="retro-button employee-cancel">VOLVER</a>
+            </div>
+        </form>
+    </section>
+</main>
 </body>
 </html>

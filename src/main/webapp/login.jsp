@@ -12,15 +12,15 @@
     <main class="login-screen">
         <section class="retro-window login-window">
             <div class="window-header">
-                <span>Login.exe</span>
+                <span>Iniciar sesion</span>
                 <span>_ [] X</span>
             </div>
 
             <div class="login-content">
                 <a href="index.jsp" class="login-brand">Rewind & Relive</a>
-                <p class="login-subtitle">Acceso al videoclub</p>
+                <p class="login-subtitle">Acceso demo del videoclub</p>
 
-                <form id="loginForm" class="login-form" action="VerificarLoginServlet" method="POST">
+                <form id="loginForm" class="login-form" action="#" method="post" data-demo-redirect="index.jsp">
                     <label for="usuario">Usuario</label>
                     <input id="usuario" class="retro-input" type="text" name="usuario" placeholder="tu_usuario" required>
 
@@ -28,6 +28,7 @@
                     <input id="password" class="retro-input" type="password" name="password" placeholder="********" required>
 
                     <button type="submit" class="retro-button login-submit">ENTRAR</button>
+                    <p class="register-invite">No se verifica base de datos por ahora. Este acceso solo vuelve al indice.</p>
                     <a href="registro.jsp" class="retro-button btn-register login-register">REGISTRARSE</a>
                 </form>
 
