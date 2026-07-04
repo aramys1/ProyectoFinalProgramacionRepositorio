@@ -19,9 +19,7 @@
     }
 
     .footer-col h4 {
-        border-bottom: 2px solid #ff9800;
         display: inline-block;
-        padding-bottom: 5px;
         margin-bottom: 15px;
         margin-top: 0;
         font-family: 'Montserrat', sans-serif;
@@ -47,11 +45,10 @@
     .footer-col a {
         color: #fce4d6;
         text-decoration: none;
-        border-bottom: 1px solid transparent;
     }
 
     .footer-col a:hover {
-        border-bottom-color: #ff9800;
+        color: #ff9800;
     }
 
     /* ==========================================
@@ -98,7 +95,6 @@
         max-width: 1100px;
         margin: 30px auto 0;
         padding-top: 18px;
-        border-top: 1px solid rgba(252, 228, 214, 0.25);
     }
 
     .copyright {

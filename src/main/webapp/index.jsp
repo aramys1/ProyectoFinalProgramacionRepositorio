@@ -16,25 +16,7 @@
         <li><a href="catalogo.jsp">Catalogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contactanos</a></li>
-        <li class="nav-profile">
-            <a href="cliente-perfil.jsp" class="retro-button">Mi perfil</a>
-            <ul class="profile-menu">
-                <li><a href="cliente-perfil.jsp">Mis ajustes</a></li>
-                <li><a href="cliente-carrito.jsp">Mi carrito</a></li>
-                <li><a href="cliente-historial.jsp">Mi historial</a></li>
-            </ul>
-        </li>
-        <li class="nav-profile">
-            <a href="empleado-dashboard.jsp" class="retro-button nav-employee-button">Empleado</a>
-            <ul class="profile-menu">
-                <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
-                <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-                <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
-                <li><a href="empleado-inventario.jsp">Inventario</a></li>
-                <li><a href="empleado-agregar-pelicula.jsp">Agregar pelicula</a></li>
-                <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
-            </ul>
-        </li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
         <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesion</a></li>
     </ul>
 </nav>
@@ -78,6 +60,7 @@
                 <div class="demo-access-actions">
                     <a class="retro-button nav-employee-button" href="empleado-dashboard.jsp">Dashboard</a>
                     <a class="retro-button nav-employee-button" href="empleado-alquileres.jsp">Alquileres</a>
+                    <a class="retro-button nav-employee-button" href="empleado-devolucion.jsp">Devoluciones</a>
                     <a class="retro-button nav-employee-button" href="empleado-inventario.jsp">Inventario</a>
                     <a class="retro-button nav-employee-button" href="empleado-usuarios.jsp">Usuarios</a>
                 </div>

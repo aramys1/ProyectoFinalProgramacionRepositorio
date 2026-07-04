@@ -20,6 +20,7 @@
         <li><a href="catalogo.jsp">Catálogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contáctanos</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
         <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li>
     </ul>
 </nav>
@@ -57,9 +58,8 @@
     </section>
 </div>
 
-<footer>
-    <%@ include file="footer.jsp" %>
-</footer>
+<%@ include file="footer.jsp" %>
 
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

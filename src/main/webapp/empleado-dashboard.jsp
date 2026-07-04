@@ -46,7 +46,8 @@
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
         <li><a href="empleado-devolucion.jsp">Devolución</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
-        <li><a href="empleado-agregar-pelicula.jsp">Agregar pelicula</a></li>
+        <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 
@@ -95,10 +96,13 @@
     <section class="employee-actions">
         <a class="retro-button employee-action" href="empleado-devolucion.jsp">Registrar devolución</a>
         <a class="retro-button employee-action" href="empleado-inventario.jsp">Ajustar inventario</a>
-        <a class="retro-button employee-action" href="empleado-agregar-pelicula.jsp">Agregar pelicula</a>
         <a class="retro-button employee-action" href="empleado-alquileres.jsp">Consultar alquileres</a>
+        <a class="retro-button employee-action" href="empleado-usuarios.jsp">Ver usuarios</a>
     </section>
 </main>
-<script src="js/empleado-responsive.js"></script>
+
+<%@ include file="footer.jsp" %>
+
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

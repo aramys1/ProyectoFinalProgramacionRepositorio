@@ -56,5 +56,9 @@
         </form>
     </section>
 </main>
+
+<%@ include file="footer.jsp" %>
+
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

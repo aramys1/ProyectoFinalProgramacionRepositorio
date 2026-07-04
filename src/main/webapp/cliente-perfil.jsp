@@ -14,8 +14,9 @@
     <ul class="nav-links">
         <li><a href="index.jsp">Inicio</a></li>
         <li><a href="catalogo.jsp">Catalogo</a></li>
-        <li><a href="cliente-carrito.jsp">Mi carrito</a></li>
-        <li><a href="cliente-historial.jsp">Mi historial</a></li>
+        <li><a href="novedades.jsp">Novedades</a></li>
+        <li><a href="contactanos.jsp">Contactanos</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 
@@ -48,5 +49,9 @@
         </article>
     </section>
 </main>
+
+<%@ include file="footer.jsp" %>
+
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

@@ -18,6 +18,7 @@
         <li><a href="catalogo.jsp">Catálogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contáctanos</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
         <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li>
     </ul>
 </nav>
@@ -71,9 +72,7 @@
                     <h3 class="card-title"><%= titulo %></h3>
                     <p class="card-meta">Año: <%= anio %></p>
                     <p class="card-price">$<%= precio %> / 48hrs</p>
-                    <a href="pelicula-detalle.jsp?id=<%= idPelicula %>">
-                        <button class="retro-button btn-rent btn-full">ALQUILAR</button>
-                    </a>
+                    <a href="pelicula-detalle.jsp?id=<%= idPelicula %>" class="retro-button btn-rent btn-full">ALQUILAR PELICULA</a>
                 </div>
             </div>
             <%
@@ -86,9 +85,8 @@
     </section>
 </div>
 
-<footer>
-    <%@ include file="footer.jsp" %>
-</footer>
+<%@ include file="footer.jsp" %>
 
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

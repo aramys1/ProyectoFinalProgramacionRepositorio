@@ -16,8 +16,8 @@
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
         <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
-        <li><a href="empleado-agregar-pelicula.jsp">Agregar pelicula</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 
@@ -82,6 +82,8 @@
         </div>
     </section>
 </main>
-<script src="js/empleado-responsive.js"></script>
+<%@ include file="footer.jsp" %>
+
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 </html>

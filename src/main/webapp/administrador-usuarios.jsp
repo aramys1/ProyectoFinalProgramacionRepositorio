@@ -1,7 +1,6 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 <%
-    // Lógica de procesamiento de roles
     String mensaje = "";
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String cedula = request.getParameter("cedula");
@@ -13,12 +12,11 @@
                 ps.setString(1, nuevoRol);
                 ps.setString(2, cedula);
                 ps.executeUpdate();
-                mensaje = "Operación realizada con éxito.";
+                mensaje = "OperaciÃ³n realizada con Ã©xito.";
             } catch (Exception e) { mensaje = "Error: " + e.getMessage(); }
         }
     }
 
-    // Lógica de búsqueda
     String busqueda = request.getParameter("buscar");
     String sqlSelect = (busqueda != null && !busqueda.isEmpty())
             ? "SELECT * FROM USUARIO WHERE CED_USUARIO LIKE '%" + busqueda + "%' AND ROL != '3'"
@@ -39,22 +37,25 @@
 <nav class="navbar retro-window">
     <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
     <ul class="nav-links">
+        <li><a href="index.jsp">Inicio</a></li>
         <li><a href="catalogo.jsp">Catalogo</a></li>
-        <li><a href="empleado-dashboard.jsp">Dashboard Empleado</a></li>
+        <li><a href="novedades.jsp">Novedades</a></li>
+        <li><a href="contactanos.jsp">Contactanos</a></li>
+        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 
 <main class="employee-page">
     <div class="employee-header">
-        <h1>Gestión de Usuarios</h1>
-        <p>Administración de roles y accesos del sistema.</p>
+        <h1>GestiÃ³n de Usuarios</h1>
+        <p>AdministraciÃ³n de roles y accesos del sistema.</p>
     </div>
 
     <% if (!mensaje.isEmpty()) { %><div class="employee-alert employee-alert-ok"><%= mensaje %></div><% } %>
 
     <div class="retro-window employee-panel">
         <form method="GET" class="employee-toolbar">
-            <input type="text" name="buscar" class="retro-search" placeholder="Buscar cédula..." value="<%= busqueda != null ? busqueda : "" %>">
+            <input type="text" name="buscar" class="retro-search" placeholder="Buscar cÃ©dula..." value="<%= busqueda != null ? busqueda : "" %>">
             <button type="submit" class="retro-button">BUSCAR</button>
             <a href="administrador-usuarios.jsp" class="employee-clear">LIMPIAR</a>
         </form>
@@ -62,7 +63,7 @@
         <div class="employee-table-wrap">
             <table class="employee-table">
                 <thead>
-                <tr><th>ID</th><th>Cédula</th><th>Nombre</th><th>Rol</th><th>Acción</th></tr>
+                <tr><th>ID</th><th>CÃ©dula</th><th>Nombre</th><th>Rol</th><th>AcciÃ³n</th></tr>
                 </thead>
                 <tbody>
                 <%
@@ -99,12 +100,9 @@
     </div>
 </main>
 
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-col"><h4>Rewind & Relive</h4><p>Gestión interna.</p></div>
-    </div>
-    <div class="copyright">2026 Rewind & Relive.</div>
-</footer>
+<%@ include file="footer.jsp" %>
+
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
 
 </body>
 </html>
