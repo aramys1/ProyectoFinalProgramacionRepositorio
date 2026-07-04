@@ -101,15 +101,6 @@ body {
     box-shadow: 6px 6px 0px #000;
 }
 
-.logo-link {
-    text-decoration: none;
-    color: #000;
-    font-weight: 900;
-    font-size: 1.5rem;
-    font-family: 'Montserrat', sans-serif;
-    transition: none;
-}
-
 .nav-links {
     display: flex;
     list-style: none;
@@ -459,21 +450,20 @@ body {
 .category-badge.cat-video { background-color: #a020f0; color: #fff; }
 
 /* Caja de Video Responsiva acoplada al contenedor con scroll */
+/* Caja de Video Acoplada al contenedor con scroll (Corregida) */
 .news-video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
+    width: 100%;
+    max-width: 400px;        /* Limitamos el ancho para que no ocupe toda la pantalla */
+    height: 225px;           /* Altura fija ideal para cajas con scroll de 250px */
+    margin: 12px auto;       /* Centra el video horizontalmente dentro del artículo */
     background-color: #000;
-    margin: 10px 0;
-    border: 1px solid #777;
+    border: 2px inset #555;  /* Borde hundido retro a juego con el contenedor */
+    box-sizing: border-box;
 }
-s
+
 .news-video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
     width: 100%;
     height: 100%;
     border: 0;
@@ -551,72 +541,6 @@ s
 }
 
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.footer {
-    background-color: #000;
-    color: #fce4d6;
-    padding: 48px 20px 18px;
-    margin-top: auto;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr 1fr;
-    gap: 36px;
-    align-items: start;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.footer-col h4 {
-    border-bottom: 2px solid #ff9800;
-    display: inline-block;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    margin-top: 0;
-    font-family: 'Montserrat', sans-serif;
-    letter-spacing: 0;
-}
-
-.footer-col p {
-    margin: 0;
-    line-height: 1.6;
-}
-
-.footer-desc {
-    font-size: 0.85rem;
-    opacity: 0.5;
-    line-height: 1.6;
-    margin: 0;
-}
-
-.footer-col ul { list-style: none; padding: 0; margin: 0; }
-
-.footer-col ul li { margin-bottom: 8px; }
-
-.footer-col a {
-    color: #fce4d6;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-}
-
-.footer-col a:hover {
-    border-bottom-color: #ff9800;
-}
-
-.copyright {
-    text-align: center;
-    font-size: 0.7rem;
-    opacity: 0.6;
-    max-width: 1100px;
-    margin: 30px auto 0;
-    padding-top: 14px;
-    border-top: 1px solid rgba(252, 228, 214, 0.25);
-}
 /* ============================================================
    CATÁLOGO
    ============================================================ */

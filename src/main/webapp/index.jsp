@@ -11,7 +11,7 @@
 <body>
 
 <nav class="navbar retro-window">
-    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
+    <%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="catalogo.jsp">Catalogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
@@ -187,30 +187,7 @@
     </div>
 </section>
 
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-col">
-            <h4>Rewind & Relive</h4>
-            <p>Tu destino retro preferido para descubrir, alquilar y revivir clasicos en formato VHS.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Navegacion</h4>
-            <ul>
-                <li><a href="catalogo.jsp">Catalogo</a></li>
-                <li><a href="novedades.jsp">Novedades</a></li>
-                <li><a href="contactanos.jsp">Contactanos</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Accesos demo</h4>
-            <ul>
-                <li><a href="cliente-perfil.jsp">Usuario registrado</a></li>
-                <li><a href="empleado-dashboard.jsp">Vistas empleado</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="copyright">2026 Rewind & Relive. Todos los derechos reservados.</div>
-</footer>
+<%@ include file="footer.jsp" %>
 
 <script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>

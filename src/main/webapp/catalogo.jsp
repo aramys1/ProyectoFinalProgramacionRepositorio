@@ -13,7 +13,7 @@
 <body>
 
 <nav class="navbar retro-window">
-    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
+    <%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="catalogo.jsp">Catálogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
@@ -86,31 +86,8 @@
     </section>
 </div>
 
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-col">
-            <h4>Rewind & Relive</h4>
-            <p>El hogar de los clásicos para volver a vivir el cine en formato VHS.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Navegación</h4>
-            <ul>
-                <li><a href="index.jsp">Inicio</a></li>
-                <li><a href="catalogo.jsp">Catálogo</a></li>
-                <li><a href="novedades.jsp">Novedades</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Contacto</h4>
-            <ul>
-                <li><a href="#">Av. VHS, #1980</a></li>
-                <li><a href="mailto:soporte@rewindrelive.com">soporte@rewindrelive.com</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="copyright">
-        © 2026 Rewind & Relive. Todos los derechos reservados.
-    </div>
+<footer>
+    <%@ include file="footer.jsp" %>
 </footer>
 
 </body>

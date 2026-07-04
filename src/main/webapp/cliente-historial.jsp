@@ -10,7 +10,7 @@
 </head>
 <body>
 <nav class="navbar retro-window">
-    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
+    <%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="index.jsp">Inicio</a></li>
         <li><a href="catalogo.jsp">Catalogo</a></li>
