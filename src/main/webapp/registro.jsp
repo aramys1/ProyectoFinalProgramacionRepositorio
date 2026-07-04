@@ -3,34 +3,49 @@
 
 <%
     if ("POST".equalsIgnoreCase(request.getMethod())) {
+        // Datos básicos
         String cedula = request.getParameter("cedula");
         String pNombre = request.getParameter("primerNombre");
         String sNombre = request.getParameter("segundoNombre");
         String pApellido = request.getParameter("primerApellido");
         String sApellido = request.getParameter("segundoApellido");
         String pass = request.getParameter("password");
-        String rol = "1";
 
-        String sql = "INSERT INTO USUARIO (CED_USUARIO, PRIMER_NOMBRE_USUARIO, SEGUNDO_NOMBRE_USUARIO, " +
-                "PRIMER_APELLIDO_USUARIO, SEGUNDO_APELLIDO_USUARIO, ROL, CONTRASENA) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Datos tarjeta
+        String numTarjeta = request.getParameter("numTarjeta");
+        String tipoTarjeta = request.getParameter("tipoTarjeta");
+        String exp = request.getParameter("expiracion");
+        String cvv = request.getParameter("cvv");
 
-        try (Connection conn = ConexionDB.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = ConexionDB.obtenerConexion()) {
+            conn.setAutoCommit(false); // Transacción para asegurar integridad
 
+            // Insertar Usuario
+            String sql = "INSERT INTO USUARIO (CED_USUARIO, PRIMER_NOMBRE_USUARIO, SEGUNDO_NOMBRE_USUARIO, " +
+                    "PRIMER_APELLIDO_USUARIO, SEGUNDO_APELLIDO_USUARIO, ROL, CONTRASENA) VALUES (?, ?, ?, ?, ?, '1', ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, cedula);
             ps.setString(2, pNombre);
             ps.setString(3, sNombre);
             ps.setString(4, pApellido);
             ps.setString(5, sApellido);
-            ps.setString(6, rol);
-            ps.setString(7, pass);
+            ps.setString(6, pass);
             ps.executeUpdate();
 
             ResultSet rs = conn.prepareStatement("SELECT id_usuario FROM Usuario WHERE ced_usuario = '" + cedula + "'").executeQuery();
             if (rs.next()) {
                 int idUsuario = rs.getInt("id_usuario");
 
-                // Función auxiliar para insertar múltiples (simulada)
+                // Insertar Tarjeta
+                PreparedStatement psT = conn.prepareStatement("INSERT INTO TARJETAUSUARIO (ID_TARJETA, NUMERO, TIPO_TARJETA, FECHA_EXPIRACION, CVV, ID_USUARIO) VALUES (seq_tarjeta.NEXTVAL, ?, ?, ?, ?, ?)");
+                psT.setString(1, numTarjeta);
+                psT.setString(2, tipoTarjeta);
+                psT.setString(3, exp);
+                psT.setString(4, cvv);
+                psT.setInt(5, idUsuario);
+                psT.executeUpdate();
+
+                // Insertar Emails
                 String[] emails = {request.getParameter("email"), request.getParameter("email2")};
                 String[] tipoEmails = {request.getParameter("tipoEmail"), request.getParameter("tipoEmail2")};
                 for(int i=0; i<2; i++) {
@@ -43,7 +58,9 @@
                     }
                 }
             }
+            conn.commit();
         } catch (Exception e) {
+            // Manejar error
         }
     }
 %>
@@ -70,6 +87,14 @@
                 <label>Primer Apellido</label> <input class="retro-input" type="text" name="primerApellido" required>
                 <label>Segundo Apellido</label> <input class="retro-input" type="text" name="segundoApellido" required>
 
+                <hr style="border: 1px inset #fff; margin: 10px 0;">
+                <label>Número de Tarjeta</label> <input class="retro-input" type="text" name="numTarjeta" required>
+                <label>Tipo de Tarjeta</label>
+                <select class="retro-input" name="tipoTarjeta"><option value="CREDITO">Crédito</option><option value="DEBITO">Débito</option></select>
+                <label>Expiración (MM/AA)</label> <input class="retro-input" type="text" name="expiracion" placeholder="MM/AA" required>
+                <label>CVV</label> <input class="retro-input" type="password" name="cvv" maxlength="3" required>
+                <hr style="border: 1px inset #fff; margin: 10px 0;">
+
                 <label>Email 1</label> <input class="retro-input" type="email" name="email" required>
                 <select class="retro-input" name="tipoEmail"><option value="1">Personal</option><option value="2">Trabajo</option></select>
                 <label>Email 2</label> <input class="retro-input" type="email" name="email2">
@@ -90,6 +115,5 @@
     </section>
 </main>
 <script src="${pageContext.request.contextPath}/js/script.js"></script>
-
 </body>
 </html>
