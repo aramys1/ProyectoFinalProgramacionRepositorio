@@ -121,6 +121,12 @@ function initInventoryTemplate() {
         toggle.addEventListener('click', function() {
             if (!addPanel) return;
             addPanel.hidden = !addPanel.hidden;
+            if (detail) {
+                detail.hidden = true;
+                buttons.forEach(function(item) {
+                    item.classList.remove('active');
+                });
+            }
             if (!addPanel.hidden) {
                 addPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -128,6 +134,8 @@ function initInventoryTemplate() {
     });
 
     if (!detail || !buttons.length) return;
+
+    detail.hidden = true;
 
     const fields = {
         title: detail.querySelector('[data-field="title"]'),
@@ -144,6 +152,8 @@ function initInventoryTemplate() {
     };
 
     function selectMovie(button, shouldScroll) {
+        detail.hidden = false;
+
         buttons.forEach(function(item) {
             item.classList.toggle('active', item === button);
         });
@@ -174,9 +184,6 @@ function initInventoryTemplate() {
         });
     });
 
-    if (buttons.length) {
-        selectMovie(buttons[0], false);
-    }
 }
 
 function initSynopsisInventoryTemplate() {

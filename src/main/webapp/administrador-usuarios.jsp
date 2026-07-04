@@ -35,27 +35,26 @@
 <body>
 
 <nav class="navbar retro-window">
-    <div class="logo"><a href="index.jsp" class="logo-link">Rewind & Relive</a></div>
+    <%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="index.jsp">Inicio</a></li>
         <li><a href="catalogo.jsp">Catalogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contactanos</a></li>
-        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 
 <main class="employee-page">
     <div class="employee-header">
-        <h1>GestiÃ³n de Usuarios</h1>
-        <p>AdministraciÃ³n de roles y accesos del sistema.</p>
+        <h1>Gestion de Usuarios</h1>
+        <p>Administracion de roles y accesos del sistema.</p>
     </div>
 
     <% if (!mensaje.isEmpty()) { %><div class="employee-alert employee-alert-ok"><%= mensaje %></div><% } %>
 
     <div class="retro-window employee-panel">
         <form method="GET" class="employee-toolbar">
-            <input type="text" name="buscar" class="retro-search" placeholder="Buscar cÃ©dula..." value="<%= busqueda != null ? busqueda : "" %>">
+            <input type="text" name="buscar" class="retro-search" placeholder="Buscar cedula..." value="<%= busqueda != null ? busqueda : "" %>">
             <button type="submit" class="retro-button">BUSCAR</button>
             <a href="administrador-usuarios.jsp" class="employee-clear">LIMPIAR</a>
         </form>
@@ -63,7 +62,7 @@
         <div class="employee-table-wrap">
             <table class="employee-table">
                 <thead>
-                <tr><th>ID</th><th>CÃ©dula</th><th>Nombre</th><th>Rol</th><th>AcciÃ³n</th></tr>
+                <tr><th>ID</th><th>Cedula</th><th>Nombre</th><th>Rol</th><th>Acción</th></tr>
                 </thead>
                 <tbody>
                 <%

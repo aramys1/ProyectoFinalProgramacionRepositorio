@@ -130,37 +130,7 @@ body {
     background-color: #ffeb3b;
 }
 
-.nav-search {
-    width: 38px;
-    height: 38px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #000;
-    background: #ffeb3b;
-    box-shadow: 3px 3px 0 #000;
-    box-sizing: border-box;
-}
 
-.search-icon {
-    width: 15px;
-    height: 15px;
-    border: 3px solid #000;
-    border-radius: 50%;
-    position: relative;
-    display: inline-block;
-}
-
-.search-icon::after {
-    content: '';
-    width: 10px;
-    height: 3px;
-    background: #000;
-    position: absolute;
-    right: -9px;
-    bottom: -5px;
-    transform: rotate(45deg);
-}
 
 
 /* ============================================================
@@ -1437,200 +1407,6 @@ form button {
 }
 .close-modal { float: right; cursor: pointer; padding: 5px; font-weight: bold; }
 
-/* ============================================================
-   INVENTARIO Y SINOPSIS
-   ============================================================ */
-.inventory-layout {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-.inventory-catalog-toolbar {
-    max-width: 1100px;
-    margin: 0 auto 24px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.inventory-catalog-toolbar .retro-search {
-    flex: 1 1 280px;
-    width: auto;
-}
-
-.inventory-catalog-grid {
-    max-width: 1100px;
-    margin: 0 auto 30px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 24px;
-}
-
-.inventory-card,
-.inventory-add-card {
-    background: #ffffff;
-    min-height: 100%;
-}
-
-.inventory-card-img {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    display: block;
-    border-bottom: 2px solid #000;
-    background: #d1d1d1;
-}
-
-.inventory-card-body,
-.inventory-add-body {
-    padding: 16px;
-}
-
-.inventory-card-body h2,
-.inventory-add-body strong {
-    display: block;
-    margin: 0 0 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.2rem;
-    line-height: 1.15;
-}
-
-.inventory-card-body p,
-.inventory-add-body p {
-    margin: 0 0 12px;
-    color: #3e2723;
-    font-weight: 800;
-    line-height: 1.4;
-}
-
-.inventory-card .btn-full {
-    width: 100%;
-    max-width: none;
-}
-
-.inventory-add-card {
-    display: flex;
-    flex-direction: column;
-}
-
-.inventory-add-body {
-    flex: 1;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
-}
-
-.inventory-add-body .retro-button {
-    width: 100%;
-}
-
-.inventory-add-panel[hidden] {
-    display: none;
-}
-
-.catalog-detail-panel {
-    margin-top: 30px;
-}
-
-.inventory-detail-grid {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 24px;
-    padding: 22px;
-}
-
-.inventory-detail-poster-wrap {
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    background: #ffffff;
-    align-self: start;
-}
-
-.inventory-detail-poster {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    display: block;
-}
-
-.inventory-copy-list {
-    margin-top: 20px;
-}
-
-.inventory-list,
-.inventory-detail {
-    margin: 0;
-}
-
-.inventory-list-body {
-    padding: 14px;
-    display: grid;
-    gap: 12px;
-}
-
-.inventory-movie-item {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid #000;
-    background: #fff;
-    box-shadow: 3px 3px 0 #000;
-    text-align: left;
-    cursor: pointer;
-}
-
-.inventory-movie-item strong,
-.inventory-movie-item span {
-    display: block;
-}
-
-.inventory-movie-item span {
-    margin-top: 6px;
-    color: #3e2723;
-    font-weight: 800;
-}
-
-.inventory-movie-item.active {
-    background: #ffeb3b;
-}
-
-.inventory-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin-top: 22px;
-}
-
-.inventory-summary article {
-    padding: 16px;
-    border: 2px solid #000;
-    background: #fff7ec;
-    box-shadow: 3px 3px 0 #000;
-}
-
-.inventory-summary span {
-    display: block;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.3rem;
-    color: #000;
-}
-
-.inventory-summary strong {
-    display: block;
-    margin-bottom: 6px;
-}
-
-.inventory-summary p {
-    margin: 0;
-    color: #3e2723;
-    line-height: 1.4;
-}
-
 .movie-detail-page {
     flex: 1;
     background: #ffffff;
@@ -1640,21 +1416,22 @@ form button {
 .movie-detail-hero {
     max-width: 1100px;
     margin: 0 auto 32px;
-    display: grid;
-    grid-template-columns: 330px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 34px;
     align-items: start;
 }
 
 .movie-poster-window {
-    background: #fff;
+    background: #1a1a1a;
 }
 
+/* CORRECCIÓN: Proporción controlada para vistas generales */
 .movie-detail-poster {
-    width: 100%;
-    display: block;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
+    width: 100% !important;
+    max-height: 420px !important;
+    display: block !important;
+    aspect-ratio: 2 / 3 !important;
+    object-fit: contain !important;
 }
 
 .movie-detail-copy h1 {
@@ -1725,14 +1502,11 @@ form button {
 }
 
 @media (max-width: 900px) {
-    .inventory-layout,
-    .inventory-detail-grid,
     .movie-detail-hero,
     .synopsis-employee-grid {
         grid-template-columns: 1fr;
     }
 
-    .inventory-summary,
     .compact-summary {
         grid-template-columns: 1fr;
     }

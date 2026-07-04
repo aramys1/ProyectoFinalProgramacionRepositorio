@@ -6,6 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/empleado-inventario.css">
     <title>Inventario | Rewind & Relive</title>
 </head>
 <body>
@@ -18,7 +19,6 @@
         <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
-        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 

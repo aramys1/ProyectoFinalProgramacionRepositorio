@@ -17,7 +17,6 @@
         <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
-        <li><a href="https://www.google.com" class="nav-search" aria-label="Buscar en Google" title="Buscar en Google"><span class="search-icon"></span></a></li>
     </ul>
 </nav>
 

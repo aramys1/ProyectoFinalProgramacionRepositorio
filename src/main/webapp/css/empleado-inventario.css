@@ -1,0 +1,226 @@
+.inventory-catalog-toolbar {
+    max-width: 980px;
+    margin: 0 auto 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.inventory-catalog-toolbar .retro-search {
+    flex: 1 1 260px;
+    width: auto;
+}
+
+.inventory-catalog-grid {
+    max-width: 980px;
+    margin: 0 auto 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 220px);
+    justify-content: center;
+    align-items: start;
+    gap: 22px;
+}
+
+.inventory-card,
+.inventory-add-card {
+    width: 220px;
+    max-width: 220px;
+    min-height: 0;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.inventory-card-img {
+    width: 220px;
+    height: 300px;
+    max-width: 220px;
+    max-height: 300px;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    border-bottom: 2px solid #000;
+    background: #d1d1d1;
+}
+
+.inventory-card-body,
+.inventory-add-body {
+    padding: 14px;
+}
+
+.inventory-card-body h2,
+.inventory-add-body strong {
+    display: block;
+    margin: 0 0 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.15;
+}
+
+.inventory-card-body p,
+.inventory-add-body p {
+    margin: 0 0 10px;
+    color: #3e2723;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.inventory-card .btn-full {
+    width: 100%;
+    max-width: none;
+}
+
+.inventory-add-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.inventory-add-body {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.inventory-add-body .retro-button {
+    width: 100%;
+}
+
+.inventory-add-panel[hidden] {
+    display: none;
+}
+
+.catalog-detail-panel {
+    max-width: 980px;
+    margin: 30px auto 0;
+}
+
+.inventory-detail-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 24px;
+    padding: 22px;
+    align-items: start;
+}
+
+.inventory-detail-poster-wrap {
+    width: 220px;
+    height: 300px;
+    max-width: 220px;
+    max-height: 300px;
+    border: 2px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.inventory-detail-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+.inventory-copy-list {
+    margin-top: 20px;
+}
+
+.inventory-list,
+.inventory-detail {
+    margin: 0;
+}
+
+.inventory-list-body {
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+}
+
+.inventory-movie-item {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #000;
+    background: #fff;
+    box-shadow: 3px 3px 0 #000;
+    text-align: left;
+    cursor: pointer;
+}
+
+.inventory-movie-item strong,
+.inventory-movie-item span {
+    display: block;
+}
+
+.inventory-movie-item span {
+    margin-top: 6px;
+    color: #3e2723;
+    font-weight: 800;
+}
+
+.inventory-movie-item.active {
+    background: #ffeb3b;
+}
+
+.inventory-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.inventory-summary article {
+    padding: 16px;
+    border: 2px solid #000;
+    background: #fff7ec;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.inventory-summary span {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.1rem;
+    color: #000;
+}
+
+.inventory-summary strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.inventory-summary p {
+    margin: 0;
+    color: #3e2723;
+    line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+    .inventory-catalog-grid {
+        grid-template-columns: repeat(auto-fit, minmax(190px, 220px));
+    }
+
+    .inventory-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-detail-poster-wrap {
+        margin: 0 auto;
+    }
+
+    .inventory-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .inventory-catalog-grid {
+        grid-template-columns: minmax(0, 220px);
+    }
+
+    .inventory-card,
+    .inventory-add-card,
+    .inventory-card-img {
+        width: 100%;
+        max-width: 220px;
+    }
+}

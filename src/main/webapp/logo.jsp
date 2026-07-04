@@ -54,6 +54,54 @@
     .social-icon:hover {
         transform: scale(1.1);
     }
+    
+    .nav-search {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+    background: #ffeb3b;
+    box-shadow: 3px 3px 0 #000;
+    box-sizing: border-box;
+}
+
+    .nav-search:hover {
+    background: #ff9800;
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 #000;
+}
+
+.nav-search img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.logo-search-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    margin-left: 5px;
+    padding-left: 15px;
+    border-left: 2px solid #000;
+}
+
+.logo-search-icon {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.logo-search-link:hover .logo-search-icon {
+    transform: scale(1.1);
+}
 </style>
 
 <!-- Estructura HTML unificada -->
@@ -74,6 +122,9 @@
         </a>
         <a href="https://x.com" target="_blank" rel="noopener noreferrer">
             <img src="${pageContext.request.contextPath}/imgs/X.png" alt="X (Twitter)" class="social-icon">
+        </a>
+        <a href="https://www.google.com" class="logo-search-link" aria-label="Buscar en Google" title="Buscar en Google">
+            <img src="${pageContext.request.contextPath}/imgs/lupa.png" alt="Buscar" class="logo-search-icon">
         </a>
     </div>
 </div>
