@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initPosterFileName();
     initInventoryTemplate();
     initSynopsisInventoryTemplate();
+    initEmployeeInventoryFilter();
 });
 
 function initAuthForms() {
