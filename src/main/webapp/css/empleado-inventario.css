@@ -69,6 +69,90 @@
     max-width: none;
 }
 
+.inventory-edit-link {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+}
+
+.inventory-empty,
+.inventory-error,
+.inventory-success {
+    grid-column: 1 / -1;
+    max-width: 980px;
+    margin: 20px auto;
+    padding: 14px;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    font-weight: 800;
+}
+
+.inventory-error {
+    background: #ffcdd2;
+}
+
+.inventory-success {
+    background: #c8e6c9;
+}
+
+.inventory-editor,
+.inventory-editor-message {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.inventory-editor-message {
+    padding-bottom: 20px;
+}
+
+.inventory-editor-message > p,
+.inventory-editor-message > a {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.inventory-genres {
+    margin: 0;
+    padding: 12px;
+    border: 2px solid #000;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+}
+
+.inventory-genres legend {
+    font-weight: 900;
+}
+
+.inventory-section-title {
+    margin: 26px 0 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+}
+
+.inventory-copy-edit-row {
+    grid-template-columns: minmax(90px, auto) auto minmax(150px, 1fr) minmax(150px, auto);
+}
+
+.inventory-delete-copy {
+    font-size: .85rem;
+    font-weight: 800;
+}
+
+.inventory-add-copies {
+    margin-top: 20px;
+    padding: 16px;
+    border: 2px dashed #000;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.inventory-add-copies label {
+    font-weight: 900;
+}
+
 .inventory-add-card {
     display: flex;
     flex-direction: column;
@@ -87,6 +171,10 @@
 }
 
 .inventory-add-panel[hidden] {
+    display: none;
+}
+
+.catalog-detail-panel[hidden] {
     display: none;
 }
 
@@ -210,6 +298,10 @@
     .inventory-summary {
         grid-template-columns: 1fr;
     }
+
+    .inventory-copy-edit-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 520px) {
@@ -222,5 +314,9 @@
     .inventory-card-img {
         width: 100%;
         max-width: 220px;
+    }
+
+    .inventory-add-copies {
+        grid-template-columns: 1fr;
     }
 }

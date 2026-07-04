@@ -152,7 +152,7 @@ function initInventoryTemplate() {
     };
 
     function selectMovie(button, shouldScroll) {
-        detail.hidden = false;
+        detail.removeAttribute('hidden');
 
         buttons.forEach(function(item) {
             item.classList.toggle('active', item === button);
