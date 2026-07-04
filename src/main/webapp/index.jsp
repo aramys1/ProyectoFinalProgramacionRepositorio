@@ -109,16 +109,51 @@
     <div class="retro-window">
         <div class="window-header"><span>Noticias_Rewind.txt</span><span>_ [] X</span></div>
         <div class="news-content">
-            <div class="log-entry">
+            
+            <article class="log-entry">
                 <div class="log-header">
-                    <h4 class="log-title">[2026-06-27] Nueva llegada: clasicos de terror disponibles.</h4>
-                    <span class="category-badge cat-inventario">Inventario</span>
+                    <h4 class="log-title">[Artículo] Buenas noticias para el formato físico de películas. Las ventas de UHDs crecen impulsadas por el aumento de interés de la Generación Z</h4>
+                    <span class="category-badge cat-culture">Cultura Retro</span>
                 </div>
-            </div>
+                <p class="news-item-text">
+                    n los albores del streaming, parecía que esto no iba a suceder, pero sin duda ha sucedido. Estamos viendo mucha evidencia, incluso en el Criterion Mobile Closet, de que cada vez más jóvenes piensan en los medios físicos de una manera diferente. En una era donde tenemos tanto disponible bajo demanda, se vuelve cada vez más importante para nosotros
+                </p>
+                <a href="https://www.espinof.com/divulgacion/buenas-noticias-para-formato-fisico-peliculas-ventas-uhds-crecen-impulsadas-aumento-interes-generacion-z" target="_blank" class="catalog-link">Leer artículo original &gt;</a>
+            </article>
+
+            <article class="log-entry">
+                <div class="log-header">
+                    <h4 class="log-title">[Artículo]¿Vuelven las películas en formato físico?</h4>
+                    <span class="category-badge cat-collection">Colección</span>
+                </div>
+                <p class="news-item-text">
+                    ¿Estamos ante un regreso a las viejas glorias de las películas en formato físico? Es debatible, pero en cualquier caso, son buenas noticias para la cinefilia en general, y para espacios como el nuestro, donde nos gusta promover el cine en discos ópticos.
+                </p>
+                <a href="https://filmclubcafe.com.mx/blog/articulos/peliculas-en-formato-fisico-regresan/" target="_blank" class="catalog-link">Leer artículo original &gt;</a>
+            </article>
+
+            <article class="log-entry">
+                <div class="log-header">
+                    <h4 class="log-title">[Video] V/H/S | La Saga Completa | RESUMEN</h4>
+                    <span class="category-badge cat-video">Multimedia</span>
+                </div>
+                <p class="news-item-text">
+                    Te cuento una repasa la antología de terror V/H/S, explorando las perturbadoras historias encontradas en cintas de video malditas. Este resumen destaca los segmentos más icónicos de la saga y el horror visceral de sus metrajes.
+                </p>
+                
+                <div class="news-video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/nkQqUpWYCOI" 
+                            title="YouTube video player" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <a href="https://www.youtube.com/watch?v=nkQqUpWYCOI" target="_blank" class="catalog-link">Ver video fuente directamente en YouTube &gt;</a>
+            </article>
+
         </div>
     </div>
 </section>
-
 <section class="why-vhs-section">
     <div class="why-vhs-inner">
         <h2>Por que escoger VHS?</h2>

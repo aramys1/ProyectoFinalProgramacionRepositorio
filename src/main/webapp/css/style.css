@@ -437,6 +437,48 @@ body {
     color: #000;
 }
 
+/* --- Ajustes internos para las noticias dentro del scroll original --- */
+.news-item-text {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #555; /* Oscurecido a gris para que contraste bien sobre el fondo blanco */
+    line-height: 1.4;
+}
+
+/* Badges de categoría adaptados al fondo blanco */
+.category-badge {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 3px;
+    font-family: 'Courier Prime', monospace;
+}
+
+.category-badge.cat-culture { background-color: #20b2aa; color: #fff; }
+.category-badge.cat-collection { background-color: #4682b4; color: #fff; }
+.category-badge.cat-video { background-color: #a020f0; color: #fff; }
+
+/* Caja de Video Responsiva acoplada al contenedor con scroll */
+.news-video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background-color: #000;
+    margin: 10px 0;
+    border: 1px solid #777;
+}
+s
+.news-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
 
 /* ============================================================
    INDEX — SECCIÓN ABOUT
@@ -723,6 +765,17 @@ body {
     text-align: center;
     font-family: 'Courier Prime', monospace;
     margin-top: 10px;
+}
+
+.member-experience {
+    margin: 12px 0;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: #333;
+    font-family: 'Courier Prime', monospace;
+    text-align: justify;
+    border-top: 1px dashed #999;
+    padding-top: 8px;
 }
 
 
