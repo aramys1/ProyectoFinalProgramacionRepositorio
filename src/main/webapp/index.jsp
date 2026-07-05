@@ -91,7 +91,7 @@
     <div class="retro-window">
         <div class="window-header"><span>Noticias_Rewind.txt</span><span>_ [] X</span></div>
         <div class="news-content">
-            
+
             <article class="log-entry">
                 <div class="log-header">
                     <h4 class="log-title">[Artículo] Buenas noticias para el formato físico de películas. Las ventas de UHDs crecen impulsadas por el aumento de interés de la Generación Z</h4>
@@ -122,11 +122,11 @@
                 <p class="news-item-text">
                     Te cuento una repasa la antología de terror V/H/S, explorando las perturbadoras historias encontradas en cintas de video malditas. Este resumen destaca los segmentos más icónicos de la saga y el horror visceral de sus metrajes.
                 </p>
-                
+
                 <div class="news-video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/nkQqUpWYCOI" 
-                            title="YouTube video player" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    <iframe src="https://www.youtube.com/embed/nkQqUpWYCOI"
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen>
                     </iframe>
                 </div>

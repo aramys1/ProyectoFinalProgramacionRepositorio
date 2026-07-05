@@ -17,6 +17,7 @@
         <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
     </ul>
 </nav>
 

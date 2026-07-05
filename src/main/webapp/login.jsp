@@ -4,6 +4,19 @@
 <%
     String errorLogin = "";
 
+    if (!"POST".equalsIgnoreCase(request.getMethod()) && session.getAttribute("idUsuario") != null) {
+        String rolSesion = String.valueOf(session.getAttribute("rolUsuario"));
+        if ("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion)) {
+            response.sendRedirect("index.jsp"); return;
+        }
+        if ("2".equals(rolSesion) || "EMPLEADO".equalsIgnoreCase(rolSesion)) {
+            response.sendRedirect("empleado-dashboard.jsp"); return;
+        }
+        if ("3".equals(rolSesion) || "ADMIN".equalsIgnoreCase(rolSesion) || "ADMINISTRADOR".equalsIgnoreCase(rolSesion)) {
+            response.sendRedirect("administrador-usuarios.jsp"); return;
+        }
+    }
+
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String cedula = request.getParameter("usuario") != null ? request.getParameter("usuario").trim() : "";
         String password = request.getParameter("password") != null ? request.getParameter("password").trim() : "";

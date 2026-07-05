@@ -20,7 +20,9 @@
         <li><a href="catalogo.jsp">Catálogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contáctanos</a></li>
-        <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li>
+        <% if (session.getAttribute("idUsuario") != null && ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) || "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
+        <li><a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a></li>
+        <% } else { %><li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li><% } %>
     </ul>
 </nav>
 

@@ -12,6 +12,7 @@
     String buscar = request.getParameter("buscar");
     String estado = request.getParameter("estado");
     String fecha = request.getParameter("fecha");
+    boolean verHistorial = "historial".equalsIgnoreCase(request.getParameter("vista"));
     String filtroBuscar = buscar == null || buscar.isBlank() ? null : buscar.trim().toLowerCase();
     String filtroEstado = estado == null || estado.isBlank() ? null : estado.trim().toUpperCase();
     java.sql.Date filtroFecha = null;
@@ -36,17 +37,24 @@
         <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
     </ul>
 </nav>
 <main class="employee-page">
     <section class="employee-header">
         <p class="employee-kicker">Alquileres.database</p>
         <h1>Alquileres registrados</h1>
-        <p>Consulta de los alquileres existentes actualmente en la base de datos.</p>
+        <p><%= verHistorial ? "Registro de alquileres que ya fueron devueltos." : "Consulta de los alquileres pendientes de devolucion." %></p>
+        <br>
+        <br>
+        <a class="retro-button" href="empleado-alquileres.jsp?vista=<%= verHistorial ? "activos" : "historial" %>">
+            <%= verHistorial ? "VER ALQUILERES ACTIVOS" : "VER HISTORIAL DE DEVOLUCIONES" %>
+        </a>
     </section>
     <section class="retro-window employee-panel">
         <div class="window-header"><span>Alquileres.table</span><span>_ [] X</span></div>
         <form class="employee-toolbar" method="get">
+            <input type="hidden" name="vista" value="<%= verHistorial ? "historial" : "activos" %>">
             <input type="text" name="buscar" class="retro-search" placeholder="ID, cliente o pelicula" value="<%= h(buscar) %>">
             <select name="estado" class="retro-search select-filter">
                 <option value="">Todos los estados</option>
@@ -57,7 +65,7 @@
             </select>
             <input type="date" name="fecha" class="retro-search" value="<%= h(fecha) %>">
             <button type="submit" class="retro-button">FILTRAR</button>
-            <a href="empleado-alquileres.jsp" class="employee-clear">Limpiar</a>
+            <a href="empleado-alquileres.jsp?vista=<%= verHistorial ? "historial" : "activos" %>" class="employee-clear">Limpiar</a>
         </form>
         <div class="employee-table-wrap">
             <table class="employee-table">
@@ -77,6 +85,7 @@
                             "JOIN Vhs v ON v.id_vhs=a.id_vhs JOIN Peliculas p ON p.id_pelicula=v.id_pelicula " +
                             "WHERE (? IS NULL OR TO_CHAR(a.id_alquiler)=? OR LOWER(c.primer_nombre_usuario || ' ' || c.primer_apellido_usuario) LIKE ? OR LOWER(p.titulo) LIKE ?) " +
                             "AND (? IS NULL OR UPPER(a.estado_alquiler)=?) AND (? IS NULL OR TRUNC(a.fecha_alquiler)=?) " +
+                            "AND ((?='HISTORIAL' AND a.fecha_devolucion IS NOT NULL) OR (?='ACTIVOS' AND a.fecha_devolucion IS NULL)) " +
                             "ORDER BY a.fecha_alquiler DESC, a.id_alquiler DESC";
                     try (Connection con = ConexionDB.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
                         String contiene = filtroBuscar == null ? null : "%" + filtroBuscar + "%";
@@ -84,6 +93,8 @@
                         ps.setString(3, contiene); ps.setString(4, contiene);
                         ps.setString(5, filtroEstado); ps.setString(6, filtroEstado);
                         ps.setDate(7, filtroFecha); ps.setDate(8, filtroFecha);
+                        ps.setString(9, verHistorial ? "HISTORIAL" : "ACTIVOS");
+                        ps.setString(10, verHistorial ? "HISTORIAL" : "ACTIVOS");
                         try (ResultSet rs = ps.executeQuery()) {
                             boolean hayAlquileres = false;
                             while (rs.next()) {
@@ -105,7 +116,7 @@
                     <td>#<%= rs.getInt("id_usuario_empleado") %></td>
                     <td><span class="status-badge <%= clase %>"><%= h(estadoActual) %></span></td>
                     <td><% if (devolucion == null) { %>
-                        <a class="employee-mini-button" href="empleado-devolucion.jsp?id=<%= rs.getInt("id_alquiler") %>">Devolver</a>
+                        <a class="employee-mini-button" href="empleado-devolucion.jsp">Devolver</a>
                         <% } else { %><span>Completado</span><% } %></td>
                 </tr>
                 <%          }

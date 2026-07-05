@@ -138,7 +138,11 @@
     <div class="copyright-container">
         <p class="copyright">© 2026 Rewind & Relive. Todos los derechos reservados.</p>
         <div class="footer-logout-zone">
-            <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn-retro-logout">Cerrar Sesión</a>
+            <% if (session.getAttribute("idUsuario") != null) { %>
+            <a href="${pageContext.request.contextPath}/logout.jsp" class="btn-retro-logout">Cerrar Sesión</a>
+            <% } else { %>
+            <a href="${pageContext.request.contextPath}/login.jsp" class="btn-retro-logout">Iniciar Sesión</a>
+            <% } %>
         </div>
     </div>
 </footer>
