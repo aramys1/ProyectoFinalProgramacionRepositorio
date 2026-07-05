@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%-- Inserta Alquiler y actualiza Vhs dentro de la misma transacción para que ambos estados coincidan. --%>
 
 <%
     String paso = request.getParameter("paso");

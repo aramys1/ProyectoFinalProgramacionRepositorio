@@ -1,9 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%--
+    Autenticación: busca una coincidencia exacta de cédula y contraseña en Usuario mediante parámetros.
+    Si existe, copia ID, cédula y rol a HttpSession; las demás páginas usan esos atributos para autorizar.
+--%>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 
 <%
     String errorLogin = "";
 
+    // GET + sesión existente: no vuelve a consultar Oracle; redirige según el rol ya autenticado.
     if (!"POST".equalsIgnoreCase(request.getMethod()) && session.getAttribute("idUsuario") != null) {
         String rolSesion = String.valueOf(session.getAttribute("rolUsuario"));
         if ("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion)) {
@@ -17,22 +22,29 @@
         }
     }
 
+    // POST significa que el usuario envió las credenciales del formulario.
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String cedula = request.getParameter("usuario") != null ? request.getParameter("usuario").trim() : "";
         String password = request.getParameter("password") != null ? request.getParameter("password").trim() : "";
 
+        // Los signos ? son marcadores: Oracle recibe el SQL separado de los valores escritos.
         String sql = "SELECT ID_USUARIO, CED_USUARIO, ROL FROM USUARIO WHERE CED_USUARIO = ? AND CONTRASENA = ?";
 
+        // Connection representa la sesión con Oracle. try-with-resources la cierra automáticamente.
         try (Connection conn = ConexionDB.obtenerConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
+            // Los índices comienzan en 1 y corresponden a los ? de izquierda a derecha.
             ps.setString(1, cedula);
             ps.setString(2, password);
 
+            // executeQuery se usa para SELECT y devuelve las filas mediante ResultSet.
             try (ResultSet rs = ps.executeQuery()) {
+                // rs.next() avanza a la primera fila; false significa credenciales sin coincidencia.
                 if (rs.next()) {
                     String rol = rs.getString("ROL") != null ? rs.getString("ROL").trim().toUpperCase() : "";
 
+                    // La sesión conserva identidad y rol entre peticiones HTTP posteriores.
                     session.setAttribute("idUsuario", rs.getInt("ID_USUARIO"));
                     session.setAttribute("cedulaUsuario", rs.getString("CED_USUARIO"));
                     session.setAttribute("rolUsuario", rol);
@@ -58,6 +70,7 @@
                 }
             }
         } catch (SQLException e) {
+            // SQLException incluye errores de conexión, nombres de columnas y ejecución de Oracle.
             errorLogin = "No se pudo validar el usuario con la base de datos: " + e.getMessage();
         }
     }

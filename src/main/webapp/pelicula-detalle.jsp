@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- LEFT JOIN conserva películas sin copias; SUM cuenta Vhs disponibles que no tienen alquiler abierto. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";

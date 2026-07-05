@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- Funciones auxiliares para escapar HTML y normalizar rutas de póster. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";
@@ -25,6 +26,7 @@
 </head>
 <body>
 
+<%-- Navegación pública; el botón de acceso solo aparece sin sesión. --%>
 <nav class="navbar retro-window">
     <%@ include file="logo.jsp" %>
     <ul class="nav-links">
@@ -37,6 +39,7 @@
     </ul>
 </nav>
 
+<%-- Portada principal con carrusel de pósteres controlado por script.js. --%>
 <header class="hero">
     <div class="hero-content">
         <div class="hero-text-inner">
@@ -58,6 +61,7 @@
     </div>
 </header>
 
+<%-- Accesos privados mostrados exclusivamente a clientes autenticados. --%>
 <% if (session.getAttribute("idUsuario") != null &&
         ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
          "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
@@ -80,16 +84,19 @@
 </section>
 <% } %>
 
+<%-- Tres películas más recientes obtenidas directamente de Oracle. --%>
 <div class="content-section">
     <section class="releases">
         <h2>Ultimos Lanzamientos</h2>
         <div class="release-grid">
             <%
+                // Consulta compacta: película, año y géneros relacionados.
                 String sqlLanzamientos="SELECT p.id_pelicula,p.titulo,p.imagen_url,"+
                         "TO_CHAR(p.fecha_estreno,'YYYY') anio,"+
                         "(SELECT LISTAGG(g.desc_genero,' / ') WITHIN GROUP(ORDER BY pg.prioridad) FROM PeliculasGeneros pg "+
                         "JOIN Genero g ON g.id_genero=pg.id_genero WHERE pg.id_pelicula=p.id_pelicula) generos "+
                         "FROM Peliculas p ORDER BY p.id_pelicula DESC FETCH FIRST 3 ROWS ONLY";
+                // Aunque no recibe filtros, PreparedStatement mantiene el mismo patrón seguro del proyecto.
                 try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlLanzamientos);ResultSet rs=ps.executeQuery()){
                     boolean hay=false;while(rs.next()){hay=true;String imagen=rs.getString("imagen_url");
             %>

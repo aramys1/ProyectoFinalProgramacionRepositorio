@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%-- Dashboard: COUNT se ejecuta en Oracle para obtener activos, vencimientos y retrasos sin transferir filas completas. --%>
 <%!
     private int contar(Connection con, String sql) throws SQLException {
         try (PreparedStatement ps = con.prepareStatement(sql);

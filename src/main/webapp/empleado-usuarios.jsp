@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- Consulta Usuario y usa subconsultas por id_usuario para resumir alquileres y cargar sus datos relacionados. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";

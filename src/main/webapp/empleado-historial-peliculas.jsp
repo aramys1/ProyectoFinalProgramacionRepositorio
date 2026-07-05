@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- Parte de Peliculas y sigue cada copia Vhs hasta Alquiler para conservar la trazabilidad física. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";

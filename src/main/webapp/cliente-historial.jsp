@@ -1,5 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%--
+    El historial une Alquiler -> Vhs -> Peliculas mediante sus claves foráneas.
+    La condición id_usuario_cliente=? garantiza que el ResultSet solo contenga movimientos del cliente actual.
+    Oracle formatea las fechas con TO_CHAR para mostrarlas de forma uniforme en la tabla HTML.
+--%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";
@@ -8,6 +13,7 @@
     }
 %>
 <%
+    // Protege el historial y usa siempre el ID guardado en la sesión, nunca uno de la URL.
     Object idSesion = session.getAttribute("idUsuario");
     String rolSesion = String.valueOf(session.getAttribute("rolUsuario"));
     if (idSesion == null || !("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion))) {
@@ -50,6 +56,7 @@
                 <thead><tr><th>ID</th><th>Película</th><th>VHS</th><th>Alquiler</th><th>Vence</th><th>Devolución</th><th>Estado</th></tr></thead>
                 <tbody>
                 <%
+                    // Recupera únicamente los alquileres pertenecientes al cliente autenticado.
                     String sql = "SELECT a.id_alquiler,p.titulo,a.id_vhs," +
                             "TO_CHAR(a.fecha_alquiler,'YYYY-MM-DD') fecha_alquiler," +
                             "TO_CHAR(a.fecha_limite,'YYYY-MM-DD') fecha_limite," +
@@ -66,6 +73,7 @@
                                 String devolucion=rs.getString("fecha_devolucion");
                                 boolean activo=devolucion==null;
                                 boolean vencido=rs.getInt("vencido")==1;
+                                // Los activos se calculan por fecha; los devueltos conservan el estado registrado por el empleado.
                                 String estado=activo ? (vencido ? "VENCIDO" : "ACTIVO") : rs.getString("estado_alquiler");
                                 String estadoNormalizado=estado==null?"":estado.toUpperCase();
                                 String clase=activo ? (vencido ? "status-danger" : "status-warning") :

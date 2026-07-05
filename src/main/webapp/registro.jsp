@@ -1,5 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%--
+    El registro inserta Usuario y, usando su id_usuario, crea TarjetaUsuario, UsuarioEmail y
+    UsuarioTelefono. Todo ocurre en una transacción: cualquier restricción UNIQUE/FK o dato inválido
+    provoca rollback para no dejar una cuenta incompleta.
+--%>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -30,13 +35,15 @@
                 throw new IllegalArgumentException("El CVV debe contener 3 o 4 dígitos.");
             }
 
+            // Abre la conexión. autoCommit=false evita confirmar cada INSERT por separado.
             conn = ConexionDB.obtenerConexion();
-            conn.setAutoCommit(false); // Transacción para asegurar integridad
+            conn.setAutoCommit(false); // Los cambios quedan pendientes hasta conn.commit().
 
-            // Insertar Usuario
+            // 1) Tabla padre Usuario. Su ID será la clave foránea de tarjeta y contactos.
             String sql = "INSERT INTO USUARIO (CED_USUARIO, PRIMER_NOMBRE_USUARIO, SEGUNDO_NOMBRE_USUARIO, " +
                     "PRIMER_APELLIDO_USUARIO, SEGUNDO_APELLIDO_USUARIO, ROL, CONTRASENA) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
+            // Cada setX define tipo JDBC y posición del parámetro correspondiente.
             ps.setString(1, cedula);
             ps.setString(2, pNombre);
             ps.setString(3, sNombre);
@@ -44,16 +51,20 @@
             ps.setString(5, sApellido);
             ps.setInt(6, 1);
             ps.setString(7, pass);
+            // executeUpdate se usa para INSERT/UPDATE/DELETE y devuelve filas afectadas.
             ps.executeUpdate();
             ps.close();
 
+            // 2) Recupera el ID generado buscando la cédula, que es UNIQUE en Usuario.
             PreparedStatement psId = conn.prepareStatement("SELECT id_usuario FROM Usuario WHERE ced_usuario = ?");
             psId.setString(1, cedula);
             ResultSet rs = psId.executeQuery();
+            // Solo se crean datos dependientes si Oracle devolvió el usuario recién insertado.
             if (rs.next()) {
                 int idUsuario = rs.getInt("id_usuario");
 
-                // Insertar Tarjeta
+                // 3) TarjetaUsuario referencia al usuario mediante ID_USUARIO.
+                // seq_tarjeta.NEXTVAL solicita a Oracle un identificador único para la tarjeta.
                 PreparedStatement psT = conn.prepareStatement("INSERT INTO TARJETAUSUARIO (ID_TARJETA, NUMERO, TIPO_TARJETA, FECHA_EXPIRACION, CVV, ID_USUARIO) VALUES (seq_tarjeta.NEXTVAL, ?, ?, ?, ?, ?)");
                 psT.setBigDecimal(1, new java.math.BigDecimal(tarjetaNormalizada));
                 psT.setString(2, tipoTarjeta);
@@ -63,7 +74,7 @@
                 psT.executeUpdate();
                 psT.close();
 
-                // Insertar Emails
+                // 4) UsuarioEmail permite hasta un correo por tipo para cada usuario según su PK compuesta.
                 String[] emails = {request.getParameter("email"), request.getParameter("email2")};
                 String[] tipoEmails = {request.getParameter("tipoEmail"), request.getParameter("tipoEmail2")};
                 for(int i=0; i<2; i++) {
@@ -77,7 +88,7 @@
                     }
                 }
 
-                // Insertar telefonos
+                // 5) UsuarioTelefono funciona igual: teléfono + tipo + propietario.
                 String[] telefonos = {request.getParameter("telefono"), request.getParameter("telefono2")};
                 String[] tipoTelefonos = {request.getParameter("tipoTelefono"), request.getParameter("tipoTelefono2")};
                 for (int i = 0; i < 2; i++) {
@@ -94,16 +105,19 @@
             }
             rs.close();
             psId.close();
+            // Confirma simultáneamente Usuario, tarjeta, correos y teléfonos.
             conn.commit();
             response.sendRedirect("login.jsp");
             return;
         } catch (Exception e) {
             if (conn != null) {
+                // Deshace todo lo pendiente; así nunca queda un registro incompleto.
                 try { conn.rollback(); } catch (SQLException ignored) { }
             }
             errorRegistro = "No se pudo completar el registro: " + e.getMessage();
         } finally {
             if (conn != null) {
+                // Libera la conexión aunque el INSERT o la redirección fallen.
                 try { conn.close(); } catch (SQLException ignored) { }
             }
         }

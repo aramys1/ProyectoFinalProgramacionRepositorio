@@ -1,5 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%--
+    Acceso a datos del catálogo:
+    - Peliculas contiene la ficha principal (título, precio, estreno e imagen).
+    - PeliculasGeneros relaciona cada película con uno o varios registros de Genero.
+    - PreparedStatement enlaza el texto del filtro con ?, evitando concatenar datos del usuario en SQL.
+    - try-with-resources cierra Connection, PreparedStatement y ResultSet incluso si Oracle produce un error.
+--%>
+<%-- Utilidades compartidas por la vista para salida segura y rutas de imágenes. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";
@@ -15,9 +23,12 @@
     }
 %>
 <%
+    // Determina si el texto se buscará en el título o en los géneros relacionados.
+    // Solo acepta dos modos conocidos. Cualquier otro valor vuelve a "nombre".
     String tipoBusqueda="genero".equalsIgnoreCase(request.getParameter("tipo"))?"genero":"nombre";
     String busqueda=request.getParameter("buscar");
     if(busqueda!=null) busqueda=busqueda.trim();
+    // Los % indican a LIKE que puede haber caracteres antes y después del texto buscado.
     String filtro=busqueda==null||busqueda.isBlank()?null:"%"+busqueda.toLowerCase()+"%";
 %>
 <!DOCTYPE html>
@@ -33,6 +44,7 @@
 <%}else if(session.getAttribute("idUsuario")==null){%><li><a href="login.jsp" class="retro-button">Iniciar sesión</a></li><%}%>
 </ul></nav>
 
+<%-- Formulario GET: permite compartir y recargar una búsqueda sin perder filtros. --%>
 <div class="content-section catalog-container">
 <div class="search-section"><form class="filter-form" method="get" action="catalogo.jsp">
 <select class="retro-search select-filter" name="tipo" aria-label="Buscar por">
@@ -46,17 +58,22 @@
 
 <section class="releases"><h1 class="glitch-title">Catálogo de VHS</h1><div class="release-grid catalog-grid">
 <%
+    // La cláusula se elige en el servidor, y el valor siempre se enlaza como parámetro.
     String sql="SELECT p.id_pelicula,p.titulo,p.precio_unidad,p.imagen_url,TO_CHAR(p.fecha_estreno,'YYYY') anio FROM Peliculas p ";
     if(filtro!=null){
+        // EXISTS no duplica películas aunque coincidan varios géneros relacionados.
         if("genero".equals(tipoBusqueda)) sql+="WHERE EXISTS (SELECT 1 FROM PeliculasGeneros pg JOIN Genero g ON g.id_genero=pg.id_genero WHERE pg.id_pelicula=p.id_pelicula AND LOWER(g.desc_genero) LIKE ?) ";
         else sql+="WHERE LOWER(p.titulo) LIKE ? ";
     }
     sql+="ORDER BY p.titulo";
     int contador=1;
+    // La conexión, sentencia y resultados se cierran automáticamente al salir de este bloque.
     try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sql)){
+        // El texto jamás se concatena en SQL: se envía aparte como primer parámetro.
         if(filtro!=null)ps.setString(1,filtro);
         try(ResultSet rs=ps.executeQuery()){
             boolean hay=false;
+            // Una iteración del ResultSet genera una tarjeta HTML del catálogo.
             while(rs.next()){hay=true;String imagen=rs.getString("imagen_url");
 %>
 <article class="retro-window release-card"><div class="window-header"><span>VHS_<%=String.format("%03d",contador++)%>.vhs</span><span>_ [] X</span></div>

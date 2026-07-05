@@ -1,6 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,java.util.*,com.conexion.ConexionDB" %>
+<%--
+    Una película se distribuye entre Peliculas (ficha), PeliculasGeneros (clasificación temática),
+    Vhs (cada copia física) y Publicacion (momento en que entra al catálogo). La creación usa una
+    transacción para impedir que queden películas sin géneros/copias por un fallo intermedio.
+--%>
 <%!
+    // Funciones de salida segura, normalización de pósteres y conversión numérica.
     private String h(String value) {
         if (value == null) return "";
         return value.replace("&", "&amp;").replace("<", "&lt;")
@@ -20,6 +26,7 @@
 <%
     request.setCharacterEncoding("UTF-8");
     String errorCreacion = null;
+    // Crea película, géneros, copias y publicación como una única operación atómica.
     if ("POST".equalsIgnoreCase(request.getMethod()) && "crear".equals(request.getParameter("accion"))) {
         try (Connection con = ConexionDB.obtenerConexion()) {
             con.setAutoCommit(false);
@@ -39,6 +46,7 @@
                 }
                 if (estado == null || estado.isBlank()) estado = "DISPONIBLE";
 
+                // Reserva el ID antes de insertar para reutilizarlo en todas las tablas relacionadas.
                 int nuevoId;
                 try (PreparedStatement ps = con.prepareStatement("SELECT seq_pelicula.NEXTVAL FROM dual");
                      ResultSet rs = ps.executeQuery()) {
@@ -57,6 +65,7 @@
                     ps.executeUpdate();
                 }
 
+                // Registra la relación muchos-a-muchos y conserva el orden como prioridad.
                 String[] generos = request.getParameterValues("generos");
                 if (generos != null) {
                     try (PreparedStatement ps = con.prepareStatement(
@@ -71,6 +80,7 @@
                         ps.executeBatch();
                     }
                 }
+                // Cada unidad física se representa con una fila independiente en Vhs.
                 try (PreparedStatement ps = con.prepareStatement("INSERT INTO Vhs(estado_fisico_vhs,id_pelicula) VALUES(?,?)")) {
                     for (int i = 0; i < copias; i++) {
                         ps.setString(1, estado.trim().toUpperCase());
@@ -79,6 +89,7 @@
                     }
                     if (copias > 0) ps.executeBatch();
                 }
+                // Publicacion permite ordenar posteriormente los lanzamientos por fecha de alta.
                 try (PreparedStatement ps = con.prepareStatement(
                         "INSERT INTO Publicacion(id_usuario_empleado,id_pelicula,fecha_publicacion) VALUES(?,?,SYSDATE)")) {
                     Object idEmpleado = session.getAttribute("idUsuario");
@@ -151,7 +162,9 @@
             </div>
         </article>
         <%
+            // Filtro opcional por título y resumen de copias agrupado por película.
             String buscar = request.getParameter("buscar");
+            // LEFT JOIN conserva películas sin copias; COUNT/SUM producen el resumen de inventario.
             String sql = "SELECT p.id_pelicula, p.titulo, p.imagen_url, " +
                     "TO_CHAR(p.fecha_estreno, 'YYYY') anio, " +
                     "COUNT(v.id_vhs) total, " +

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- Agrupa Alquiler por cliente y enlaza Vhs/Peliculas para reconstruir su historial sin modificar datos. --%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";

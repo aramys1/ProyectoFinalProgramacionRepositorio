@@ -1,5 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%--
+    La devolución modifica dos entidades: cierra Alquiler con fecha_devolucion y devuelve un estado a Vhs.
+    FOR UPDATE bloquea la fila durante la transacción. El estado final conserva si llegó tarde, dañada o
+    ambas situaciones, permitiendo que los historiales lo muestren después del cierre.
+--%>
 <%!
     private String h(String valor) {
         if (valor == null) return "";
@@ -9,6 +14,7 @@
 %>
 <%
     request.setCharacterEncoding("UTF-8");
+    // Parámetros que identifican al cliente y al alquiler que procesará el empleado.
     String mensaje = null;
     String error = null;
     String cedula = request.getParameter("cedula");
@@ -17,6 +23,7 @@
     try { idAlquiler = Integer.parseInt(request.getParameter("id")); }
     catch (Exception ignored) { }
 
+    // Cierra el alquiler y actualiza el estado físico del VHS en una sola transacción.
     if ("POST".equalsIgnoreCase(request.getMethod()) && "devolver".equals(request.getParameter("accion"))) {
         String estadoVhs = request.getParameter("estado_vhs");
         if (!"DISPONIBLE".equals(estadoVhs) && !"DANADO".equals(estadoVhs)) {
@@ -38,6 +45,7 @@
                             idVhs = rs.getInt("id_vhs");
                         }
                     }
+                    // Bloquea el alquiler para impedir que dos empleados registren la misma devolución.
                     try (PreparedStatement ps = con.prepareStatement(
                             "UPDATE Alquiler SET estado_alquiler=CASE " +
                                     "WHEN fecha_limite<SYSDATE AND ?='DANADO' THEN 'TARDE DANADO' " +
@@ -49,6 +57,7 @@
                         ps.setInt(3, idAlquiler);
                         if (ps.executeUpdate() != 1) throw new SQLException("No se pudo actualizar el alquiler.");
                     }
+                    // El estado conserva si la devolución fue tardía, dañada o ambas.
                     try (PreparedStatement ps = con.prepareStatement(
                             "UPDATE Vhs SET estado_fisico_vhs=? WHERE id_vhs=?")) {
                         ps.setString(1, estadoVhs);
@@ -72,6 +81,7 @@
     String cliente = null, pelicula = null, fechaLimite = null, estadoActualVhs = null;
     int idVhs = 0;
     boolean retrasado = false;
+    // Carga el detalle y calcula el retraso antes de mostrar el formulario de confirmación.
     if (idAlquiler > 0 && cedula != null && !cedula.isBlank() && mensaje == null) {
         String sqlDetalle = "SELECT c.primer_nombre_usuario || ' ' || c.primer_apellido_usuario cliente, " +
                 "p.titulo, a.id_vhs, v.estado_fisico_vhs, TO_CHAR(a.fecha_limite,'YYYY-MM-DD') fecha_limite, " +

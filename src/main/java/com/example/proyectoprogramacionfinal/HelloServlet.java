@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
+    // Servlet de ejemplo generado con el proyecto; no participa en el flujo principal.
     private String message;
 
     public void init() {

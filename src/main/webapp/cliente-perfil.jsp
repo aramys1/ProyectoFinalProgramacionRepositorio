@@ -1,6 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,java.util.*,com.conexion.ConexionDB" %>
+<%--
+    Usuario almacena los datos personales; UsuarioEmail y UsuarioTelefono son tablas multivaloradas;
+    TarjetaUsuario almacena el medio de pago. Todas las consultas usan idUsuario de la sesión para que
+    un cliente nunca pueda leer o modificar otro perfil cambiando parámetros en la URL.
+--%>
 <%!
+    // Utilidades de presentación, conversión y enmascarado de información sensible.
     private String h(String valor) {
         if (valor == null) return "";
         return valor.replace("&", "&amp;").replace("<", "&lt;")
@@ -21,6 +27,7 @@
 %>
 <%
     request.setCharacterEncoding("UTF-8");
+    // El perfil siempre se obtiene del usuario autenticado para impedir editar otras cuentas.
     Object idSesion = session.getAttribute("idUsuario");
     String rolSesion = String.valueOf(session.getAttribute("rolUsuario"));
     if (idSesion == null || !("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion))) {
@@ -30,6 +37,7 @@
     int idUsuario = Integer.parseInt(String.valueOf(idSesion));
     String error = null;
 
+    // Actualiza datos personales, contactos, tarjeta y contraseña opcional.
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         Connection con = null;
         try {
@@ -62,8 +70,10 @@
                 throw new IllegalArgumentException("Los dos teléfonos deben usar tipos diferentes.");
             }
 
+            // Una sola transacción mantiene sincronizadas todas las tablas del perfil.
             con = ConexionDB.obtenerConexion();
             con.setAutoCommit(false);
+            // Se elige una sentencia sin CONTRASENA cuando el usuario deja ese campo vacío.
             String sqlUsuario = nuevaPassword == null
                     ? "UPDATE Usuario SET ced_usuario=?,primer_nombre_usuario=?,segundo_nombre_usuario=?,primer_apellido_usuario=?,segundo_apellido_usuario=? WHERE id_usuario=?"
                     : "UPDATE Usuario SET ced_usuario=?,primer_nombre_usuario=?,segundo_nombre_usuario=?,primer_apellido_usuario=?,segundo_apellido_usuario=?,contrasena=? WHERE id_usuario=?";
@@ -75,9 +85,11 @@
                 if (ps.executeUpdate() != 1) throw new SQLException("No se encontró el usuario autenticado.");
             }
 
+            // Los contactos son multivalorados: se reemplaza el conjunto completo del usuario.
             try (PreparedStatement ps = con.prepareStatement("DELETE FROM UsuarioEmail WHERE id_usuario=?")) {
                 ps.setInt(1,idUsuario); ps.executeUpdate();
             }
+            // INSERT...SELECT valida que el tipo solicitado exista antes de crear la relación.
             try (PreparedStatement ps = con.prepareStatement("INSERT INTO UsuarioEmail(email,id_tipo_email,id_usuario) SELECT ?,id_tipo_email,? FROM tipo_email WHERE id_tipo_email=?")) {
                 if (email1 != null) { ps.setString(1,email1); ps.setInt(2,idUsuario); ps.setInt(3,tipoEmail1); ps.executeUpdate(); }
                 if (email2 != null) { ps.setString(1,email2); ps.setInt(2,idUsuario); ps.setInt(3,tipoEmail2); ps.executeUpdate(); }
@@ -90,6 +102,7 @@
                 if (telefono2 != null) { ps.setString(1,telefono2); ps.setInt(2,idUsuario); ps.setInt(3,tipoTelefono2); ps.executeUpdate(); }
             }
 
+            // El número actual nunca se envía al navegador; solo cambia si llega uno nuevo.
             String numeroNuevo = nuloSiVacio(request.getParameter("numeroTarjeta"));
             String tipoTarjeta = nuloSiVacio(request.getParameter("tipoTarjeta"));
             String expiracion = nuloSiVacio(request.getParameter("expiracion"));
@@ -121,6 +134,7 @@
         }
     }
 
+    // Datos que alimentan tanto la vista de lectura como el formulario de edición.
     String cedula="",primerNombre="",segundoNombre="",primerApellido="",segundoApellido="",fechaRegistro="";
     String numeroTarjeta=null,tipoTarjeta="",expiracion="";
     List<String[]> emails=new ArrayList<>(), telefonos=new ArrayList<>();
@@ -164,6 +178,7 @@
 <p>Datos personales asociados a tu cuenta desde <%= h(fechaRegistro) %>.</p></section>
 <% if(request.getParameter("guardado")!=null){%><div class="employee-alert employee-alert-ok">Tu perfil se actualizó correctamente.</div><%}%>
 <% if(error!=null){%><div class="employee-alert employee-alert-error">No fue posible completar la operación: <%= h(error) %></div><%}%>
+<%-- Por defecto solo muestra datos; el formulario aparece al solicitar edición o tras un error. --%>
 <% boolean editando = request.getParameter("editar") != null || error != null;
    if (!editando) { %>
 <section class="account-grid">
