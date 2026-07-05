@@ -13,6 +13,12 @@
     if (idSesion == null || !("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion))) {
         response.sendRedirect("login.jsp"); return;
     }
+    int idUsuario = Integer.parseInt(String.valueOf(idSesion));
+    Object propietarioCarrito = session.getAttribute("carritoUsuarioId");
+    if (propietarioCarrito == null || !String.valueOf(idUsuario).equals(String.valueOf(propietarioCarrito))) {
+        session.removeAttribute("carritoPeliculas");
+        session.setAttribute("carritoUsuarioId", idUsuario);
+    }
     @SuppressWarnings("unchecked")
     List<Integer> carrito = (List<Integer>) session.getAttribute("carritoPeliculas");
     if (carrito == null) {
@@ -20,6 +26,8 @@
         session.setAttribute("carritoPeliculas", carrito);
     }
     String mensaje = null, error = null;
+    int diasSeleccionados = 1;
+    try { diasSeleccionados = Integer.parseInt(request.getParameter("dias")); } catch (Exception ignored) { }
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String accion = request.getParameter("accion");
         int idPelicula = 0;
@@ -31,11 +39,63 @@
         } else if ("vaciar".equals(accion)) {
             carrito.clear();
             mensaje = "Carrito vaciado.";
+        } else if ("alquilar".equals(accion)) {
+            if (carrito.isEmpty()) {
+                error = "El carrito está vacío.";
+            } else if (diasSeleccionados < 1 || diasSeleccionados > 30) {
+                error = "Seleccione una duración entre 1 y 30 días.";
+            } else {
+                Connection con = null;
+                try {
+                    con = ConexionDB.obtenerConexion();
+                    con.setAutoCommit(false);
+                    int idEmpleado = 0;
+                    try (PreparedStatement ps = con.prepareStatement(
+                            "SELECT id_usuario FROM Usuario WHERE TO_CHAR(rol)='2' OR UPPER(TO_CHAR(rol))='EMPLEADO' ORDER BY id_usuario FETCH FIRST 1 ROW ONLY");
+                         ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) idEmpleado = rs.getInt(1);
+                    }
+                    if (idEmpleado == 0) throw new SQLException("No hay ningún empleado registrado para procesar el alquiler.");
+
+                    try (PreparedStatement buscarVhs = con.prepareStatement(
+                            "SELECT id_vhs FROM Vhs WHERE id_pelicula=? AND UPPER(estado_fisico_vhs)='DISPONIBLE' " +
+                                    "AND NOT EXISTS (SELECT 1 FROM Alquiler a WHERE a.id_vhs=Vhs.id_vhs AND a.fecha_devolucion IS NULL) " +
+                                    "ORDER BY id_vhs FOR UPDATE");
+                         PreparedStatement insertar = con.prepareStatement(
+                            "INSERT INTO Alquiler(estado_alquiler,fecha_alquiler,fecha_limite,id_usuario_cliente,id_vhs,id_usuario_empleado) " +
+                                    "VALUES('PENDIENTE',SYSDATE,SYSDATE+?,?,?,?)");
+                         PreparedStatement ocupar = con.prepareStatement(
+                            "UPDATE Vhs SET estado_fisico_vhs='ALQUILADO' WHERE id_vhs=?")) {
+                        for (Integer pelicula : carrito) {
+                            buscarVhs.setInt(1,pelicula);
+                            int idVhs;
+                            try (ResultSet rs=buscarVhs.executeQuery()) {
+                                if(!rs.next()) throw new SQLException("Una de las películas ya no tiene copias disponibles.");
+                                idVhs=rs.getInt(1);
+                            }
+                            insertar.setInt(1,diasSeleccionados); insertar.setInt(2,idUsuario); insertar.setInt(3,idVhs); insertar.setInt(4,idEmpleado);
+                            insertar.executeUpdate();
+                            ocupar.setInt(1,idVhs); ocupar.executeUpdate();
+                        }
+                    }
+                    con.commit();
+                    int cantidad=carrito.size();
+                    carrito.clear();
+                    mensaje="Alquiler confirmado por "+diasSeleccionados+" día(s). Películas alquiladas: "+cantidad+".";
+                } catch(Exception e) {
+                    if(con!=null) try{con.rollback();}catch(SQLException ignored){}
+                    error="No fue posible completar el alquiler: "+e.getMessage();
+                } finally {
+                    if(con!=null) try{con.close();}catch(SQLException ignored){}
+                }
+            }
         } else if ("agregar".equals(accion)) {
             if (carrito.contains(idPelicula)) error = "La pelicula ya esta en el carrito.";
             else if (carrito.size() >= 3) error = "El carrito permite un maximo de 3 peliculas.";
             else {
-                String sqlDisponible = "SELECT COUNT(*) FROM Vhs WHERE id_pelicula=? AND UPPER(estado_fisico_vhs)='DISPONIBLE'";
+                String sqlDisponible = "SELECT COUNT(*) FROM Vhs v WHERE v.id_pelicula=? " +
+                        "AND UPPER(v.estado_fisico_vhs)='DISPONIBLE' " +
+                        "AND NOT EXISTS (SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL)";
                 try (Connection con = ConexionDB.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sqlDisponible)) {
                     ps.setInt(1, idPelicula);
                     try (ResultSet rs = ps.executeQuery()) {
@@ -55,7 +115,7 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=6">
     <title>Carrito VHS | Rewind &amp; Relive</title>
 </head>
 <body>
@@ -86,7 +146,8 @@
                     StringBuilder marcas = new StringBuilder();
                     for (int i=0; i<carrito.size(); i++) marcas.append(i == 0 ? "?" : ",?");
                     String sql = "SELECT p.id_pelicula,p.titulo,p.precio_unidad," +
-                            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' THEN 1 ELSE 0 END) disponibles " +
+                            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS " +
+                            "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL) THEN 1 ELSE 0 END) disponibles " +
                             "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula=p.id_pelicula " +
                             "WHERE p.id_pelicula IN (" + marcas + ") GROUP BY p.id_pelicula,p.titulo,p.precio_unidad ORDER BY p.titulo";
                     try (Connection con = ConexionDB.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -96,7 +157,7 @@
             %><tr>
                 <td><%= numero++ %></td><td><%= h(rs.getString("titulo")) %></td><td>$<%= precio %></td>
                 <td><span class="status-badge <%= rs.getInt("disponibles") > 0 ? "status-ok" : "status-danger" %>"><%= rs.getInt("disponibles") %></span></td>
-                <td><form method="post"><input type="hidden" name="accion" value="quitar"><input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>"><button class="employee-mini-button" type="submit">Quitar</button></form></td>
+                <td><form method="post"><input type="hidden" name="accion" value="quitar"><input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>"><button class="cart-item-remove" type="submit">Quitar</button></form></td>
             </tr><%      }}
                     } catch (SQLException e) { %><tr><td colspan="5">No fue posible cargar el carrito: <%= h(e.getMessage()) %></td></tr><% }
                 }
@@ -104,13 +165,20 @@
             </tbody>
         </table></div>
     </section>
-    <section class="employee-actions">
-        <a class="retro-button employee-action" href="catalogo.jsp">Agregar peliculas</a>
-        <% if (!carrito.isEmpty()) { %><form method="post"><input type="hidden" name="accion" value="vaciar"><button class="retro-button employee-action" type="submit">Vaciar carrito</button></form><% } %>
-        <span class="account-limit">Total por dia: $<%= total %> | Espacios disponibles: <%= 3-carrito.size() %> / 3</span>
+    <section class="cart-button-bar">
+        <a class="cart-action-button cart-action-add" href="catalogo.jsp">Agregar películas</a>
+        <% if (!carrito.isEmpty()) { %>
+        <label class="cart-days-control">Días
+            <input id="rentalDays" class="cart-days-input" type="number" name="dias" value="<%=diasSeleccionados%>" min="1" max="30" required form="rentForm">
+        </label>
+        <form id="rentForm" method="post"><input type="hidden" name="accion" value="alquilar"><button class="cart-action-button cart-action-rent" type="submit">ALQUILAR</button></form>
+        <form method="post"><input type="hidden" name="accion" value="vaciar"><button class="cart-action-button cart-action-empty" type="submit">Vaciar carrito</button></form><% } %>
+        <span class="account-limit" data-daily-total="<%=total%>"><strong>Total por día: $<%= total.setScale(2, java.math.RoundingMode.HALF_UP) %></strong>
+            <% if(!carrito.isEmpty()){%> | Total por <span id="rentalDaysLabel"><%=diasSeleccionados%></span> día(s): $<span id="rentalTotal"><%=total.multiply(new java.math.BigDecimal(diasSeleccionados)).setScale(2,java.math.RoundingMode.HALF_UP)%></span><%}%>
+            | Espacios disponibles: <%= 3-carrito.size() %> / 3</span>
     </section>
 </main>
 <%@ include file="footer.jsp" %>
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
+<script src="${pageContext.request.contextPath}/js/script.js?v=6"></script>
 </body>
 </html>

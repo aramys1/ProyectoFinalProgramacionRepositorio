@@ -39,8 +39,14 @@
                         }
                     }
                     try (PreparedStatement ps = con.prepareStatement(
-                            "UPDATE Alquiler SET estado_alquiler='DEVUELTO', fecha_devolucion=SYSDATE WHERE id_alquiler=? AND fecha_devolucion IS NULL")) {
-                        ps.setInt(1, idAlquiler);
+                            "UPDATE Alquiler SET estado_alquiler=CASE " +
+                                    "WHEN fecha_limite<SYSDATE AND ?='DANADO' THEN 'TARDE DANADO' " +
+                                    "WHEN fecha_limite<SYSDATE THEN 'DEVUELTO TARDE' " +
+                                    "WHEN ?='DANADO' THEN 'DEVUELTO DANADO' ELSE 'DEVUELTO' END, " +
+                                    "fecha_devolucion=SYSDATE WHERE id_alquiler=? AND fecha_devolucion IS NULL")) {
+                        ps.setString(1, estadoVhs);
+                        ps.setString(2, estadoVhs);
+                        ps.setInt(3, idAlquiler);
                         if (ps.executeUpdate() != 1) throw new SQLException("No se pudo actualizar el alquiler.");
                     }
                     try (PreparedStatement ps = con.prepareStatement(
@@ -99,7 +105,7 @@
 </head>
 <body>
 <nav class="navbar retro-window employee-nav">
-    <div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
+    <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>

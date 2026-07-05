@@ -1,4 +1,19 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%!
+    private String h(String valor) {
+        if (valor == null) return "";
+        return valor.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
+    private String posterPath(String valor) {
+        if (valor == null) return "";
+        String ruta=valor.trim().replace('\\','/');
+        while(ruta.startsWith("/")) ruta=ruta.substring(1);
+        if(ruta.startsWith("recursos/")) ruta=ruta.substring("recursos/".length());
+        return ruta;
+    }
+%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,7 +31,9 @@
         <li><a href="catalogo.jsp">Catalogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contactanos</a></li>
+        <% if (session.getAttribute("idUsuario") == null) { %>
         <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
+        <% } %>
     </ul>
 </nav>
 
@@ -29,20 +46,28 @@
     </div>
     <div class="hero-image-container">
         <div class="retro-window">
-            <div class="window-header"><span>VHS_001.vhs</span><span>_ [] X</span></div>
-            <div class="placeholder-img"></div>
+            <div class="window-header"><span data-hero-poster-name>terminator2.jpg</span><span>_ [] X</span></div>
+            <img class="placeholder-img hero-poster-slideshow"
+                 src="${pageContext.request.contextPath}/recursos/posters/terminator2.jpg"
+                 alt="Póster de película"
+                 data-hero-poster-slider
+                 data-poster-base="${pageContext.request.contextPath}/recursos/posters/"
+                 data-posters="Cars.jpg,obsesion.png,scary.jpg,terminator2.jpg,tiburon4.jpeg,torrente2.jpg,viernes13_6ta_poster.jpeg">
         </div>
         <a href="catalogo.jsp" class="retro-button btn-rent">ALQUILAR</a>
     </div>
 </header>
 
+<% if (session.getAttribute("idUsuario") != null &&
+        ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
+         "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
 <section class="demo-access-section">
     <div class="demo-access-inner">
         <article class="retro-window demo-access-card">
             <div class="window-header"><span>usuario_registrado.menu</span><span>_ [] X</span></div>
             <div class="demo-access-body">
                 <h2>Usuario registrado</h2>
-                <p>Acceso de muestra para ver el perfil, carrito e historial sin conectar a la base de datos.</p>
+                <p>Consulta tu perfil, las películas seleccionadas y tu historial personal de alquileres.</p>
                 <div class="demo-access-actions">
                     <a class="retro-button" href="cliente-perfil.jsp">Mi perfil</a>
                     <a class="retro-button" href="cliente-carrito.jsp">Mi carrito</a>
@@ -51,36 +76,35 @@
             </div>
         </article>
 
-        <article class="retro-window demo-access-card">
-            <div class="window-header"><span>vistas_empleado.menu</span><span>_ [] X</span></div>
-            <div class="demo-access-body">
-                <h2>Vistas del empleado</h2>
-                <p>Paneles de presentacion para alquileres, devoluciones, inventario y usuarios.</p>
-                <div class="demo-access-actions">
-                    <a class="retro-button nav-employee-button" href="empleado-dashboard.jsp">Dashboard</a>
-                    <a class="retro-button nav-employee-button" href="empleado-alquileres.jsp">Alquileres</a>
-                    <a class="retro-button nav-employee-button" href="empleado-devolucion.jsp">Devoluciones</a>
-                    <a class="retro-button nav-employee-button" href="empleado-inventario.jsp">Inventario</a>
-                    <a class="retro-button nav-employee-button" href="empleado-usuarios.jsp">Usuarios</a>
-                </div>
-            </div>
-        </article>
     </div>
 </section>
+<% } %>
 
 <div class="content-section">
     <section class="releases">
         <h2>Ultimos Lanzamientos</h2>
         <div class="release-grid">
-            <div class="retro-window release-card">
-                <div class="window-header"><span>Pelicula.exe</span></div>
+            <%
+                String sqlLanzamientos="SELECT p.id_pelicula,p.titulo,p.imagen_url,"+
+                        "TO_CHAR(p.fecha_estreno,'YYYY') anio,"+
+                        "(SELECT LISTAGG(g.desc_genero,' / ') WITHIN GROUP(ORDER BY pg.prioridad) FROM PeliculasGeneros pg "+
+                        "JOIN Genero g ON g.id_genero=pg.id_genero WHERE pg.id_pelicula=p.id_pelicula) generos "+
+                        "FROM Peliculas p ORDER BY p.id_pelicula DESC FETCH FIRST 3 ROWS ONLY";
+                try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlLanzamientos);ResultSet rs=ps.executeQuery()){
+                    boolean hay=false;while(rs.next()){hay=true;String imagen=rs.getString("imagen_url");
+            %>
+            <article class="retro-window release-card">
+                <div class="window-header"><span>PELÍCULA_<%=rs.getInt("id_pelicula")%>.vhs</span><span>_ [] X</span></div>
                 <div class="card-content">
-                    <img src="recursos/posters/terminator2.jpg" alt="Portada de Terminator 2" class="movie-img">
-                    <h3>Terminator 2</h3>
-                    <p>1991 | Accion</p>
-                    <a href="catalogo.jsp" class="retro-button">VER MAS</a>
+                    <%if(imagen!=null&&!imagen.isBlank()){%><img src="<%=request.getContextPath()%>/recursos/<%=h(posterPath(imagen))%>" alt="Portada de <%=h(rs.getString("titulo"))%>" class="movie-img">
+                    <%}else{%><div class="placeholder-img movie-img"></div><%}%>
+                    <h3><%=h(rs.getString("titulo"))%></h3>
+                    <p><%=h(rs.getString("anio"))%><%=rs.getString("generos")==null?"":" | "+h(rs.getString("generos"))%></p>
+                    <a href="pelicula-detalle.jsp?id=<%=rs.getInt("id_pelicula")%>" class="retro-button">VER MÁS</a>
                 </div>
-            </div>
+            </article>
+            <%      }if(!hay){%><p class="employee-empty">Todavía no hay películas publicadas.</p><%}
+                }catch(SQLException e){%><p class="employee-empty">No fue posible cargar los últimos lanzamientos.</p><%}%>
         </div>
         <a href="catalogo.jsp" class="catalog-link">VER CATALOGO COMPLETO &gt;</a>
     </section>
@@ -171,6 +195,6 @@
 
 <%@ include file="footer.jsp" %>
 
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
+<script src="${pageContext.request.contextPath}/js/script.js?v=4"></script>
 </body>
 </html>

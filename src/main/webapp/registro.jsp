@@ -19,19 +19,31 @@
         String exp = request.getParameter("expiracion");
         String cvv = request.getParameter("cvv");
 
-        try (Connection conn = ConexionDB.obtenerConexion()) {
+        Connection conn = null;
+        try {
+            String tarjetaNormalizada = numTarjeta == null ? "" : numTarjeta.replaceAll("[\\s-]", "");
+            String cvvNormalizado = cvv == null ? "" : cvv.trim();
+            if (!tarjetaNormalizada.matches("\\d{13,19}")) {
+                throw new IllegalArgumentException("El número de tarjeta debe contener entre 13 y 19 dígitos.");
+            }
+            if (!cvvNormalizado.matches("\\d{3,4}")) {
+                throw new IllegalArgumentException("El CVV debe contener 3 o 4 dígitos.");
+            }
+
+            conn = ConexionDB.obtenerConexion();
             conn.setAutoCommit(false); // Transacción para asegurar integridad
 
             // Insertar Usuario
             String sql = "INSERT INTO USUARIO (CED_USUARIO, PRIMER_NOMBRE_USUARIO, SEGUNDO_NOMBRE_USUARIO, " +
-                    "PRIMER_APELLIDO_USUARIO, SEGUNDO_APELLIDO_USUARIO, ROL, CONTRASENA) VALUES (?, ?, ?, ?, ?, '1', ?)";
+                    "PRIMER_APELLIDO_USUARIO, SEGUNDO_APELLIDO_USUARIO, ROL, CONTRASENA) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, cedula);
             ps.setString(2, pNombre);
             ps.setString(3, sNombre);
             ps.setString(4, pApellido);
             ps.setString(5, sApellido);
-            ps.setString(6, pass);
+            ps.setInt(6, 1);
+            ps.setString(7, pass);
             ps.executeUpdate();
             ps.close();
 
@@ -43,10 +55,10 @@
 
                 // Insertar Tarjeta
                 PreparedStatement psT = conn.prepareStatement("INSERT INTO TARJETAUSUARIO (ID_TARJETA, NUMERO, TIPO_TARJETA, FECHA_EXPIRACION, CVV, ID_USUARIO) VALUES (seq_tarjeta.NEXTVAL, ?, ?, ?, ?, ?)");
-                psT.setString(1, numTarjeta);
+                psT.setBigDecimal(1, new java.math.BigDecimal(tarjetaNormalizada));
                 psT.setString(2, tipoTarjeta);
                 psT.setString(3, exp);
-                psT.setString(4, cvv);
+                psT.setInt(4, Integer.parseInt(cvvNormalizado));
                 psT.setInt(5, idUsuario);
                 psT.executeUpdate();
                 psT.close();
@@ -86,7 +98,14 @@
             response.sendRedirect("login.jsp");
             return;
         } catch (Exception e) {
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ignored) { }
+            }
             errorRegistro = "No se pudo completar el registro: " + e.getMessage();
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException ignored) { }
+            }
         }
     }
 %>
@@ -117,11 +136,11 @@
                 <label>Segundo Apellido</label> <input class="retro-input" type="text" name="segundoApellido" required>
 
                 <hr style="border: 1px inset #fff; margin: 10px 0;">
-                <label>Número de Tarjeta</label> <input class="retro-input" type="text" name="numTarjeta" required>
+                <label>Número de Tarjeta</label> <input class="retro-input" type="text" name="numTarjeta" inputmode="numeric" pattern="[0-9 -]{13,23}" title="Entre 13 y 19 dígitos; puede usar espacios o guiones" required>
                 <label>Tipo de Tarjeta</label>
                 <select class="retro-input" name="tipoTarjeta"><option value="CREDITO">Crédito</option><option value="DEBITO">Débito</option></select>
                 <label>Expiración (MM/AA)</label> <input class="retro-input" type="text" name="expiracion" placeholder="MM/AA" required>
-                <label>CVV</label> <input class="retro-input" type="password" name="cvv" maxlength="3" required>
+                <label>CVV</label> <input class="retro-input" type="password" name="cvv" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" required>
                 <hr style="border: 1px inset #fff; margin: 10px 0;">
 
                 <label>Email 1</label> <input class="retro-input" type="email" name="email" required>

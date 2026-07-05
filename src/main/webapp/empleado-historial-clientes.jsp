@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 <title>Historial por cliente | Rewind &amp; Relive</title></head><body>
-<nav class="navbar retro-window employee-nav"><div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
+<nav class="navbar retro-window employee-nav"><% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
 <ul class="nav-links"><li><a href="empleado-dashboard.jsp">Dashboard</a></li><li><a href="empleado-alquileres.jsp">Alquileres</a></li>
 <li><a href="empleado-devolucion.jsp">Devolucion</a></li><li><a href="empleado-inventario.jsp">Inventario</a></li>
 <li><a href="empleado-usuarios.jsp">Usuarios</a></li><li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li></ul></nav>

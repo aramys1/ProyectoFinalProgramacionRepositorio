@@ -79,6 +79,14 @@
                     }
                     if (copias > 0) ps.executeBatch();
                 }
+                try (PreparedStatement ps = con.prepareStatement(
+                        "INSERT INTO Publicacion(id_usuario_empleado,id_pelicula,fecha_publicacion) VALUES(?,?,SYSDATE)")) {
+                    Object idEmpleado = session.getAttribute("idUsuario");
+                    if (idEmpleado == null) ps.setNull(1, Types.NUMERIC);
+                    else ps.setInt(1, Integer.parseInt(String.valueOf(idEmpleado)));
+                    ps.setInt(2, nuevoId);
+                    ps.executeUpdate();
+                }
                 con.commit();
                 response.sendRedirect("empleado-pelicula-editar.jsp?id=" + nuevoId + "&creada=1");
                 return;
@@ -105,7 +113,7 @@
 </head>
 <body>
 <nav class="navbar retro-window employee-nav">
-    <div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
+    <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>

@@ -14,7 +14,8 @@
     java.math.BigDecimal precio=null;
     int disponibles=0;
     String sql = "SELECT p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,TO_CHAR(p.fecha_estreno,'YYYY') anio," +
-            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' THEN 1 ELSE 0 END) disponibles " +
+            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS " +
+            "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL) THEN 1 ELSE 0 END) disponibles " +
             "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula=p.id_pelicula WHERE p.id_pelicula=? " +
             "GROUP BY p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,p.fecha_estreno";
     try (Connection con=ConexionDB.obtenerConexion(); PreparedStatement ps=con.prepareStatement(sql)) {
@@ -36,7 +37,7 @@
 <nav class="navbar retro-window"><%@ include file="logo.jsp" %><ul class="nav-links">
     <li><a href="catalogo.jsp">Catalogo</a></li><li><a href="novedades.jsp">Novedades</a></li><li><a href="contactanos.jsp">Contactanos</a></li>
     <% if (clienteAutenticado) { %><li><a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a></li>
-    <% } else { %><li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li><% } %>
+    <% } else if (session.getAttribute("idUsuario") == null) { %><li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li><% } %>
 </ul></nav>
 <main class="movie-detail-page">
 <% if (titulo == null) { %>
@@ -53,8 +54,9 @@
             <div class="employee-form-actions">
                 <% if (clienteAutenticado && disponibles > 0) { %>
                 <form method="post" action="cliente-carrito.jsp"><input type="hidden" name="accion" value="agregar"><input type="hidden" name="id_pelicula" value="<%= idPelicula %>"><button class="retro-button btn-rent" type="submit">AGREGAR AL CARRITO</button></form>
-                <% } else if (!clienteAutenticado) { %><a class="retro-button btn-rent" href="login.jsp">INICIAR SESION PARA ALQUILAR</a>
-                <% } else { %><button class="retro-button" type="button" disabled>SIN COPIAS DISPONIBLES</button><% } %>
+                <% } else if (session.getAttribute("idUsuario") == null) { %><a class="retro-button btn-rent" href="login.jsp">INICIAR SESION PARA ALQUILAR</a>
+                <% } else if (clienteAutenticado) { %><button class="retro-button" type="button" disabled>SIN COPIAS DISPONIBLES</button>
+                <% } else { %><button class="retro-button" type="button" disabled>DISPONIBLE SOLO PARA CLIENTES</button><% } %>
                 <a class="retro-button employee-cancel" href="catalogo.jsp">VOLVER AL CATALOGO</a>
             </div>
         </article>

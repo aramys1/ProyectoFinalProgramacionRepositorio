@@ -4,7 +4,58 @@ document.addEventListener('DOMContentLoaded', function() {
     initPosterFileName();
     initInventoryTemplate();
     initSynopsisInventoryTemplate();
+    initHeroPosterSlider();
+    initCartRentalTotal();
 });
+
+function initCartRentalTotal() {
+    const daysInput = document.getElementById('rentalDays');
+    const totalBox = document.querySelector('[data-daily-total]');
+    const daysLabel = document.getElementById('rentalDaysLabel');
+    const rentalTotal = document.getElementById('rentalTotal');
+    if (!daysInput || !totalBox || !daysLabel || !rentalTotal) return;
+
+    function updateTotal() {
+        const days = Math.min(30, Math.max(1, parseInt(daysInput.value, 10) || 1));
+        const daily = parseFloat(totalBox.dataset.dailyTotal) || 0;
+        daysLabel.textContent = String(days);
+        rentalTotal.textContent = (daily * days).toFixed(2);
+    }
+
+    daysInput.addEventListener('input', updateTotal);
+    updateTotal();
+}
+
+function initHeroPosterSlider() {
+    const poster = document.querySelector('[data-hero-poster-slider]');
+    if (!poster) return;
+
+    const posters = (poster.dataset.posters || '').split(',').map(function(name) {
+        return name.trim();
+    }).filter(Boolean);
+    if (posters.length < 2) return;
+
+    const base = poster.dataset.posterBase || '';
+    const nameLabel = document.querySelector('[data-hero-poster-name]');
+    let current = posters.indexOf(poster.src.split('/').pop());
+
+    function showRandomPoster() {
+        let next;
+        do {
+            next = Math.floor(Math.random() * posters.length);
+        } while (next === current && posters.length > 1);
+
+        current = next;
+        poster.classList.add('is-changing');
+        window.setTimeout(function() {
+            poster.src = base + posters[current];
+            if (nameLabel) nameLabel.textContent = posters[current];
+            poster.classList.remove('is-changing');
+        }, 250);
+    }
+
+    window.setInterval(showRandomPoster, 1500);
+}
 
 function initAuthForms() {
     const loginForm = document.getElementById('loginForm');
