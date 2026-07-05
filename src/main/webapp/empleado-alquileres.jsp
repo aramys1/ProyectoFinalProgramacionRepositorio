@@ -50,6 +50,8 @@
         <a class="retro-button" href="empleado-alquileres.jsp?vista=<%= verHistorial ? "activos" : "historial" %>">
             <%= verHistorial ? "VER ALQUILERES ACTIVOS" : "VER HISTORIAL DE DEVOLUCIONES" %>
         </a>
+        <a class="retro-button" style="margin-left: 10px" href="empleado-historial-clientes.jsp">HISTORIAL POR CLIENTE</a>
+        <a class="retro-button" href="empleado-historial-peliculas.jsp">HISTORIAL POR PELICULA</a>
     </section>
     <section class="retro-window employee-panel">
         <div class="window-header"><span>Alquileres.table</span><span>_ [] X</span></div>
