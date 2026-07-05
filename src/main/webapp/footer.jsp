@@ -1,4 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
+    String rutaFooter = request.getServletPath();
+    boolean footerEmpleado = rutaFooter != null
+            && rutaFooter.substring(rutaFooter.lastIndexOf('/') + 1).startsWith("empleado-");
+%>
 <style>
     .footer {
         background-color: #000;
@@ -109,7 +114,7 @@
 </style>
 
 <footer class="footer">
-    <div class="footer-content">
+    <div class="footer-content" <%= footerEmpleado ? "style=\"grid-template-columns: 1.3fr 2fr;\"" : "" %>>
         <div class="footer-col">
             <h4>Rewind & Relive</h4>
             <p>Tu destino retro preferido para descubrir, alquilar y revivir clásicos en formato VHS.</p>
@@ -118,13 +123,23 @@
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
+                <% if (footerEmpleado) { %>
+                <li><a href="${pageContext.request.contextPath}/empleado-dashboard.jsp">Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/empleado-alquileres.jsp">Alquileres</a></li>
+                <li><a href="${pageContext.request.contextPath}/empleado-devolucion.jsp">Devolución</a></li>
+                <li><a href="${pageContext.request.contextPath}/empleado-inventario.jsp">Inventario</a></li>
+                <li><a href="${pageContext.request.contextPath}/empleado-usuarios.jsp">Usuarios</a></li>
+                <li><a href="${pageContext.request.contextPath}/empleado-alquilar.jsp">Nuevo Alquiler</a></li>
+                <% } else { %>
                 <li><a href="${pageContext.request.contextPath}/index.jsp">Inicio</a></li>
                 <li><a href="${pageContext.request.contextPath}/catalogo.jsp">Catálogo</a></li>
                 <li><a href="${pageContext.request.contextPath}/novedades.jsp">Novedades</a></li>
                 <li><a href="${pageContext.request.contextPath}/contactanos.jsp">Contáctanos</a></li>
+                <% } %>
             </ul>
         </div>
-        
+
+        <% if (!footerEmpleado) { %>
         <div class="footer-col">
             <h4>Mi Cuenta</h4>
             <ul>
@@ -133,6 +148,7 @@
                 <li><a href="${pageContext.request.contextPath}/cliente-historial.jsp">Mi Historial</a></li>
             </ul>
         </div>
+        <% } %>
     </div>
     
     <div class="copyright-container">

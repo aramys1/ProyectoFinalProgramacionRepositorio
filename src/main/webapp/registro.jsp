@@ -2,6 +2,8 @@
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 
 <%
+    request.setCharacterEncoding("UTF-8");
+    String errorRegistro = "";
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         // Datos básicos
         String cedula = request.getParameter("cedula");
@@ -31,8 +33,11 @@
             ps.setString(5, sApellido);
             ps.setString(6, pass);
             ps.executeUpdate();
+            ps.close();
 
-            ResultSet rs = conn.prepareStatement("SELECT id_usuario FROM Usuario WHERE ced_usuario = '" + cedula + "'").executeQuery();
+            PreparedStatement psId = conn.prepareStatement("SELECT id_usuario FROM Usuario WHERE ced_usuario = ?");
+            psId.setString(1, cedula);
+            ResultSet rs = psId.executeQuery();
             if (rs.next()) {
                 int idUsuario = rs.getInt("id_usuario");
 
@@ -44,6 +49,7 @@
                 psT.setString(4, cvv);
                 psT.setInt(5, idUsuario);
                 psT.executeUpdate();
+                psT.close();
 
                 // Insertar Emails
                 String[] emails = {request.getParameter("email"), request.getParameter("email2")};
@@ -55,12 +61,32 @@
                         psE.setInt(2, Integer.parseInt(tipoEmails[i]));
                         psE.setInt(3, idUsuario);
                         psE.executeUpdate();
+                        psE.close();
+                    }
+                }
+
+                // Insertar telefonos
+                String[] telefonos = {request.getParameter("telefono"), request.getParameter("telefono2")};
+                String[] tipoTelefonos = {request.getParameter("tipoTelefono"), request.getParameter("tipoTelefono2")};
+                for (int i = 0; i < 2; i++) {
+                    if (telefonos[i] != null && !telefonos[i].isBlank()) {
+                        PreparedStatement psTel = conn.prepareStatement(
+                                "INSERT INTO UsuarioTelefono (telefono, id_tipo_telefono, id_usuario) VALUES (?, ?, ?)");
+                        psTel.setString(1, telefonos[i].trim());
+                        psTel.setInt(2, Integer.parseInt(tipoTelefonos[i]));
+                        psTel.setInt(3, idUsuario);
+                        psTel.executeUpdate();
+                        psTel.close();
                     }
                 }
             }
+            rs.close();
+            psId.close();
             conn.commit();
+            response.sendRedirect("login.jsp");
+            return;
         } catch (Exception e) {
-            // Manejar error
+            errorRegistro = "No se pudo completar el registro: " + e.getMessage();
         }
     }
 %>
@@ -80,6 +106,9 @@
         <div class="window-header"><span>Registro.exe</span><span>_ [] X</span></div>
         <div class="login-content">
             <a href="index.jsp" class="login-brand">Rewind & Relive</a>
+            <% if (!errorRegistro.isEmpty()) { %>
+            <div class="employee-alert employee-alert-error login-alert"><%= errorRegistro %></div>
+            <% } %>
             <form id="registroForm" class="login-form" action="" method="post" onsubmit="return validarContrasenas()">
                 <label>Cédula</label> <input class="retro-input" type="text" name="cedula" required>
                 <label>Primer Nombre</label> <input class="retro-input" type="text" name="primerNombre" required>
@@ -98,12 +127,12 @@
                 <label>Email 1</label> <input class="retro-input" type="email" name="email" required>
                 <select class="retro-input" name="tipoEmail"><option value="1">Personal</option><option value="2">Trabajo</option></select>
                 <label>Email 2</label> <input class="retro-input" type="email" name="email2">
-                <select class="retro-input" name="tipoEmail2"><option value="1">Personal</option><option value="2">Trabajo</option></select>
+                <select class="retro-input" name="tipoEmail2"><option value="1">Personal</option><option value="2" selected>Trabajo</option></select>
 
                 <label>Teléfono 1</label> <input class="retro-input" type="text" name="telefono" required>
                 <select class="retro-input" name="tipoTelefono"><option value="1">Movil</option><option value="2">Casa</option></select>
                 <label>Teléfono 2</label> <input class="retro-input" type="text" name="telefono2">
-                <select class="retro-input" name="tipoTelefono2"><option value="1">Movil</option><option value="2">Casa</option></select>
+                <select class="retro-input" name="tipoTelefono2"><option value="1">Movil</option><option value="2" selected>Casa</option></select>
 
                 <label>Contraseña</label> <input id="password" class="retro-input" type="password" name="password" required>
                 <label>Confirmar Contraseña</label> <input id="confirmPassword" class="retro-input" type="password" required>

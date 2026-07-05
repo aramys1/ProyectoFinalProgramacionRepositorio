@@ -16,7 +16,7 @@
         <li><a href="catalogo.jsp">Catalogo</a></li>
         <li><a href="novedades.jsp">Novedades</a></li>
         <li><a href="contactanos.jsp">Contactanos</a></li>
-        <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesion</a></li>
+        <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
     </ul>
 </nav>
 
