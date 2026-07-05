@@ -184,8 +184,8 @@
         <p>Los cambios realizados aquí se guardan directamente en la base de datos.</p>
     </section>
 
-    <% if (request.getParameter("guardado") != null) { %>
-    <p class="inventory-success" role="status">Los cambios se guardaron correctamente.</p>
+    <% if (request.getParameter("guardado") != null || request.getParameter("creada") != null) { %>
+    <p class="inventory-success" role="status"><%= request.getParameter("creada") != null ? "La película y sus copias se crearon correctamente." : "Los cambios se guardaron correctamente." %></p>
     <% } %>
     <% if (error != null) { %>
     <p class="inventory-error" role="alert">No se guardaron los cambios: <%= h(error) %></p>
