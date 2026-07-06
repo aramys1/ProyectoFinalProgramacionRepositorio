@@ -84,11 +84,36 @@
 </section>
 <% } %>
 
+<%-- Accesos privados mostrados exclusivamente a empleados autenticados. --%>
+<% if (session.getAttribute("idUsuario") != null &&
+        ("2".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
+         "EMPLEADO".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
+<section class="demo-access-section">
+    <div class="demo-access-inner">
+        <article class="retro-window demo-access-card">
+            <div class="window-header"><span>empleado.menu</span><span>_ [] X</span></div>
+            <div class="demo-access-body">
+                <h2>Panel de empleado</h2>
+                <p>Accede a las funciones principales para operar alquileres, devoluciones e inventario.</p>
+                <div class="demo-access-actions">
+                    <a class="retro-button" href="empleado-dashboard.jsp">Dashboard</a>
+                    <a class="retro-button" href="empleado-alquileres.jsp">Alquileres</a>
+                    <a class="retro-button" href="empleado-devolucion.jsp">Devolucion</a>
+                    <a class="retro-button" href="empleado-inventario.jsp">Inventario</a>
+                    <a class="retro-button" href="empleado-alquilar.jsp">Alquilar</a>
+                </div>
+            </div>
+        </article>
+
+    </div>
+</section>
+<% } %>
+
 <%-- Tres películas más recientes obtenidas directamente de Oracle. --%>
 <div class="content-section">
     <section class="releases">
         <h2>Ultimos Lanzamientos</h2>
-        <div class="release-grid">
+        <div class="release-grid catalog-grid">
             <%
                 // Consulta compacta: película, año y géneros relacionados.
                 String sqlLanzamientos="SELECT p.id_pelicula,p.titulo,p.imagen_url,"+
@@ -102,10 +127,10 @@
             %>
             <article class="retro-window release-card">
                 <div class="window-header"><span>PELÍCULA_<%=rs.getInt("id_pelicula")%>.vhs</span><span>_ [] X</span></div>
-                <div class="card-content">
-                    <%if(imagen!=null&&!imagen.isBlank()){%><img src="<%=request.getContextPath()%>/recursos/<%=h(posterPath(imagen))%>" alt="Portada de <%=h(rs.getString("titulo"))%>" class="movie-img">
-                    <%}else{%><div class="placeholder-img movie-img"></div><%}%>
-                    <h3><%=h(rs.getString("titulo"))%></h3>
+                <%if(imagen!=null&&!imagen.isBlank()){%><img src="<%=request.getContextPath()%>/recursos/<%=h(posterPath(imagen))%>" alt="Portada de <%=h(rs.getString("titulo"))%>" class="card-img">
+                <%}else{%><div class="placeholder-img card-img"></div><%}%>
+                <div class="card-body">
+                    <h3 class="card-title"><%=h(rs.getString("titulo"))%></h3>
                     <p><%=h(rs.getString("anio"))%><%=rs.getString("generos")==null?"":" | "+h(rs.getString("generos"))%></p>
                     <a href="pelicula-detalle.jsp?id=<%=rs.getInt("id_pelicula")%>" class="retro-button">VER MÁS</a>
                 </div>

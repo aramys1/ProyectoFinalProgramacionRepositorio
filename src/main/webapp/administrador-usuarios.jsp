@@ -17,7 +17,7 @@
                 ps.setString(2, cedula);
                 // Para UPDATE, el entero devuelto representa cuántas cuentas cambiaron.
                 ps.executeUpdate();
-                mensaje = "OperaciÃ³n realizada con Ã©xito.";
+                mensaje = "Operación realizada con éxito.";
             } catch (Exception e) { mensaje = "Error: " + e.getMessage(); }
         }
     }

@@ -3,6 +3,16 @@
 <%-- Inserta Alquiler y actualiza Vhs dentro de la misma transacción para que ambos estados coincidan. --%>
 
 <%
+    Object idEmpleadoSesionObj = session.getAttribute("idUsuario");
+    int idEmpleadoSesion = 0;
+    if (idEmpleadoSesionObj != null) {
+        try {
+            idEmpleadoSesion = Integer.parseInt(String.valueOf(idEmpleadoSesionObj));
+        } catch (NumberFormatException e) {
+            idEmpleadoSesion = 0;
+        }
+    }
+
     String paso = request.getParameter("paso");
     if (paso == null) paso = "1";
 
@@ -55,10 +65,12 @@
         int idClienteConf = Integer.parseInt(request.getParameter("id_cliente"));
         int idVhs         = Integer.parseInt(request.getParameter("id_vhs"));
         int dias          = Integer.parseInt(request.getParameter("dias"));
-        // Ahora lo obtenemos del formulario
-        String idEmpleado    = request.getParameter("id_empleado");
 
         try (Connection con = ConexionDB.obtenerConexion()) {
+            if (idEmpleadoSesion <= 0) {
+                throw new SQLException("No hay un empleado autenticado para registrar el alquiler.");
+            }
+
             con.setAutoCommit(false);
 
             // 1. Calcular FECHA_LIMITE (ejemplo: fecha actual + días de alquiler)
@@ -68,13 +80,10 @@
 
             PreparedStatement psAlquiler = con.prepareStatement(sqlAlquiler);
 
-            // Limpiamos el ID del empleado para que sea un número puro (sin guiones)
-            int idEmpleadoInt = Integer.parseInt(request.getParameter("id_empleado").replace("-", ""));
-
             psAlquiler.setInt(1, dias);           // Para el cálculo de FECHA_LIMITE
             psAlquiler.setInt(2, idClienteConf);  // ID_USUARIO_CLIENTE
             psAlquiler.setInt(3, idVhs);          // ID_VHS
-            psAlquiler.setInt(4, idEmpleadoInt);  // ID_USUARIO_EMPLEADO
+            psAlquiler.setInt(4, idEmpleadoSesion);  // ID_USUARIO_EMPLEADO
 
             psAlquiler.executeUpdate();
 
@@ -141,7 +150,6 @@
     <% } %>
 
     <!-- PASO 2: Buscar cliente -->
-    <!-- PASO 2: Buscar cliente -->
     <% if ("2".equals(paso) && idCliente == 0) { %>
     <section class="retro-window employee-panel">
         <div class="window-header"><span>Buscar_Cliente.search</span><span>_ [] X</span></div>
@@ -172,8 +180,8 @@
                 <input type="hidden" name="accion" value="confirmar">
                 <input type="hidden" name="id_cliente" value="<%= idCliente %>">
 
-                <label>ID del Empleado (que realiza el alquiler):</label><br>
-                <input type="text" name="id_empleado" class="retro-search" required style="width: 100px;">
+                <label>ID del Empleado (cuenta actual):</label><br>
+                <input type="text" class="retro-search" value="<%= idEmpleadoSesion %>" readonly style="width: 100px; background:#e0e0e0;">
                 <br><br>
 
                 <label>Buscar pelicula:</label><br><br>
