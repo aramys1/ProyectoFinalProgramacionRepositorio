@@ -17,6 +17,7 @@
 %>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
@@ -24,72 +25,68 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <title>Rewind & Relive | Inicio</title>
 </head>
+
 <body>
 
-<%-- Navegación pública; el botón de acceso solo aparece sin sesión. --%>
-<nav class="navbar retro-window">
-    <%@ include file="logo.jsp" %>
-    <ul class="nav-links">
-        <li><a href="catalogo.jsp">Catalogo</a></li>
-        <li><a href="novedades.jsp">Novedades</a></li>
-        <li><a href="contactanos.jsp">Contactanos</a></li>
-        <% if (session.getAttribute("idUsuario") == null) { %>
-        <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
-        <% } %>
-    </ul>
-</nav>
+    <%-- Navegación pública; el botón de acceso solo aparece sin sesión. --%>
+    <nav class="navbar retro-window">
+        <%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="catalogo.jsp">Catalogo</a></li>
+            <li><a href="novedades.jsp">Novedades</a></li>
+            <li><a href="contactanos.jsp">Contactanos</a></li>
+            <% if (session.getAttribute("idUsuario") == null) { %>
+            <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
+            <% } %>
+        </ul>
+    </nav>
 
-<%-- Portada principal con carrusel de pósteres controlado por script.js. --%>
-<header class="hero">
-    <div class="hero-content">
-        <div class="hero-text-inner">
-            <h1>Revive la magia del VHS</h1>
-            <p>La mejor seleccion de clasicos, directo a tu sala.</p>
+    <%-- Portada principal con carrusel de pósteres controlado por script.js. --%>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-text-inner">
+                <h1>Revive la magia del VHS</h1>
+                <p>La mejor seleccion de clasicos, directo a tu sala.</p>
+            </div>
         </div>
-    </div>
-    <div class="hero-image-container">
-        <div class="retro-window">
-            <div class="window-header"><span data-hero-poster-name>terminator2.jpg</span><span>_ [] X</span></div>
-            <img class="placeholder-img hero-poster-slideshow"
-                 src="${pageContext.request.contextPath}/recursos/posters/terminator2.jpg"
-                 alt="Póster de película"
-                 data-hero-poster-slider
-                 data-poster-base="${pageContext.request.contextPath}/recursos/posters/"
-                 data-posters="Cars.jpg,obsesion.png,scary.jpg,terminator2.jpg,tiburon4.jpeg,torrente2.jpg,viernes13_6ta_poster.jpeg">
+        <div class="hero-image-container">
+            <div class="retro-window">
+                <div class="window-header"><span data-hero-poster-name>terminator2.jpg</span><span>_ [] X</span></div>
+                <img class="placeholder-img hero-poster-slideshow" src="${pageContext.request.contextPath}/recursos/posters/terminator2.jpg" alt="Póster de película" data-hero-poster-slider data-poster-base="${pageContext.request.contextPath}/recursos/posters/" data-posters="Cars.jpg,obsesion.png,scary.jpg,terminator2.jpg,tiburon4.jpeg,torrente2.jpg,viernes13_6ta_poster.jpeg">
+            </div>
+            <a href="catalogo.jsp" class="retro-button btn-rent">ALQUILAR</a>
         </div>
-        <a href="catalogo.jsp" class="retro-button btn-rent">ALQUILAR</a>
-    </div>
-</header>
+    </header>
 
-<%-- Accesos privados mostrados exclusivamente a clientes autenticados. --%>
-<% if (session.getAttribute("idUsuario") != null &&
+    <%-- Accesos privados mostrados exclusivamente a clientes autenticados. --%>
+    <% if (session.getAttribute("idUsuario") != null &&
         ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
          "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
-<section class="demo-access-section">
-    <div class="demo-access-inner">
-        <article class="retro-window demo-access-card">
-            <div class="window-header"><span>usuario_registrado.menu</span><span>_ [] X</span></div>
-            <div class="demo-access-body">
-                <h2>Usuario registrado</h2>
-                <p>Consulta tu perfil, las películas seleccionadas y tu historial personal de alquileres.</p>
-                <div class="demo-access-actions">
-                    <a class="retro-button" href="cliente-perfil.jsp">Mi perfil</a>
-                    <a class="retro-button" href="cliente-carrito.jsp">Mi carrito</a>
-                    <a class="retro-button" href="cliente-historial.jsp">Mi historial</a>
+    <section class="demo-access-section">
+        <div class="demo-access-inner">
+            <article class="retro-window demo-access-card">
+                <div class="window-header"><span>usuario_registrado.menu</span><span>_ [] X</span></div>
+                <div class="demo-access-body">
+                    <h2>Usuario registrado</h2>
+                    <p>Consulta tu perfil, las películas seleccionadas y tu historial personal de alquileres.</p>
+                    <div class="demo-access-actions">
+                        <a class="retro-button" href="cliente-perfil.jsp">Mi perfil</a>
+                        <a class="retro-button" href="cliente-carrito.jsp">Mi carrito</a>
+                        <a class="retro-button" href="cliente-historial.jsp">Mi historial</a>
+                    </div>
                 </div>
-            </div>
-        </article>
+            </article>
 
-    </div>
-</section>
-<% } %>
+        </div>
+    </section>
+    <% } %>
 
-<%-- Tres películas más recientes obtenidas directamente de Oracle. --%>
-<div class="content-section">
-    <section class="releases">
-        <h2>Ultimos Lanzamientos</h2>
-        <div class="release-grid">
-            <%
+    <%-- Tres películas más recientes obtenidas directamente de Oracle. --%>
+    <div class="content-section">
+        <section class="releases">
+            <h2>Ultimos Lanzamientos</h2>
+            <div class="release-grid">
+                <%
                 // Consulta compacta: película, año y géneros relacionados.
                 String sqlLanzamientos="SELECT p.id_pelicula,p.titulo,p.imagen_url,"+
                         "TO_CHAR(p.fecha_estreno,'YYYY') anio,"+
@@ -100,17 +97,17 @@
                 try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlLanzamientos);ResultSet rs=ps.executeQuery()){
                     boolean hay=false;while(rs.next()){hay=true;String imagen=rs.getString("imagen_url");
             %>
-            <article class="retro-window release-card">
-                <div class="window-header"><span>PELÍCULA_<%=rs.getInt("id_pelicula")%>.vhs</span><span>_ [] X</span></div>
-                <div class="card-content">
-                    <%if(imagen!=null&&!imagen.isBlank()){%><img src="<%=request.getContextPath()%>/recursos/<%=h(posterPath(imagen))%>" alt="Portada de <%=h(rs.getString("titulo"))%>" class="movie-img">
-                    <%}else{%><div class="placeholder-img movie-img"></div><%}%>
+                <article class="retro-window release-card">
+                    <div class="window-header"><span>PELÍCULA_<%=rs.getInt("id_pelicula")%>.vhs</span><span>_ [] X</span></div>
+                    <div class="card-content">
+                        <%if(imagen!=null&&!imagen.isBlank()){%><img src="<%=request.getContextPath()%>/recursos/<%=h(posterPath(imagen))%>" alt="Portada de <%=h(rs.getString("titulo"))%>" class="movie-img">
+                        <%}else{%><div class="placeholder-img movie-img"></div><%}%>
                     <h3><%=h(rs.getString("titulo"))%></h3>
-                    <p><%=h(rs.getString("anio"))%><%=rs.getString("generos")==null?"":" | "+h(rs.getString("generos"))%></p>
-                    <a href="pelicula-detalle.jsp?id=<%=rs.getInt("id_pelicula")%>" class="retro-button">VER MÁS</a>
-                </div>
-            </article>
-            <%      }if(!hay){%><p class="employee-empty">Todavía no hay películas publicadas.</p><%}
+                        <p><%=h(rs.getString("anio"))%><%=rs.getString("generos")==null?"":" | "+h(rs.getString("generos"))%></p>
+                        <a href="pelicula-detalle.jsp?id=<%=rs.getInt("id_pelicula")%>" class="retro-button">VER MÁS</a>
+                    </div>
+                </article>
+                <%      }if(!hay){%><p class="employee-empty">Todavía no hay películas publicadas.</p><%}
                 }catch(SQLException e){%><p class="employee-empty">No fue posible cargar los últimos lanzamientos.</p><%}%>
         </div>
         <a href="catalogo.jsp" class="catalog-link">VER CATALOGO COMPLETO &gt;</a>
@@ -202,6 +199,7 @@
 
 <%@ include file="footer.jsp" %>
 
-<script src="${pageContext.request.contextPath}/js/script.js?v=4"></script>
+                <script src="${pageContext.request.contextPath}/js/script.js?v=4"></script>
 </body>
+
 </html>

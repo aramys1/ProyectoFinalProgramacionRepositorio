@@ -135,6 +135,7 @@
 %>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
@@ -143,29 +144,30 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/empleado-inventario.css">
     <title>Editar película | Rewind &amp; Relive</title>
 </head>
-<body>
-<nav class="navbar retro-window employee-nav">
-    <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
-    <ul class="nav-links">
-        <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
-        <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-        <li><a href="empleado-devolucion.jsp">Devolución</a></li>
-        <li><a href="empleado-inventario.jsp">Inventario</a></li>
-        <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
-        <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
-    </ul>
-</nav>
 
-<main class="employee-page">
-<%
+<body>
+    <nav class="navbar retro-window employee-nav">
+        <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
+            <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
+            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
+            <li><a href="empleado-inventario.jsp">Inventario</a></li>
+            <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+            <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
+        </ul>
+    </nav>
+
+    <main class="employee-page">
+        <%
     if (idPelicula < 1) {
 %>
-    <section class="retro-window employee-panel inventory-editor-message">
-        <div class="window-header"><span>Error</span><span>_ [] X</span></div>
-        <p>El identificador de la película no es válido.</p>
-        <a class="retro-button" href="empleado-inventario.jsp">VOLVER</a>
-    </section>
-<%
+        <section class="retro-window employee-panel inventory-editor-message">
+            <div class="window-header"><span>Error</span><span>_ [] X</span></div>
+            <p>El identificador de la película no es válido.</p>
+            <a class="retro-button" href="empleado-inventario.jsp">VOLVER</a>
+        </section>
+        <%
     } else {
         try (Connection con = ConexionDB.obtenerConexion();
              PreparedStatement pelicula = con.prepareStatement(
@@ -176,12 +178,12 @@
             try (ResultSet p = pelicula.executeQuery()) {
                 if (!p.next()) {
 %>
-    <section class="retro-window employee-panel inventory-editor-message">
-        <div class="window-header"><span>No_encontrada.error</span><span>_ [] X</span></div>
-        <p>La película solicitada no existe.</p>
-        <a class="retro-button" href="empleado-inventario.jsp">VOLVER</a>
-    </section>
-<%
+        <section class="retro-window employee-panel inventory-editor-message">
+            <div class="window-header"><span>No_encontrada.error</span><span>_ [] X</span></div>
+            <p>La película solicitada no existe.</p>
+            <a class="retro-button" href="empleado-inventario.jsp">VOLVER</a>
+        </section>
+        <%
                 } else {
                     // Conjunto usado para marcar los géneros actuales en el formulario.
                     Set<Integer> generosSeleccionados = new HashSet<>();
@@ -190,59 +192,59 @@
                         try (ResultSet rs = ps.executeQuery()) { while (rs.next()) generosSeleccionados.add(rs.getInt(1)); }
                     }
 %>
-    <section class="employee-header">
-        <p class="employee-kicker">Película_<%= idPelicula %>.edit</p>
-        <h1>Editar <%= h(p.getString("titulo")) %></h1>
-        <p>Los cambios realizados aquí se guardan directamente en la base de datos.</p>
-    </section>
+        <section class="employee-header">
+            <p class="employee-kicker">Película_<%= idPelicula %>.edit</p>
+            <h1>Editar <%= h(p.getString("titulo")) %></h1>
+            <p>Los cambios realizados aquí se guardan directamente en la base de datos.</p>
+        </section>
 
-    <% if (request.getParameter("guardado") != null || request.getParameter("creada") != null) { %>
-    <p class="inventory-success" role="status"><%= request.getParameter("creada") != null ? "La película y sus copias se crearon correctamente." : "Los cambios se guardaron correctamente." %></p>
-    <% } %>
-    <% if (error != null) { %>
-    <p class="inventory-error" role="alert">No se guardaron los cambios: <%= h(error) %></p>
-    <% } %>
+        <% if (request.getParameter("guardado") != null || request.getParameter("creada") != null) { %>
+        <p class="inventory-success" role="status"><%= request.getParameter("creada") != null ? "La película y sus copias se crearon correctamente." : "Los cambios se guardaron correctamente." %></p>
+        <% } %>
+        <% if (error != null) { %>
+        <p class="inventory-error" role="alert">No se guardaron los cambios: <%= h(error) %></p>
+        <% } %>
 
-    <form class="retro-window employee-panel inventory-editor" method="post">
-        <input type="hidden" name="id" value="<%= idPelicula %>">
-        <div class="window-header"><span>Datos_Película.form</span><span>_ [] X</span></div>
-        <div class="inventory-detail-grid">
-            <div class="inventory-detail-poster-wrap">
-                <% if (p.getString("imagen_url") != null && !p.getString("imagen_url").isBlank()) { %>
-                <img src="<%= request.getContextPath() %>/recursos/<%= h(posterPath(p.getString("imagen_url"))) %>" alt="Póster actual" class="inventory-detail-poster">
-                <% } else { %><div class="placeholder-img inventory-detail-poster"></div><% } %>
-            </div>
-            <div class="employee-form employee-movie-form">
-                <div class="employee-form-grid">
-                    <label>Título *<input class="retro-search" name="titulo" required value="<%= h(p.getString("titulo")) %>"></label>
-                    <label>Fecha de estreno *<input class="retro-search" type="date" name="fechaEstreno" required value="<%= h(p.getString("fecha_estreno")) %>"></label>
-                    <label>Precio por unidad *<input class="retro-search" type="number" min="0" step="0.01" name="precio" required value="<%= p.getBigDecimal("precio_unidad") %>"></label>
-                    <label>Clasificación *
-                        <select class="retro-search" name="clasificacion" required>
-                            <% try (PreparedStatement ps = con.prepareStatement("SELECT id_clasificacion,desc_clasificacion FROM Clasificacion ORDER BY edad_minima"); ResultSet rs = ps.executeQuery()) {
-                                while (rs.next()) { %>
-                            <option value="<%= rs.getInt(1) %>" <%= rs.getInt(1) == p.getInt("id_clasificacion") ? "selected" : "" %>><%= h(rs.getString(2)) %></option>
-                            <% }} %>
-                        </select>
-                    </label>
-                    <label class="employee-full-field">Ruta de imagen
-                        <input class="retro-search" name="imagenUrl" value="<%= h(p.getString("imagen_url")) %>" placeholder="posters/pelicula.jpg">
-                    </label>
-                    <fieldset class="employee-full-field inventory-genres">
-                        <legend>Géneros</legend>
-                        <% try (PreparedStatement ps = con.prepareStatement("SELECT id_genero,desc_genero FROM Genero ORDER BY desc_genero"); ResultSet rs = ps.executeQuery()) {
-                            while (rs.next()) { int idGenero = rs.getInt(1); %>
-                        <label><input type="checkbox" name="generos" value="<%= idGenero %>" <%= generosSeleccionados.contains(idGenero) ? "checked" : "" %>> <%= h(rs.getString(2)) %></label>
-                        <% }} %>
-                    </fieldset>
-                    <label class="employee-full-field">Sinopsis *
-                        <textarea class="retro-search employee-textarea" name="sinopsis" required><%= h(p.getString("sinopsis")) %></textarea>
-                    </label>
+        <form class="retro-window employee-panel inventory-editor" method="post">
+            <input type="hidden" name="id" value="<%= idPelicula %>">
+            <div class="window-header"><span>Datos_Película.form</span><span>_ [] X</span></div>
+            <div class="inventory-detail-grid">
+                <div class="inventory-detail-poster-wrap">
+                    <% if (p.getString("imagen_url") != null && !p.getString("imagen_url").isBlank()) { %>
+                    <img src="<%= request.getContextPath() %>/recursos/<%= h(posterPath(p.getString("imagen_url"))) %>" alt="Póster actual" class="inventory-detail-poster">
+                    <% } else { %><div class="placeholder-img inventory-detail-poster"></div><% } %>
                 </div>
+                <div class="employee-form employee-movie-form">
+                    <div class="employee-form-grid">
+                        <label>Título *<input class="retro-search" name="titulo" required value="<%= h(p.getString("titulo")) %>"></label>
+                        <label>Fecha de estreno *<input class="retro-search" type="date" name="fechaEstreno" required value="<%= h(p.getString("fecha_estreno")) %>"></label>
+                        <label>Precio por unidad *<input class="retro-search" type="number" min="0" step="0.01" name="precio" required value="<%= p.getBigDecimal("precio_unidad") %>"></label>
+                        <label>Clasificación *
+                            <select class="retro-search" name="clasificacion" required>
+                                <% try (PreparedStatement ps = con.prepareStatement("SELECT id_clasificacion,desc_clasificacion FROM Clasificacion ORDER BY edad_minima"); ResultSet rs = ps.executeQuery()) {
+                                while (rs.next()) { %>
+                                <option value="<%= rs.getInt(1) %>" <%= rs.getInt(1) == p.getInt("id_clasificacion") ? "selected" : "" %>><%= h(rs.getString(2)) %></option>
+                                <% }} %>
+                            </select>
+                        </label>
+                        <label class="employee-full-field">Ruta de imagen
+                            <input class="retro-search" name="imagenUrl" value="<%= h(p.getString("imagen_url")) %>" placeholder="posters/pelicula.jpg">
+                        </label>
+                        <fieldset class="employee-full-field inventory-genres">
+                            <legend>Géneros</legend>
+                            <% try (PreparedStatement ps = con.prepareStatement("SELECT id_genero,desc_genero FROM Genero ORDER BY desc_genero"); ResultSet rs = ps.executeQuery()) {
+                            while (rs.next()) { int idGenero = rs.getInt(1); %>
+                            <label><input type="checkbox" name="generos" value="<%= idGenero %>" <%= generosSeleccionados.contains(idGenero) ? "checked" : "" %>> <%= h(rs.getString(2)) %></label>
+                            <% }} %>
+                        </fieldset>
+                        <label class="employee-full-field">Sinopsis *
+                            <textarea class="retro-search employee-textarea" name="sinopsis" required><%= h(p.getString("sinopsis")) %></textarea>
+                        </label>
+                    </div>
 
-                <h2 class="inventory-section-title">Copias VHS</h2>
-                <div class="copy-status-list inventory-copy-list">
-                    <% try (PreparedStatement ps = con.prepareStatement(
+                    <h2 class="inventory-section-title">Copias VHS</h2>
+                    <div class="copy-status-list inventory-copy-list">
+                        <% try (PreparedStatement ps = con.prepareStatement(
                             "SELECT v.id_vhs,v.estado_fisico_vhs," +
                                     "CASE WHEN EXISTS(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND UPPER(a.estado_alquiler) IN ('ACTIVO','ALQUILADO','EN USO')) THEN 1 ELSE 0 END en_uso," +
                                     "CASE WHEN EXISTS(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs) THEN 1 ELSE 0 END tiene_historial " +
@@ -251,45 +253,46 @@
                         try (ResultSet rs = ps.executeQuery()) {
                             boolean hayCopias = false;
                             while (rs.next()) { hayCopias = true; int idVhs = rs.getInt("id_vhs"); %>
-                    <div class="copy-status-row inventory-copy-edit-row">
-                        <strong>VHS #<%= idVhs %></strong>
-                        <% if (rs.getInt("en_uso") == 1) { %><span class="status-badge status-warning">EN USO</span><% } %>
-                        <input class="retro-search" name="estado_<%= idVhs %>" value="<%= h(rs.getString("estado_fisico_vhs")) %>" required aria-label="Estado físico de VHS <%= idVhs %>">
-                        <label class="inventory-delete-copy">
-                            <input type="checkbox" name="eliminar_<%= idVhs %>" <%= rs.getInt("tiene_historial") == 1 ? "disabled" : "" %>>
-                            Eliminar<%= rs.getInt("tiene_historial") == 1 ? " (tiene historial)" : "" %>
-                        </label>
-                    </div>
-                    <%      }
+                        <div class="copy-status-row inventory-copy-edit-row">
+                            <strong>VHS #<%= idVhs %></strong>
+                            <% if (rs.getInt("en_uso") == 1) { %><span class="status-badge status-warning">EN USO</span><% } %>
+                            <input class="retro-search" name="estado_<%= idVhs %>" value="<%= h(rs.getString("estado_fisico_vhs")) %>" required aria-label="Estado físico de VHS <%= idVhs %>">
+                            <label class="inventory-delete-copy">
+                                <input type="checkbox" name="eliminar_<%= idVhs %>" <%= rs.getInt("tiene_historial") == 1 ? "disabled" : "" %>>
+                                Eliminar<%= rs.getInt("tiene_historial") == 1 ? " (tiene historial)" : "" %>
+                            </label>
+                        </div>
+                        <%      }
                             if (!hayCopias) { %><p>Esta película todavía no tiene copias VHS.</p><% }
                         }
                     } %>
-                </div>
+                    </div>
 
-                <div class="inventory-add-copies">
-                    <label>Agregar copias<input class="retro-search" type="number" name="nuevasCopias" min="0" max="100" value="0"></label>
-                    <label>Estado inicial<input class="retro-search" name="estadoNuevo" value="DISPONIBLE"></label>
-                </div>
+                    <div class="inventory-add-copies">
+                        <label>Agregar copias<input class="retro-search" type="number" name="nuevasCopias" min="0" max="100" value="0"></label>
+                        <label>Estado inicial<input class="retro-search" name="estadoNuevo" value="DISPONIBLE"></label>
+                    </div>
 
-                <div class="employee-form-actions">
-                    <button type="submit" class="retro-button">GUARDAR CAMBIOS</button>
-                    <a class="retro-button employee-cancel" href="empleado-inventario.jsp">CANCELAR</a>
+                    <div class="employee-form-actions">
+                        <button type="submit" class="retro-button">GUARDAR CAMBIOS</button>
+                        <a class="retro-button employee-cancel" href="empleado-inventario.jsp">CANCELAR</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
-<%
+        </form>
+        <%
                 }
             }
         } catch (SQLException e) {
 %>
-    <p class="inventory-error">No fue posible cargar la película: <%= h(e.getMessage()) %></p>
-<%
+        <p class="inventory-error">No fue posible cargar la película: <%= h(e.getMessage()) %></p>
+        <%
         }
     }
 %>
-</main>
-<%@ include file="footer.jsp" %>
-<script src="${pageContext.request.contextPath}/js/script.js?v=3"></script>
+    </main>
+    <%@ include file="footer.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/script.js?v=3"></script>
 </body>
+
 </html>

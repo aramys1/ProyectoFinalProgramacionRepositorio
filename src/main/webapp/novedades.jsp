@@ -4,6 +4,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
@@ -14,30 +15,30 @@
 
 <body>
 
-<nav class="navbar retro-window">
-    <%@ include file="logo.jsp" %>
-    <ul class="nav-links">
-        <li><a href="catalogo.jsp">Catálogo</a></li>
-        <li><a href="novedades.jsp">Novedades</a></li>
-        <li><a href="contactanos.jsp">Contáctanos</a></li>
-        <% if (session.getAttribute("idUsuario") != null && ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) || "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
-        <li><a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a></li>
-        <% } else if (session.getAttribute("idUsuario") == null) { %><li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li><% } %>
-    </ul>
-</nav>
+    <nav class="navbar retro-window">
+        <%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="catalogo.jsp">Catálogo</a></li>
+            <li><a href="novedades.jsp">Novedades</a></li>
+            <li><a href="contactanos.jsp">Contáctanos</a></li>
+            <% if (session.getAttribute("idUsuario") != null && ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) || "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
+            <li><a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a></li>
+            <% } else if (session.getAttribute("idUsuario") == null) { %><li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesión</a></li><% } %>
+        </ul>
+    </nav>
 
-<div class="content-section" style="padding: 40px 20px;">
-    <section class="releases">
-        <h1 class="glitch-title">Nuestras novedades</h1>
+    <div class="content-section" style="padding: 40px 20px;">
+        <section class="releases">
+            <h1 class="glitch-title">Nuestras novedades</h1>
 
-        <div class="retro-window news-window">
-            <div class="window-header">
-                <span>Novedades_del_Sistema.log</span>
-                <span>_ [] X</span>
-            </div>
+            <div class="retro-window news-window">
+                <div class="window-header">
+                    <span>Novedades_del_Sistema.log</span>
+                    <span>_ [] X</span>
+                </div>
 
-            <div class="log-content">
-                <%
+                <div class="log-content">
+                    <%
                     List<String[]> noticias = new ArrayList<>();
                     noticias.add(new String[]{"LANZAMIENTO WEB V1.0", "noticia", "2026-06-10", "Rewind & Relive entra oficialmente en funcionamiento. Gracias por ser parte del lanzamiento."});
                     noticias.add(new String[]{"MANTENIMIENTO: ORACLE SQL", "tecnico", "2026-06-22", "Optimización de procedimientos PL/SQL completada. Mejora del 15% en velocidad de carga."});
@@ -53,14 +54,15 @@
                         <span class="log-date">[<%= n[2] %>]</span>
                         <p><%= n[3] %></p>
                     </div>
-                <% } %>
+                    <% } %>
+                </div>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>
 
-<%@ include file="footer.jsp" %>
+    <%@ include file="footer.jsp" %>
 
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
+    <script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
+
 </html>

@@ -126,6 +126,7 @@
 %>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
@@ -133,31 +134,46 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=6">
     <title>Carrito VHS | Rewind &amp; Relive</title>
 </head>
+
 <body>
-<nav class="navbar retro-window">
-    <%@ include file="logo.jsp" %>
-    <ul class="nav-links">
-        <li><a href="index.jsp">Inicio</a></li><li><a href="catalogo.jsp">Catalogo</a></li>
-        <li><a href="cliente-perfil.jsp">Mi Perfil</a></li><li><a href="cliente-historial.jsp">Mi Historial</a></li>
-    </ul>
-</nav>
-<main class="account-page">
-    <section class="employee-header">
-        <p class="employee-kicker">Orden de alquiler</p><h1>Mi carrito</h1>
-        <p>Peliculas seleccionadas y disponibilidad actual en la base de datos.</p>
-    </section>
-    <% if (mensaje != null) { %><div class="employee-alert employee-alert-ok"><%= h(mensaje) %></div><% } %>
-    <% if (error != null) { %><div class="employee-alert employee-alert-error"><%= h(error) %></div><% } %>
-    <section class="retro-window employee-panel">
-        <div class="window-header"><span>carrito_actual.table</span><span>_ [] X</span></div>
-        <div class="employee-table-wrap"><table class="employee-table">
-            <thead><tr><th>#</th><th>Pelicula</th><th>Precio dia</th><th>Disponibles</th><th>Accion</th></tr></thead>
-            <tbody>
-            <%
+    <nav class="navbar retro-window">
+        <%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="index.jsp">Inicio</a></li>
+            <li><a href="catalogo.jsp">Catalogo</a></li>
+            <li><a href="cliente-perfil.jsp">Mi Perfil</a></li>
+            <li><a href="cliente-historial.jsp">Mi Historial</a></li>
+        </ul>
+    </nav>
+    <main class="account-page">
+        <section class="employee-header">
+            <p class="employee-kicker">Orden de alquiler</p>
+            <h1>Mi carrito</h1>
+            <p>Peliculas seleccionadas y disponibilidad actual en la base de datos.</p>
+        </section>
+        <% if (mensaje != null) { %><div class="employee-alert employee-alert-ok"><%= h(mensaje) %></div><% } %>
+        <% if (error != null) { %><div class="employee-alert employee-alert-error"><%= h(error) %></div><% } %>
+        <section class="retro-window employee-panel">
+            <div class="window-header"><span>carrito_actual.table</span><span>_ [] X</span></div>
+            <div class="employee-table-wrap">
+                <table class="employee-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Pelicula</th>
+                            <th>Precio dia</th>
+                            <th>Disponibles</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
                 // Acumula el precio diario de todas las películas visibles en el carrito.
                 java.math.BigDecimal total = java.math.BigDecimal.ZERO;
                 if (carrito.isEmpty()) {
-            %><tr><td colspan="5" class="employee-empty">El carrito esta vacio.</td></tr><%
+            %><tr>
+                            <td colspan="5" class="employee-empty">El carrito esta vacio.</td>
+                        </tr><%
                 } else {
                     StringBuilder marcas = new StringBuilder();
                     for (int i=0; i<carrito.size(); i++) marcas.append(i == 0 ? "?" : ",?");
@@ -171,30 +187,38 @@
                         try (ResultSet rs = ps.executeQuery()) { int numero=1; while (rs.next()) {
                             java.math.BigDecimal precio = rs.getBigDecimal("precio_unidad"); total = total.add(precio);
             %><tr>
-                <td><%= numero++ %></td><td><%= h(rs.getString("titulo")) %></td><td>$<%= precio %></td>
-                <td><span class="status-badge <%= rs.getInt("disponibles") > 0 ? "status-ok" : "status-danger" %>"><%= rs.getInt("disponibles") %></span></td>
-                <td><form method="post"><input type="hidden" name="accion" value="quitar"><input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>"><button class="cart-item-remove" type="submit">Quitar</button></form></td>
-            </tr><%      }}
-                    } catch (SQLException e) { %><tr><td colspan="5">No fue posible cargar el carrito: <%= h(e.getMessage()) %></td></tr><% }
+                            <td><%= numero++ %></td>
+                            <td><%= h(rs.getString("titulo")) %></td>
+                            <td>$<%= precio %></td>
+                            <td><span class="status-badge <%= rs.getInt("disponibles") > 0 ? "status-ok" : "status-danger" %>"><%= rs.getInt("disponibles") %></span></td>
+                            <td>
+                                <form method="post"><input type="hidden" name="accion" value="quitar"><input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>"><button class="cart-item-remove" type="submit">Quitar</button></form>
+                            </td>
+                        </tr><%      }}
+                    } catch (SQLException e) { %><tr>
+                            <td colspan="5">No fue posible cargar el carrito: <%= h(e.getMessage()) %></td>
+                        </tr><% }
                 }
             %>
-            </tbody>
-        </table></div>
-    </section>
-    <section class="cart-button-bar">
-        <a class="cart-action-button cart-action-add" href="catalogo.jsp">Agregar películas</a>
-        <% if (!carrito.isEmpty()) { %>
-        <label class="cart-days-control">Días
-            <input id="rentalDays" class="cart-days-input" type="number" name="dias" value="<%=diasSeleccionados%>" min="1" max="30" required form="rentForm">
-        </label>
-        <form id="rentForm" method="post"><input type="hidden" name="accion" value="alquilar"><button class="cart-action-button cart-action-rent" type="submit">ALQUILAR</button></form>
-        <form method="post"><input type="hidden" name="accion" value="vaciar"><button class="cart-action-button cart-action-empty" type="submit">Vaciar carrito</button></form><% } %>
-        <span class="account-limit" data-daily-total="<%=total%>"><strong>Total por día: $<%= total.setScale(2, java.math.RoundingMode.HALF_UP) %></strong>
-            <% if(!carrito.isEmpty()){%> | Total por <span id="rentalDaysLabel"><%=diasSeleccionados%></span> día(s): $<span id="rentalTotal"><%=total.multiply(new java.math.BigDecimal(diasSeleccionados)).setScale(2,java.math.RoundingMode.HALF_UP)%></span><%}%>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="cart-button-bar">
+            <a class="cart-action-button cart-action-add" href="catalogo.jsp">Agregar películas</a>
+            <% if (!carrito.isEmpty()) { %>
+            <label class="cart-days-control">Días
+                <input id="rentalDays" class="cart-days-input" type="number" name="dias" value="<%=diasSeleccionados%>" min="1" max="30" required form="rentForm">
+            </label>
+            <form id="rentForm" method="post"><input type="hidden" name="accion" value="alquilar"><button class="cart-action-button cart-action-rent" type="submit">ALQUILAR</button></form>
+            <form method="post"><input type="hidden" name="accion" value="vaciar"><button class="cart-action-button cart-action-empty" type="submit">Vaciar carrito</button></form><% } %>
+            <span class="account-limit" data-daily-total="<%=total%>"><strong>Total por día: $<%= total.setScale(2, java.math.RoundingMode.HALF_UP) %></strong>
+                <% if(!carrito.isEmpty()){%> | Total por <span id="rentalDaysLabel"><%=diasSeleccionados%></span> día(s): $<span id="rentalTotal"><%=total.multiply(new java.math.BigDecimal(diasSeleccionados)).setScale(2,java.math.RoundingMode.HALF_UP)%></span><%}%>
             | Espacios disponibles: <%= 3-carrito.size() %> / 3</span>
-    </section>
-</main>
-<%@ include file="footer.jsp" %>
-<script src="${pageContext.request.contextPath}/js/script.js?v=6"></script>
+        </section>
+    </main>
+    <%@ include file="footer.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/script.js?v=6"></script>
 </body>
+
 </html>

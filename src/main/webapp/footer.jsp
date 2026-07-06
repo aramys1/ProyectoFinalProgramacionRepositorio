@@ -43,9 +43,15 @@
         margin: 0;
     }
 
-    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li {
+        margin-bottom: 8px;
+    }
 
     .footer-col a {
         color: #fce4d6;
@@ -62,18 +68,19 @@
     .btn-retro-logout {
         display: inline-block;
         background-color: #000;
-        color: #ff9800 !important; /* Texto naranja característico */
+        color: #ff9800 !important;
+        /* Texto naranja característico */
         font-family: 'Courier Prime', monospace;
         font-size: 0.75rem !important;
         font-weight: bold;
         text-transform: uppercase;
         text-decoration: none !important;
         padding: 6px 14px;
-        
+
         /* Borde retro simulando ventana de comandos/3D */
         border: 2px solid #ff9800 !important;
         box-shadow: 3px 3px 0px #ff9800;
-        
+
         cursor: pointer;
         transition: all 0.1s ease;
     }
@@ -119,7 +126,7 @@
             <h4>Rewind & Relive</h4>
             <p>Tu destino retro preferido para descubrir, alquilar y revivir clásicos en formato VHS.</p>
         </div>
-        
+
         <div class="footer-col">
             <h4>Navegación</h4>
             <ul>
@@ -150,7 +157,7 @@
         </div>
         <% } %>
     </div>
-    
+
     <div class="copyright-container">
         <p class="copyright">© 2026 Rewind & Relive. Todos los derechos reservados.</p>
         <div class="footer-logout-zone">

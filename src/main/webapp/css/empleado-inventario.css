@@ -1,322 +1,325 @@
 .inventory-catalog-toolbar {
-    max-width: 980px;
-    margin: 0 auto 24px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+  max-width: 980px;
+  margin: 0 auto 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .inventory-catalog-toolbar .retro-search {
-    flex: 1 1 260px;
-    width: auto;
+  flex: 1 1 260px;
+  width: auto;
 }
 
 .inventory-catalog-grid {
-    max-width: 980px;
-    margin: 0 auto 30px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 220px);
-    justify-content: center;
-    align-items: start;
-    gap: 22px;
+  max-width: 980px;
+  margin: 0 auto 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 220px);
+  justify-content: center;
+  align-items: start;
+  gap: 22px;
 }
 
 .inventory-card,
 .inventory-add-card {
-    width: 220px;
-    max-width: 220px;
-    min-height: 0;
-    background: #ffffff;
-    overflow: hidden;
+  width: 220px;
+  max-width: 220px;
+  min-height: 0;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .inventory-card-img {
-    width: 220px;
-    height: 300px;
-    max-width: 220px;
-    max-height: 300px;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-    border-bottom: 2px solid #000;
-    background: #d1d1d1;
+  width: 220px;
+  height: 300px;
+  max-width: 220px;
+  max-height: 300px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border-bottom: 2px solid #000;
+  background: #d1d1d1;
 }
 
 .inventory-card-body,
 .inventory-add-body {
-    padding: 14px;
+  padding: 14px;
 }
 
 .inventory-card-body h2,
 .inventory-add-body strong {
-    display: block;
-    margin: 0 0 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    line-height: 1.15;
+  display: block;
+  margin: 0 0 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  line-height: 1.15;
 }
 
 .inventory-card-body p,
 .inventory-add-body p {
-    margin: 0 0 10px;
-    color: #3e2723;
-    font-weight: 800;
-    line-height: 1.35;
+  margin: 0 0 10px;
+  color: #3e2723;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .inventory-card .btn-full {
-    width: 100%;
-    max-width: none;
+  width: 100%;
+  max-width: none;
 }
 
 .inventory-edit-link {
-    display: block;
-    box-sizing: border-box;
-    text-align: center;
-    text-decoration: none;
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
 }
 
 .inventory-empty,
 .inventory-error,
 .inventory-success {
-    grid-column: 1 / -1;
-    max-width: 980px;
-    margin: 20px auto;
-    padding: 14px;
-    border: 2px solid #000;
-    box-shadow: 3px 3px 0 #000;
-    font-weight: 800;
+  grid-column: 1 / -1;
+  max-width: 980px;
+  margin: 20px auto;
+  padding: 14px;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  font-weight: 800;
 }
 
 .inventory-error {
-    background: #ffcdd2;
+  background: #ffcdd2;
 }
 
 .inventory-success {
-    background: #c8e6c9;
+  background: #c8e6c9;
 }
 
 .inventory-editor,
 .inventory-editor-message {
-    max-width: 980px;
-    margin: 0 auto;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .inventory-editor-message {
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 .inventory-editor-message > p,
 .inventory-editor-message > a {
-    margin-left: 20px;
-    margin-right: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .inventory-genres {
-    margin: 0;
-    padding: 12px;
-    border: 2px solid #000;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 18px;
+  margin: 0;
+  padding: 12px;
+  border: 2px solid #000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
 }
 
 .inventory-genres legend {
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .inventory-section-title {
-    margin: 26px 0 8px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.2rem;
+  margin: 26px 0 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
 }
 
 .inventory-copy-edit-row {
-    grid-template-columns: minmax(90px, auto) auto minmax(150px, 1fr) minmax(150px, auto);
+  grid-template-columns: minmax(90px, auto) auto minmax(150px, 1fr) minmax(
+      150px,
+      auto
+    );
 }
 
 .inventory-delete-copy {
-    font-size: .85rem;
-    font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 800;
 }
 
 .inventory-add-copies {
-    margin-top: 20px;
-    padding: 16px;
-    border: 2px dashed #000;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px dashed #000;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .inventory-add-copies label {
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .inventory-add-card {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .inventory-add-body {
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
 }
 
 .inventory-add-body .retro-button {
-    width: 100%;
+  width: 100%;
 }
 
 .inventory-add-panel[hidden] {
-    display: none;
+  display: none;
 }
 
 .catalog-detail-panel[hidden] {
-    display: none;
+  display: none;
 }
 
 .catalog-detail-panel {
-    max-width: 980px;
-    margin: 30px auto 0;
+  max-width: 980px;
+  margin: 30px auto 0;
 }
 
 .inventory-detail-grid {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 24px;
-    padding: 22px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  padding: 22px;
+  align-items: start;
 }
 
 .inventory-detail-poster-wrap {
-    width: 220px;
-    height: 300px;
-    max-width: 220px;
-    max-height: 300px;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 #000;
-    background: #ffffff;
-    overflow: hidden;
+  width: 220px;
+  height: 300px;
+  max-width: 220px;
+  max-height: 300px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .inventory-detail-poster {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 .inventory-copy-list {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .inventory-list,
 .inventory-detail {
-    margin: 0;
+  margin: 0;
 }
 
 .inventory-list-body {
-    padding: 14px;
-    display: grid;
-    gap: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
 }
 
 .inventory-movie-item {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid #000;
-    background: #fff;
-    box-shadow: 3px 3px 0 #000;
-    text-align: left;
-    cursor: pointer;
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #000;
+  background: #fff;
+  box-shadow: 3px 3px 0 #000;
+  text-align: left;
+  cursor: pointer;
 }
 
 .inventory-movie-item strong,
 .inventory-movie-item span {
-    display: block;
+  display: block;
 }
 
 .inventory-movie-item span {
-    margin-top: 6px;
-    color: #3e2723;
-    font-weight: 800;
+  margin-top: 6px;
+  color: #3e2723;
+  font-weight: 800;
 }
 
 .inventory-movie-item.active {
-    background: #ffeb3b;
+  background: #ffeb3b;
 }
 
 .inventory-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
 }
 
 .inventory-summary article {
-    padding: 16px;
-    border: 2px solid #000;
-    background: #fff7ec;
-    box-shadow: 3px 3px 0 #000;
+  padding: 16px;
+  border: 2px solid #000;
+  background: #fff7ec;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .inventory-summary span {
-    display: block;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.1rem;
-    color: #000;
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.1rem;
+  color: #000;
 }
 
 .inventory-summary strong {
-    display: block;
-    margin-bottom: 6px;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .inventory-summary p {
-    margin: 0;
-    color: #3e2723;
-    line-height: 1.4;
+  margin: 0;
+  color: #3e2723;
+  line-height: 1.4;
 }
 
 @media (max-width: 900px) {
-    .inventory-catalog-grid {
-        grid-template-columns: repeat(auto-fit, minmax(190px, 220px));
-    }
+  .inventory-catalog-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 220px));
+  }
 
-    .inventory-detail-grid {
-        grid-template-columns: 1fr;
-    }
+  .inventory-detail-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .inventory-detail-poster-wrap {
-        margin: 0 auto;
-    }
+  .inventory-detail-poster-wrap {
+    margin: 0 auto;
+  }
 
-    .inventory-summary {
-        grid-template-columns: 1fr;
-    }
+  .inventory-summary {
+    grid-template-columns: 1fr;
+  }
 
-    .inventory-copy-edit-row {
-        grid-template-columns: 1fr;
-    }
+  .inventory-copy-edit-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 520px) {
-    .inventory-catalog-grid {
-        grid-template-columns: minmax(0, 220px);
-    }
+  .inventory-catalog-grid {
+    grid-template-columns: minmax(0, 220px);
+  }
 
-    .inventory-card,
-    .inventory-add-card,
-    .inventory-card-img {
-        width: 100%;
-        max-width: 220px;
-    }
+  .inventory-card,
+  .inventory-add-card,
+  .inventory-card-img {
+    width: 100%;
+    max-width: 220px;
+  }
 
-    .inventory-add-copies {
-        grid-template-columns: 1fr;
-    }
+  .inventory-add-copies {
+    grid-template-columns: 1fr;
+  }
 }

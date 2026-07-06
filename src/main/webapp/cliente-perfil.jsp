@@ -152,76 +152,242 @@
         try (PreparedStatement ps=con.prepareStatement("SELECT telefono,id_tipo_telefono FROM UsuarioTelefono WHERE id_usuario=? ORDER BY id_tipo_telefono")) {
             ps.setInt(1,idUsuario); try(ResultSet rs=ps.executeQuery()){ while(rs.next()) telefonos.add(new String[]{rs.getString(1),rs.getString(2)}); }
         }
-        try (PreparedStatement ps=con.prepareStatement("SELECT numero,tipo_tarjeta,fecha_expiracion FROM TarjetaUsuario WHERE id_usuario=? ORDER BY id_tarjeta FETCH FIRST 1 ROW ONLY")) {
-            ps.setInt(1,idUsuario); try(ResultSet rs=ps.executeQuery()){ if(rs.next()){numeroTarjeta=rs.getString(1);tipoTarjeta=rs.getString(2);expiracion=rs.getString(3);} }
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT numero, tipo_tarjeta, fecha_expiracion " +
+                "FROM TarjetaUsuario WHERE id_usuario=? " +
+                "ORDER BY id_tarjeta FETCH FIRST 1 ROW ONLY")) {
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    numeroTarjeta = rs.getString(1);
+                    tipoTarjeta = rs.getString(2);
+                    expiracion = rs.getString(3);
+                }
+            }
         }
-        try (PreparedStatement ps=con.prepareStatement("SELECT id_tipo_email,desc_tipo_email FROM tipo_email ORDER BY id_tipo_email");ResultSet rs=ps.executeQuery()) {
-            while(rs.next()) tiposEmail.add(new String[]{rs.getString(1),rs.getString(2)});
+
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT id_tipo_email, desc_tipo_email FROM tipo_email ORDER BY id_tipo_email");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                tiposEmail.add(new String[]{rs.getString(1), rs.getString(2)});
+            }
         }
-        try (PreparedStatement ps=con.prepareStatement("SELECT id_tipo_telefono,desc_tipo_telefono FROM tipo_telefonos ORDER BY id_tipo_telefono");ResultSet rs=ps.executeQuery()) {
-            while(rs.next()) tiposTelefono.add(new String[]{rs.getString(1),rs.getString(2)});
+
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT id_tipo_telefono, desc_tipo_telefono FROM tipo_telefonos ORDER BY id_tipo_telefono");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                tiposTelefono.add(new String[]{rs.getString(1), rs.getString(2)});
+            }
         }
-    } catch(SQLException e) { error=error==null?e.getMessage():error; }
-    while(emails.size()<2) emails.add(new String[]{"", tiposEmail.size()>emails.size()?tiposEmail.get(emails.size())[0]:""});
-    while(telefonos.size()<2) telefonos.add(new String[]{"", tiposTelefono.size()>telefonos.size()?tiposTelefono.get(telefonos.size())[0]:""});
+    } catch (SQLException e) {
+        error = error == null ? e.getMessage() : error;
+    }
+
+    while (emails.size() < 2) {
+        String tipo = tiposEmail.size() > emails.size() ? tiposEmail.get(emails.size())[0] : "";
+        emails.add(new String[]{"", tipo});
+    }
+    while (telefonos.size() < 2) {
+        String tipo = tiposTelefono.size() > telefonos.size() ? tiposTelefono.get(telefonos.size())[0] : "";
+        telefonos.add(new String[]{"", tipo});
+    }
 %>
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-<title>Mi Perfil | Rewind &amp; Relive</title></head><body>
-<nav class="navbar retro-window"><%@ include file="logo.jsp" %><ul class="nav-links">
-<li><a href="index.jsp">Inicio</a></li><li><a href="catalogo.jsp">Catálogo</a></li><li><a href="cliente-carrito.jsp">Mi carrito</a></li><li><a href="cliente-historial.jsp">Mi historial</a></li>
-</ul></nav>
-<main class="account-page">
-<section class="employee-header"><p class="employee-kicker">Cuenta de cliente #<%= idUsuario %></p><h1>Mi perfil</h1>
-<p>Datos personales asociados a tu cuenta desde <%= h(fechaRegistro) %>.</p></section>
-<% if(request.getParameter("guardado")!=null){%><div class="employee-alert employee-alert-ok">Tu perfil se actualizó correctamente.</div><%}%>
-<% if(error!=null){%><div class="employee-alert employee-alert-error">No fue posible completar la operación: <%= h(error) %></div><%}%>
-<%-- Por defecto solo muestra datos; el formulario aparece al solicitar edición o tras un error. --%>
-<% boolean editando = request.getParameter("editar") != null || error != null;
-   if (!editando) { %>
-<section class="account-grid">
-<article class="retro-window account-card"><div class="window-header"><span>datos_personales.view</span><span>_ [] X</span></div>
-<div class="account-card-body"><h2><%=h(primerNombre)%> <%=h(segundoNombre)%> <%=h(primerApellido)%> <%=h(segundoApellido)%></h2>
-<p><strong>Cédula:</strong> <%=h(cedula)%></p><p><strong>Fecha de registro:</strong> <%=h(fechaRegistro)%></p><p><strong>Rol:</strong> Cliente</p></div></article>
-<article class="retro-window account-card"><div class="window-header"><span>contacto.view</span><span>_ [] X</span></div>
-<div class="account-card-body"><h2>Contacto</h2>
-<% boolean hayEmail=false; for(String[] dato:emails){if(dato[0]!=null&&!dato[0].isBlank()){hayEmail=true;String nombreTipo="";for(String[] tipo:tiposEmail)if(tipo[0].equals(dato[1]))nombreTipo=tipo[1];%>
-<p><strong>Correo <%=h(nombreTipo)%>:</strong> <%=h(dato[0])%></p><%}} if(!hayEmail){%><p>Sin correos registrados.</p><%}%>
-<% boolean hayTelefono=false; for(String[] dato:telefonos){if(dato[0]!=null&&!dato[0].isBlank()){hayTelefono=true;String nombreTipo="";for(String[] tipo:tiposTelefono)if(tipo[0].equals(dato[1]))nombreTipo=tipo[1];%>
-<p><strong>Teléfono <%=h(nombreTipo)%>:</strong> <%=h(dato[0])%></p><%}} if(!hayTelefono){%><p>Sin teléfonos registrados.</p><%}%>
-</div></article>
-<article class="retro-window account-card"><div class="window-header"><span>tarjeta.view</span><span>_ [] X</span></div>
-<div class="account-card-body"><h2>Tarjeta</h2><p><strong>Número:</strong> <%=h(tarjetaOculta(numeroTarjeta))%></p>
-<p><strong>Tipo:</strong> <%=h(tipoTarjeta)%></p><p><strong>Expiración:</strong> <%=h(expiracion)%></p></div></article>
-<article class="retro-window account-card"><div class="window-header"><span>acciones_perfil.exe</span><span>_ [] X</span></div>
-<div class="account-card-body account-actions-list"><a class="retro-button" href="cliente-perfil.jsp?editar=1">EDITAR INFORMACIÓN</a>
-<a class="retro-button" href="cliente-carrito.jsp">VER CARRITO</a><a class="retro-button" href="cliente-historial.jsp">VER HISTORIAL</a></div></article>
-</section>
-<% } else { %>
-<section class="retro-window employee-panel employee-form-panel"><div class="window-header"><span>perfil_usuario.edit</span><span>_ [] X</span></div>
-<form class="employee-form employee-movie-form" method="post"><div class="employee-form-grid">
-<label>Cédula *<input class="retro-search" name="cedula" required value="<%=h(cedula)%>"></label>
-<label>Primer nombre *<input class="retro-search" name="primerNombre" required value="<%=h(primerNombre)%>"></label>
-<label>Segundo nombre<input class="retro-search" name="segundoNombre" value="<%=h(segundoNombre)%>"></label>
-<label>Primer apellido *<input class="retro-search" name="primerApellido" required value="<%=h(primerApellido)%>"></label>
-<label>Segundo apellido<input class="retro-search" name="segundoApellido" value="<%=h(segundoApellido)%>"></label>
-<label>Nueva contraseña<input class="retro-search" type="password" name="nuevaPassword" minlength="4" autocomplete="new-password" placeholder="Déjala vacía para conservarla"></label>
-<label>Confirmar contraseña<input class="retro-search" type="password" name="confirmarPassword" minlength="4" autocomplete="new-password"></label>
-<% for(int i=0;i<2;i++){String[] dato=emails.get(i);%>
-<label>Correo <%=i+1%><input class="retro-search" type="email" name="email<%=i+1%>" value="<%=h(dato[0])%>"></label>
-<label>Tipo de correo <%=i+1%><select class="retro-search" name="tipoEmail<%=i+1%>"><%for(String[] tipo:tiposEmail){%><option value="<%=tipo[0]%>" <%=tipo[0].equals(dato[1])?"selected":""%>><%=h(tipo[1])%></option><%}%></select></label>
-<%}%>
-<% for(int i=0;i<2;i++){String[] dato=telefonos.get(i);%>
-<label>Teléfono <%=i+1%><input class="retro-search" name="telefono<%=i+1%>" value="<%=h(dato[0])%>"></label>
-<label>Tipo de teléfono <%=i+1%><select class="retro-search" name="tipoTelefono<%=i+1%>"><%for(String[] tipo:tiposTelefono){%><option value="<%=tipo[0]%>" <%=tipo[0].equals(dato[1])?"selected":""%>><%=h(tipo[1])%></option><%}%></select></label>
-<%}%>
-<div class="employee-full-field"><h2>Tarjeta</h2><p><strong>Número actual:</strong> <%=h(tarjetaOculta(numeroTarjeta))%></p></div>
-<label>Nueva tarjeta<input class="retro-search" name="numeroTarjeta" inputmode="numeric" placeholder="Vacío para conservar la actual"></label>
-<label>Tipo<select class="retro-search" name="tipoTarjeta"><option value="CREDITO" <%="CREDITO".equalsIgnoreCase(tipoTarjeta)?"selected":""%>>Crédito</option><option value="DEBITO" <%="DEBITO".equalsIgnoreCase(tipoTarjeta)?"selected":""%>>Débito</option></select></label>
-<label>Expiración<input class="retro-search" name="expiracion" pattern="(0[1-9]|1[0-2])/[0-9]{2}" placeholder="MM/AA" value="<%=h(expiracion)%>"></label>
-</div><div class="employee-form-actions"><button class="retro-button" type="submit">GUARDAR PERFIL</button><a class="retro-button employee-cancel" href="cliente-perfil.jsp">CANCELAR</a></div></form>
-</section>
-<% } %>
-</main><%@ include file="footer.jsp" %><script src="${pageContext.request.contextPath}/js/script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <title>Mi Perfil | Rewind &amp; Relive</title>
+</head>
+
+<body>
+    <nav class="navbar retro-window">
+        <%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="index.jsp">Inicio</a></li>
+            <li><a href="catalogo.jsp">Catálogo</a></li>
+            <li><a href="cliente-carrito.jsp">Mi carrito</a></li>
+            <li><a href="cliente-historial.jsp">Mi historial</a></li>
+        </ul>
+    </nav>
+
+    <main class="account-page">
+        <section class="employee-header">
+            <p class="employee-kicker">Cuenta de cliente #<%= idUsuario %></p>
+            <h1>Mi perfil</h1>
+            <p>Datos personales asociados a tu cuenta desde <%= h(fechaRegistro) %>.</p>
+        </section>
+
+        <% if (request.getParameter("guardado") != null) { %>
+        <div class="employee-alert employee-alert-ok">Tu perfil se actualizó correctamente.</div>
+        <% } %>
+
+        <% if (error != null) { %>
+        <div class="employee-alert employee-alert-error">
+            No fue posible completar la operación: <%= h(error) %>
+        </div>
+        <% } %>
+
+        <%-- Por defecto solo muestra datos; el formulario aparece al solicitar edición o tras un error. --%>
+        <%
+        boolean editando = request.getParameter("editar") != null || error != null;
+        if (!editando) {
+    %>
+        <section class="account-grid">
+            <article class="retro-window account-card">
+                <div class="window-header"><span>datos_personales.view</span><span>_ [] X</span></div>
+                <div class="account-card-body">
+                    <h2><%= h(primerNombre) %> <%= h(segundoNombre) %> <%= h(primerApellido) %> <%= h(segundoApellido) %></h2>
+                    <p><strong>Cédula:</strong> <%= h(cedula) %></p>
+                    <p><strong>Fecha de registro:</strong> <%= h(fechaRegistro) %></p>
+                    <p><strong>Rol:</strong> Cliente</p>
+                </div>
+            </article>
+
+            <article class="retro-window account-card">
+                <div class="window-header"><span>contacto.view</span><span>_ [] X</span></div>
+                <div class="account-card-body">
+                    <h2>Contacto</h2>
+                    <%
+                    boolean hayEmail = false;
+                    for (String[] dato : emails) {
+                        if (dato[0] != null && !dato[0].isBlank()) {
+                            hayEmail = true;
+                            String nombreTipo = "";
+                            for (String[] tipo : tiposEmail) {
+                                if (tipo[0].equals(dato[1])) nombreTipo = tipo[1];
+                            }
+                %>
+                    <p><strong>Correo <%= h(nombreTipo) %>:</strong> <%= h(dato[0]) %></p>
+                    <%      }
+                    }
+                    if (!hayEmail) { %><p>Sin correos registrados.</p><% } %>
+
+                    <%
+                    boolean hayTelefono = false;
+                    for (String[] dato : telefonos) {
+                        if (dato[0] != null && !dato[0].isBlank()) {
+                            hayTelefono = true;
+                            String nombreTipo = "";
+                            for (String[] tipo : tiposTelefono) {
+                                if (tipo[0].equals(dato[1])) nombreTipo = tipo[1];
+                            }
+                %>
+                    <p><strong>Teléfono <%= h(nombreTipo) %>:</strong> <%= h(dato[0]) %></p>
+                    <%      }
+                    }
+                    if (!hayTelefono) { %><p>Sin teléfonos registrados.</p><% } %>
+                </div>
+            </article>
+
+            <article class="retro-window account-card">
+                <div class="window-header"><span>tarjeta.view</span><span>_ [] X</span></div>
+                <div class="account-card-body">
+                    <h2>Tarjeta</h2>
+                    <p><strong>Número:</strong> <%= h(tarjetaOculta(numeroTarjeta)) %></p>
+                    <p><strong>Tipo:</strong> <%= h(tipoTarjeta) %></p>
+                    <p><strong>Expiración:</strong> <%= h(expiracion) %></p>
+                </div>
+            </article>
+
+            <article class="retro-window account-card">
+                <div class="window-header"><span>acciones_perfil.exe</span><span>_ [] X</span></div>
+                <div class="account-card-body account-actions-list">
+                    <a class="retro-button" href="cliente-perfil.jsp?editar=1">EDITAR INFORMACIÓN</a>
+                    <a class="retro-button" href="cliente-carrito.jsp">VER CARRITO</a>
+                    <a class="retro-button" href="cliente-historial.jsp">VER HISTORIAL</a>
+                </div>
+            </article>
+        </section>
+        <% } else { %>
+        <section class="retro-window employee-panel employee-form-panel">
+            <div class="window-header"><span>perfil_usuario.edit</span><span>_ [] X</span></div>
+            <form class="employee-form employee-movie-form" method="post">
+                <div class="employee-form-grid">
+                    <label>Cédula *
+                        <input class="retro-search" name="cedula" required value="<%= h(cedula) %>">
+                    </label>
+                    <label>Primer nombre *
+                        <input class="retro-search" name="primerNombre" required value="<%= h(primerNombre) %>">
+                    </label>
+                    <label>Segundo nombre
+                        <input class="retro-search" name="segundoNombre" value="<%= h(segundoNombre) %>">
+                    </label>
+                    <label>Primer apellido *
+                        <input class="retro-search" name="primerApellido" required value="<%= h(primerApellido) %>">
+                    </label>
+                    <label>Segundo apellido
+                        <input class="retro-search" name="segundoApellido" value="<%= h(segundoApellido) %>">
+                    </label>
+                    <label>Nueva contraseña
+                        <input class="retro-search" type="password" name="nuevaPassword" minlength="4" autocomplete="new-password" placeholder="Déjala vacía para conservarla">
+                    </label>
+                    <label>Confirmar contraseña
+                        <input class="retro-search" type="password" name="confirmarPassword" minlength="4" autocomplete="new-password">
+                    </label>
+
+                    <% for (int i = 0; i < 2; i++) {
+                    String[] dato = emails.get(i); %>
+                    <label>Correo <%= i + 1 %>
+                        <input class="retro-search" type="email" name="email<%= i + 1 %>" value="<%= h(dato[0]) %>">
+                    </label>
+                    <label>Tipo de correo <%= i + 1 %>
+                        <select class="retro-search" name="tipoEmail<%= i + 1 %>">
+                            <% for (String[] tipo : tiposEmail) { %>
+                            <option value="<%= tipo[0] %>" <%= tipo[0].equals(dato[1]) ? "selected" : "" %>><%= h(tipo[1]) %></option>
+                            <% } %>
+                        </select>
+                    </label>
+                    <% } %>
+
+                    <% for (int i = 0; i < 2; i++) {
+                    String[] dato = telefonos.get(i); %>
+                    <label>Teléfono <%= i + 1 %>
+                        <input class="retro-search" name="telefono<%= i + 1 %>" value="<%= h(dato[0]) %>">
+                    </label>
+                    <label>Tipo de teléfono <%= i + 1 %>
+                        <select class="retro-search" name="tipoTelefono<%= i + 1 %>">
+                            <% for (String[] tipo : tiposTelefono) { %>
+                            <option value="<%= tipo[0] %>" <%= tipo[0].equals(dato[1]) ? "selected" : "" %>><%= h(tipo[1]) %></option>
+                            <% } %>
+                        </select>
+                    </label>
+                    <% } %>
+
+                    <div class="employee-full-field">
+                        <h2>Tarjeta</h2>
+                        <p><strong>Número actual:</strong> <%= h(tarjetaOculta(numeroTarjeta)) %></p>
+                    </div>
+                    <label>Nueva tarjeta
+                        <input class="retro-search" name="numeroTarjeta" inputmode="numeric" placeholder="Vacío para conservar la actual">
+                    </label>
+                    <label>Tipo
+                        <select class="retro-search" name="tipoTarjeta">
+                            <option value="CREDITO" <%= "CREDITO".equalsIgnoreCase(tipoTarjeta) ? "selected" : "" %>>Crédito</option>
+                            <option value="DEBITO" <%= "DEBITO".equalsIgnoreCase(tipoTarjeta) ? "selected" : "" %>>Débito</option>
+                        </select>
+                    </label>
+                    <label>Expiración
+                        <input class="retro-search" name="expiracion" pattern="(0[1-9]|1[0-2])/[0-9]{2}" placeholder="MM/AA" value="<%= h(expiracion) %>">
+                    </label>
+                </div>
+
+                <div class="employee-form-actions">
+                    <button class="retro-button" type="submit">GUARDAR PERFIL</button>
+                    <a class="retro-button employee-cancel" href="cliente-perfil.jsp">CANCELAR</a>
+                </div>
+            </form>
+        </section>
+        <% } %>
+    </main>
+
+    <%@ include file="footer.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/script.js"></script>
+</body>
+
+</html>
