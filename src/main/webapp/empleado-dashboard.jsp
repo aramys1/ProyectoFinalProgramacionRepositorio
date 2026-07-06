@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%-- Dashboard: COUNT se ejecuta en Oracle para obtener activos, vencimientos y retrasos sin transferir filas completas. --%>
 <%!
     private int contar(Connection con, String sql) throws SQLException {
         try (PreparedStatement ps = con.prepareStatement(sql);
@@ -40,13 +41,14 @@
 </head>
 <body>
 <nav class="navbar retro-window employee-nav">
-    <div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
+    <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
         <li><a href="empleado-devolucion.jsp">Devolución</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
     </ul>
 </nav>
 

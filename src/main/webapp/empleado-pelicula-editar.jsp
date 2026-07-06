@@ -1,6 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,java.util.*,com.conexion.ConexionDB" %>
+<%--
+    La edición afecta varias tablas relacionadas. Primero actualiza Peliculas, después reconstruye sus
+    relaciones de género y finalmente procesa Vhs. Una copia con registros en Alquiler no se elimina,
+    porque esa clave foránea es necesaria para conservar el historial.
+--%>
 <%!
+    // Utilidades usadas para validar IDs, escapar contenido y resolver pósteres.
     private String h(String value) {
         if (value == null) return "";
         return value.replace("&", "&amp;").replace("<", "&lt;")
@@ -22,6 +28,7 @@
     int idPelicula = entero(request.getParameter("id"), -1);
     String error = null;
 
+    // Guarda película, géneros y copias dentro de la misma transacción.
     if ("POST".equalsIgnoreCase(request.getMethod()) && idPelicula > 0) {
         try (Connection con = ConexionDB.obtenerConexion()) {
             con.setAutoCommit(false);
@@ -70,8 +77,10 @@
                     }
                 }
 
+                // Solo procesa copias que realmente pertenecen a la película seleccionada.
                 try (PreparedStatement buscarCopias = con.prepareStatement("SELECT id_vhs FROM Vhs WHERE id_pelicula=?");
                      PreparedStatement actualizar = con.prepareStatement("UPDATE Vhs SET estado_fisico_vhs=? WHERE id_vhs=? AND id_pelicula=?");
+                     // NOT EXISTS protege adicionalmente en Oracle las copias que ya tienen historial.
                      PreparedStatement eliminar = con.prepareStatement(
                              "DELETE FROM Vhs v WHERE v.id_vhs=? AND v.id_pelicula=? " +
                                      "AND NOT EXISTS (SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs)")) {
@@ -96,6 +105,7 @@
                     }
                 }
 
+                // Agrega nuevas unidades físicas sin alterar el historial de las existentes.
                 int nuevasCopias = entero(request.getParameter("nuevasCopias"), 0);
                 if (nuevasCopias < 0 || nuevasCopias > 100) throw new SQLException("La cantidad de copias nuevas debe estar entre 0 y 100.");
                 String estadoNuevo = request.getParameter("estadoNuevo");
@@ -135,13 +145,14 @@
 </head>
 <body>
 <nav class="navbar retro-window employee-nav">
-    <div class="logo"><a href="index.jsp" class="logo-link">ADMIN PANEL</a></div>
+    <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
     <ul class="nav-links">
         <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
         <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
         <li><a href="empleado-devolucion.jsp">Devolución</a></li>
         <li><a href="empleado-inventario.jsp">Inventario</a></li>
         <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+        <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
     </ul>
 </nav>
 
@@ -172,6 +183,7 @@
     </section>
 <%
                 } else {
+                    // Conjunto usado para marcar los géneros actuales en el formulario.
                     Set<Integer> generosSeleccionados = new HashSet<>();
                     try (PreparedStatement ps = con.prepareStatement("SELECT id_genero FROM PeliculasGeneros WHERE id_pelicula=?")) {
                         ps.setInt(1, idPelicula);
@@ -184,8 +196,8 @@
         <p>Los cambios realizados aquí se guardan directamente en la base de datos.</p>
     </section>
 
-    <% if (request.getParameter("guardado") != null) { %>
-    <p class="inventory-success" role="status">Los cambios se guardaron correctamente.</p>
+    <% if (request.getParameter("guardado") != null || request.getParameter("creada") != null) { %>
+    <p class="inventory-success" role="status"><%= request.getParameter("creada") != null ? "La película y sus copias se crearon correctamente." : "Los cambios se guardaron correctamente." %></p>
     <% } %>
     <% if (error != null) { %>
     <p class="inventory-error" role="alert">No se guardaron los cambios: <%= h(error) %></p>

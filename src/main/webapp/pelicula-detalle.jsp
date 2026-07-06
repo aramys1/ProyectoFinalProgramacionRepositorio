@@ -1,133 +1,66 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%
-    String id = request.getParameter("id");
-    String titulo = "Terminator 2";
-    String poster = "recursos/posters/terminator2.jpg";
-    String genero = "Accion / Ciencia Ficcion";
-    String anio = "1991";
-    String precio = "2.99";
-    String sinopsis = "Un protector cyborg viaja al pasado para defender a John Connor de una nueva amenaza liquida enviada para cambiar el futuro.";
-    String descripcion = "La pelicula combina persecuciones, efectos practicos y una historia de familia encontrada. Esta vista queda preparada para recibir la informacion real de Peliculas, Vhs y estados cuando se conecte el modulo.";
-
-    if ("2".equals(id)) {
-        titulo = "Viernes 13 Parte VI";
-        poster = "recursos/posters/viernes13_6ta_poster.jpeg";
-        genero = "Terror";
-        anio = "1986";
-        precio = "1.99";
-        sinopsis = "Jason vuelve a Crystal Lake en una entrega con terror clasico, humor oscuro y ambiente de videoclub.";
-        descripcion = "Una plantilla de sinopsis pensada para mostrar reparto, clasificacion, disponibilidad y estados de copias sin depender todavia de una consulta adicional.";
-    } else if ("3".equals(id)) {
-        titulo = "Tiburon 4";
-        poster = "recursos/posters/tiburon4.jpeg";
-        genero = "Suspenso / Aventura";
-        anio = "1987";
-        precio = "1.49";
-        sinopsis = "La familia Brody vuelve a enfrentarse al terror marino en una historia de persecucion y supervivencia.";
-        descripcion = "La ficha sirve como puente entre el catalogo y el flujo de alquiler. Luego podra llenarse desde la base de datos con el id de pelicula.";
+<%@ page import="java.sql.*,com.conexion.ConexionDB" %>
+<%-- LEFT JOIN conserva películas sin copias; SUM cuenta Vhs disponibles que no tienen alquiler abierto. --%>
+<%!
+    private String h(String valor) {
+        if (valor == null) return "";
+        return valor.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
     }
 %>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-    <title><%= titulo %> | Rewind & Relive</title>
-</head>
-<body>
-
-<nav class="navbar retro-window">
-    <%@ include file="logo.jsp" %>
-    <ul class="nav-links">
-        <li><a href="catalogo.jsp">Catalogo</a></li>
-        <li><a href="novedades.jsp">Novedades</a></li>
-        <li><a href="contactanos.jsp">Contactanos</a></li>
-        <li><a href="${pageContext.request.contextPath}/login.jsp" class="retro-button">Iniciar Sesion</a></li>
-    </ul>
-</nav>
-
+<%
+    int idPelicula = 0;
+    try { idPelicula = Integer.parseInt(request.getParameter("id")); } catch (Exception ignored) { }
+    String titulo=null, imagen=null, anio=null, sinopsis=null;
+    java.math.BigDecimal precio=null;
+    int disponibles=0;
+    String sql = "SELECT p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,TO_CHAR(p.fecha_estreno,'YYYY') anio," +
+            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS " +
+            "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL) THEN 1 ELSE 0 END) disponibles " +
+            "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula=p.id_pelicula WHERE p.id_pelicula=? " +
+            "GROUP BY p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,p.fecha_estreno";
+    try (Connection con=ConexionDB.obtenerConexion(); PreparedStatement ps=con.prepareStatement(sql)) {
+        ps.setInt(1,idPelicula);
+        try (ResultSet rs=ps.executeQuery()) { if (rs.next()) {
+            titulo=rs.getString("titulo"); imagen=rs.getString("imagen_url"); sinopsis=rs.getString("sinopsis");
+            precio=rs.getBigDecimal("precio_unidad"); anio=rs.getString("anio"); disponibles=rs.getInt("disponibles");
+        }}
+    } catch (SQLException ignored) { }
+    boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
+            ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
+             "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))));
+%>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+<title><%= titulo == null ? "Pelicula" : h(titulo) %> | Rewind &amp; Relive</title></head><body>
+<nav class="navbar retro-window"><%@ include file="logo.jsp" %><ul class="nav-links">
+    <li><a href="catalogo.jsp">Catalogo</a></li><li><a href="novedades.jsp">Novedades</a></li><li><a href="contactanos.jsp">Contactanos</a></li>
+    <% if (clienteAutenticado) { %><li><a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a></li>
+    <% } else if (session.getAttribute("idUsuario") == null) { %><li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li><% } %>
+</ul></nav>
 <main class="movie-detail-page">
+<% if (titulo == null) { %>
+    <div class="employee-alert employee-alert-error">No se encontro la pelicula solicitada.</div>
+<% } else { %>
     <section class="movie-detail-hero">
-        <article class="retro-window movie-poster-window">
-            <div class="window-header"><span><%= titulo %>.vhs</span><span>_ [] X</span></div>
-            <img src="<%= poster %>" alt="Poster de <%= titulo %>" class="movie-detail-poster">
+        <article class="retro-window movie-poster-window"><div class="window-header"><span><%= h(titulo) %>.vhs</span><span>_ [] X</span></div>
+            <% if (imagen != null && !imagen.isBlank()) { %><img src="recursos/<%= h(imagen) %>" alt="Poster de <%= h(titulo) %>" class="movie-detail-poster">
+            <% } else { %><div class="placeholder-img movie-detail-poster"></div><% } %>
         </article>
-
-        <article class="movie-detail-copy">
-            <p class="employee-kicker">Ficha de pelicula</p>
-            <h1><%= titulo %></h1>
-            <p class="movie-detail-meta"><%= anio %> | <%= genero %> | $<%= precio %> / dia</p>
-            <p class="movie-synopsis"><%= sinopsis %></p>
-            <p><%= descripcion %></p>
+        <article class="movie-detail-copy"><p class="employee-kicker">Ficha de pelicula</p><h1><%= h(titulo) %></h1>
+            <p class="movie-detail-meta"><%= h(anio) %> | $<%= precio %> / dia</p><p class="movie-synopsis"><%= h(sinopsis) %></p>
+            <p><strong>Copias disponibles:</strong> <%= disponibles %></p>
             <div class="employee-form-actions">
-                <a class="retro-button btn-rent" href="cliente-carrito.jsp">ALQUILAR PELICULA</a>
+                <% if (clienteAutenticado && disponibles > 0) { %>
+                <form method="post" action="cliente-carrito.jsp"><input type="hidden" name="accion" value="agregar"><input type="hidden" name="id_pelicula" value="<%= idPelicula %>"><button class="retro-button btn-rent" type="submit">AGREGAR AL CARRITO</button></form>
+                <% } else if (session.getAttribute("idUsuario") == null) { %><a class="retro-button btn-rent" href="login.jsp">INICIAR SESION PARA ALQUILAR</a>
+                <% } else if (clienteAutenticado) { %><button class="retro-button" type="button" disabled>SIN COPIAS DISPONIBLES</button>
+                <% } else { %><button class="retro-button" type="button" disabled>DISPONIBLE SOLO PARA CLIENTES</button><% } %>
                 <a class="retro-button employee-cancel" href="catalogo.jsp">VOLVER AL CATALOGO</a>
             </div>
         </article>
     </section>
-
-    <section class="retro-window employee-panel synopsis-employee-panel">
-        <div class="window-header"><span>Panel_Empleado_Inventario.view</span><span>_ [] X</span></div>
-        <div class="synopsis-employee-grid">
-            <div>
-                <h2>Vista editable del empleado</h2>
-                <form class="employee-form employee-movie-form" action="#" method="post">
-                    <label>Titulo
-                        <input class="retro-search" type="text" value="<%= titulo %>">
-                    </label>
-                    <label>Descripcion interna
-                        <textarea class="retro-search employee-textarea"><%= descripcion %></textarea>
-                    </label>
-                    <button type="button" class="retro-button">GUARDAR BORRADOR</button>
-                </form>
-            </div>
-
-            <div>
-                <h2>Copias y estados</h2>
-                <div class="copy-status-list">
-                    <div class="copy-status-row" data-copy-status>
-                        <span>VHS #088</span>
-                        <span class="status-badge status-ok">DISPONIBLE</span>
-                        <select class="retro-search">
-                            <option>DISPONIBLE</option>
-                            <option>EN USO</option>
-                            <option>DANADA</option>
-                        </select>
-                    </div>
-                    <div class="copy-status-row" data-copy-status>
-                        <span>VHS #089</span>
-                        <span class="status-badge status-warning">EN USO</span>
-                        <select class="retro-search">
-                            <option>EN USO</option>
-                            <option>DISPONIBLE</option>
-                            <option>DANADA</option>
-                        </select>
-                    </div>
-                    <div class="copy-status-row" data-copy-status>
-                        <span>VHS #090</span>
-                        <span class="status-badge status-danger">DANADA</span>
-                        <select class="retro-search">
-                            <option>DANADA</option>
-                            <option>DISPONIBLE</option>
-                            <option>EN USO</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="inventory-summary compact-summary">
-                    <article><span>6</span><strong>Disponibles</strong></article>
-                    <article><span>3</span><strong>En uso</strong></article>
-                    <article><span>1</span><strong>Danadas</strong></article>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-
-<%@ include file="footer.jsp" %>
-
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
-</body>
-</html>
+<% } %>
+</main><%@ include file="footer.jsp" %><script src="${pageContext.request.contextPath}/js/script.js"></script></body></html>

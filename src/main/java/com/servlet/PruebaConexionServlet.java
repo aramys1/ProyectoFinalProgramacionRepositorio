@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/probar-conexion")
 public class PruebaConexionServlet extends HttpServlet {
 
+    /** Página de diagnóstico para comprobar que el despliegue alcanza Oracle Cloud. */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

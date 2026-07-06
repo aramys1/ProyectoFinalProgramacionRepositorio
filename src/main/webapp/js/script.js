@@ -1,12 +1,66 @@
+// Punto de entrada: activa únicamente los componentes presentes en la página actual.
 document.addEventListener('DOMContentLoaded', function() {
     initAuthForms();
     initEmployeeNav();
     initPosterFileName();
     initInventoryTemplate();
     initSynopsisInventoryTemplate();
-    initEmployeeInventoryFilter();
+    initHeroPosterSlider();
+    initCartRentalTotal();
 });
 
+// Recalcula en vivo el precio del carrito según los días escogidos.
+function initCartRentalTotal() {
+    const daysInput = document.getElementById('rentalDays');
+    const totalBox = document.querySelector('[data-daily-total]');
+    const daysLabel = document.getElementById('rentalDaysLabel');
+    const rentalTotal = document.getElementById('rentalTotal');
+    if (!daysInput || !totalBox || !daysLabel || !rentalTotal) return;
+
+    function updateTotal() {
+        const days = Math.min(30, Math.max(1, parseInt(daysInput.value, 10) || 1));
+        const daily = parseFloat(totalBox.dataset.dailyTotal) || 0;
+        daysLabel.textContent = String(days);
+        rentalTotal.textContent = (daily * days).toFixed(2);
+    }
+
+    daysInput.addEventListener('input', updateTotal);
+    updateTotal();
+}
+
+// Alterna aleatoriamente los pósteres de la portada sin repetir el actual.
+function initHeroPosterSlider() {
+    const poster = document.querySelector('[data-hero-poster-slider]');
+    if (!poster) return;
+
+    const posters = (poster.dataset.posters || '').split(',').map(function(name) {
+        return name.trim();
+    }).filter(Boolean);
+    if (posters.length < 2) return;
+
+    const base = poster.dataset.posterBase || '';
+    const nameLabel = document.querySelector('[data-hero-poster-name]');
+    let current = posters.indexOf(poster.src.split('/').pop());
+
+    function showRandomPoster() {
+        let next;
+        do {
+            next = Math.floor(Math.random() * posters.length);
+        } while (next === current && posters.length > 1);
+
+        current = next;
+        poster.classList.add('is-changing');
+        window.setTimeout(function() {
+            poster.src = base + posters[current];
+            if (nameLabel) nameLabel.textContent = posters[current];
+            poster.classList.remove('is-changing');
+        }, 250);
+    }
+
+    window.setInterval(showRandomPoster, 1500);
+}
+
+// Validaciones básicas del lado del navegador para login y registro.
 function initAuthForms() {
     const loginForm = document.getElementById('loginForm');
     const registroForm = document.getElementById('registroForm');
@@ -47,6 +101,7 @@ function initAuthForms() {
     }
 }
 
+// Comprueba que la contraseña y su confirmación coincidan.
 function validarContrasenas() {
     const pass = document.getElementById('password');
     const confirmPass = document.getElementById('confirmPassword');
@@ -61,6 +116,7 @@ function validarContrasenas() {
     return true;
 }
 
+// Marca la sección activa y crea el menú adaptable de las vistas de empleado.
 function initEmployeeNav() {
     const nav = document.querySelector('.employee-nav');
     if (!nav) return;
@@ -97,6 +153,7 @@ function initEmployeeNav() {
     });
 }
 
+// Copia el nombre del archivo seleccionado al campo visible del formulario.
 function initPosterFileName() {
     const posterFile = document.getElementById('posterFile');
     const posterNombre = document.getElementById('posterNombre');
@@ -109,6 +166,7 @@ function initPosterFileName() {
     }
 }
 
+// Controla la apertura de formularios y paneles del inventario.
 function initInventoryTemplate() {
     const inventory = document.querySelector('[data-inventory-template]');
     if (!inventory) return;
@@ -187,6 +245,7 @@ function initInventoryTemplate() {
 
 }
 
+// Sincroniza visualmente la insignia de estado de cada copia VHS.
 function initSynopsisInventoryTemplate() {
     const statusRows = document.querySelectorAll('[data-copy-status]');
     if (!statusRows.length) return;
@@ -203,6 +262,7 @@ function initSynopsisInventoryTemplate() {
     });
 }
 
+// Filtra filas de usuario en las tablas antiguas que usan búsqueda en cliente.
 function buscarUsuario() {
     const buscarInput = document.getElementById('buscarInput');
     const filas = document.querySelectorAll('#tbodyUsuarios tr');
@@ -232,6 +292,7 @@ function limpiarBusqueda() {
     }
 }
 
+// Actualiza visualmente el rol; el guardado real debe validarse también en servidor.
 function cambiarRol(btn, nuevoRol) {
     const fila = btn.closest('tr');
     const badge = fila.querySelector('.role-badge');
@@ -254,6 +315,7 @@ function cambiarRol(btn, nuevoRol) {
     }
 }
 
+// Presenta una notificación temporal de éxito o error.
 function mostrarToast(mensaje, tipo) {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -265,6 +327,7 @@ function mostrarToast(mensaje, tipo) {
     }, 3000);
 }
 
+// Filtra las opciones de película utilizadas por formularios de alquiler.
 function filtrarPeliculas() {
     const buscar = (document.getElementById('buscarPelicula')?.value || '').toLowerCase();
     const select = document.getElementById('selectVhs');
@@ -280,6 +343,7 @@ function filtrarPeliculas() {
     if (total) total.textContent = '0.00';
 }
 
+// Calcula el importe estimado usando precio por día y duración.
 function calcularTotal() {
     const select = document.getElementById('selectVhs');
     const diasInput = document.getElementById('dias');
@@ -292,6 +356,7 @@ function calcularTotal() {
     total.textContent = (precio * dias).toFixed(2);
 }
 
+// Utilidades genéricas para abrir y cerrar ventanas modales.
 function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.style.display = 'block';

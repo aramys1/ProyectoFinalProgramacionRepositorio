@@ -104,6 +104,11 @@
 }
 </style>
 
+<% if (Boolean.TRUE.equals(request.getAttribute("adminPanelLogo"))) { %>
+<div class="logo-container-wrapper">
+    <a href="${pageContext.request.contextPath}/index.jsp" class="logo-link">ADMIN PANEL</a>
+</div>
+<% } else { %>
 <!-- Estructura HTML unificada -->
 <div class="logo-container-wrapper">
     <!-- Bloque del Logo y Nombre de la Empresa -->
@@ -128,3 +133,4 @@
         </a>
     </div>
 </div>
+<% } %>

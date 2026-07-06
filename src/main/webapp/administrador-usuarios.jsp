@@ -1,22 +1,29 @@
 ﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
+<%-- Consulta y modifica roles de Usuario; PreparedStatement mantiene separados SQL y valores recibidos. --%>
 <%
     String mensaje = "";
+    // POST cambia el rol de una cuenta existente.
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String cedula = request.getParameter("cedula");
         String nuevoRol = request.getParameter("nuevoRol");
         if (cedula != null && nuevoRol != null) {
+            // ROL != '3' impide modificar al administrador principal desde esta pantalla.
             String sqlUpd = "UPDATE USUARIO SET ROL = ? WHERE CED_USUARIO = ? AND ROL != '3'";
             try (Connection conn = ConexionDB.obtenerConexion();
                  PreparedStatement ps = conn.prepareStatement(sqlUpd)) {
+                // Primer ? = rol nuevo; segundo ? = cédula que identifica la fila.
                 ps.setString(1, nuevoRol);
                 ps.setString(2, cedula);
+                // Para UPDATE, el entero devuelto representa cuántas cuentas cambiaron.
                 ps.executeUpdate();
                 mensaje = "OperaciÃ³n realizada con Ã©xito.";
             } catch (Exception e) { mensaje = "Error: " + e.getMessage(); }
         }
     }
 
+    // Esta sentencia alimenta la tabla HTML. Sin texto muestra empleados; con texto busca cédulas.
+    // IMPORTANTE: es código heredado que concatena busqueda; debe migrarse a PreparedStatement con LIKE ?.
     String busqueda = request.getParameter("buscar");
     String sqlSelect = (busqueda != null && !busqueda.isEmpty())
             ? "SELECT * FROM USUARIO WHERE CED_USUARIO LIKE '%" + busqueda + "%' AND ROL != '3'"
@@ -66,9 +73,11 @@
                 </thead>
                 <tbody>
                 <%
+                    // Statement ejecuta sqlSelect y ResultSet expone una fila de Usuario en cada iteración.
                     try (Connection conn = ConexionDB.obtenerConexion();
                          Statement st = conn.createStatement();
                          ResultSet rs = st.executeQuery(sqlSelect)) {
+                        // Cada rs.next() mueve el cursor a la siguiente cuenta encontrada.
                         while (rs.next()) {
                             String id = rs.getString("ID_USUARIO");
                             String cedula = rs.getString("CED_USUARIO");
