@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
 <%-- Consulta Usuario y usa subconsultas por id_usuario para resumir alquileres y cargar sus datos relacionados. --%>
 <%!
+    // Escapa caracteres especiales antes de mostrar datos de la base de datos en el HTML.
     private String h(String valor) {
         if (valor == null) return "";
         return valor.replace("&", "&amp;").replace("<", "&lt;")
@@ -9,9 +10,12 @@
     }
 %>
 <%
+    // Lee el filtro de búsqueda y lo normaliza para compararlo sin distinguir mayúsculas.
     request.setCharacterEncoding("UTF-8");
     String buscar=request.getParameter("buscar");
     String filtro=buscar==null||buscar.isBlank()?null:buscar.trim().toLowerCase();
+
+    // El parámetro "id" indica qué cliente debe mostrarse en la sección de detalle.
     int idDetalle=0;
     try{idDetalle=Integer.parseInt(request.getParameter("id"));}catch(Exception ignored){}
 %>
@@ -66,41 +70,105 @@
                     </thead>
                     <tbody>
                         <%
-    String sqlUsuarios="SELECT u.id_usuario,u.ced_usuario,u.primer_nombre_usuario || ' ' || u.primer_apellido_usuario nombre,u.rol,"+
-            "(SELECT COUNT(*) FROM Alquiler a WHERE a.id_usuario_cliente=u.id_usuario AND a.fecha_devolucion IS NULL) activos,"+
-            "(SELECT COUNT(*) FROM Alquiler a WHERE a.id_usuario_cliente=u.id_usuario) total,"+
-            "(SELECT LISTAGG(p.titulo, ', ') WITHIN GROUP (ORDER BY p.titulo) FROM Alquiler a JOIN Vhs v ON v.id_vhs=a.id_vhs "+
-            "JOIN Peliculas p ON p.id_pelicula=v.id_pelicula WHERE a.id_usuario_cliente=u.id_usuario AND a.fecha_devolucion IS NULL) actuales "+
-            "FROM Usuario u WHERE (TO_CHAR(u.rol)='1' OR UPPER(TO_CHAR(u.rol))='CLIENTE') "+
-            "AND (? IS NULL OR LOWER(u.primer_nombre_usuario || ' ' || u.primer_apellido_usuario) LIKE ? OR LOWER(u.ced_usuario) LIKE ?) ORDER BY nombre";
-    try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlUsuarios)){
-        String contiene=filtro==null?null:"%"+filtro+"%";ps.setString(1,filtro);ps.setString(2,contiene);ps.setString(3,contiene);
-        try(ResultSet rs=ps.executeQuery()){boolean hay=false;while(rs.next()){hay=true;String actuales=rs.getString("actuales");
-%><tr>
+                            // Obtiene los clientes junto con la cantidad y los títulos de sus alquileres.
+                            // LISTAGG reúne en un solo texto las películas que aún no han sido devueltas.
+                            String sqlUsuarios =
+                                    "SELECT u.id_usuario, u.ced_usuario, " +
+                                    "u.primer_nombre_usuario || ' ' || u.primer_apellido_usuario nombre, u.rol, " +
+                                    "(SELECT COUNT(*) FROM Alquiler a " +
+                                    " WHERE a.id_usuario_cliente = u.id_usuario " +
+                                    " AND a.fecha_devolucion IS NULL) activos, " +
+                                    "(SELECT COUNT(*) FROM Alquiler a " +
+                                    " WHERE a.id_usuario_cliente = u.id_usuario) total, " +
+                                    "(SELECT LISTAGG(p.titulo, ', ') WITHIN GROUP (ORDER BY p.titulo) " +
+                                    " FROM Alquiler a " +
+                                    " JOIN Vhs v ON v.id_vhs = a.id_vhs " +
+                                    " JOIN Peliculas p ON p.id_pelicula = v.id_pelicula " +
+                                    " WHERE a.id_usuario_cliente = u.id_usuario " +
+                                    " AND a.fecha_devolucion IS NULL) actuales " +
+                                    "FROM Usuario u " +
+                                    "WHERE (TO_CHAR(u.rol) = '1' OR UPPER(TO_CHAR(u.rol)) = 'CLIENTE') " +
+                                    "AND (? IS NULL " +
+                                    " OR LOWER(u.primer_nombre_usuario || ' ' || u.primer_apellido_usuario) LIKE ? " +
+                                    " OR LOWER(u.ced_usuario) LIKE ?) " +
+                                    "ORDER BY nombre";
+
+                            try (
+                                Connection con = ConexionDB.obtenerConexion();
+                                PreparedStatement ps = con.prepareStatement(sqlUsuarios)
+                            ) {
+                                // Los comodines permiten encontrar coincidencias parciales por nombre o cédula.
+                                String contiene = filtro == null ? null : "%" + filtro + "%";
+
+                                ps.setString(1, filtro);
+                                ps.setString(2, contiene);
+                                ps.setString(3, contiene);
+
+                                try (ResultSet rs = ps.executeQuery()) {
+                                    boolean hay = false;
+
+                                    // Crea una fila de la tabla por cada cliente encontrado.
+                                    while (rs.next()) {
+                                        hay = true;
+                                        String actuales = rs.getString("actuales");
+                        %>
+                        <tr>
                             <td>#<%= rs.getInt("id_usuario") %></td>
                             <td><%= h(rs.getString("nombre")) %></td>
                             <td><%= h(rs.getString("ced_usuario")) %></td>
                             <td><span class="status-badge status-ok">Cliente</span></td>
                             <td><%= rs.getInt("activos") %></td>
                             <td><%= rs.getInt("total") %></td>
-                            <td><%= actuales==null?"Sin alquiler activo":h(actuales) %></td>
+                            <td><%= actuales == null ? "Sin alquiler activo" : h(actuales) %></td>
                             <td><a class="employee-mini-button" href="empleado-usuarios.jsp?id=<%= rs.getInt("id_usuario") %>">Ver mas</a></td>
-                        </tr><%}
-        if(!hay){%><tr>
-                            <td colspan="8" class="employee-empty">No se encontraron clientes.</td>
-                        </tr><%}}
-    }catch(SQLException e){%><tr>
-                            <td colspan="8">No fue posible cargar los clientes: <%= h(e.getMessage()) %></td>
-                        </tr><%}%>
-</tbody></table></div></section>
+                        </tr>
+                        <%
+                                    }
 
-<% if(idDetalle>0){
-    String sqlDetalle="SELECT id_usuario,ced_usuario,primer_nombre_usuario,segundo_nombre_usuario,primer_apellido_usuario,"+
-            "segundo_apellido_usuario,TO_CHAR(fecha_registro,'YYYY-MM-DD') fecha_registro FROM Usuario "+
-            "WHERE id_usuario=? AND (TO_CHAR(rol)='1' OR UPPER(TO_CHAR(rol))='CLIENTE')";
-    try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlDetalle)){
-        ps.setInt(1,idDetalle);try(ResultSet rs=ps.executeQuery()){if(rs.next()){
-%><section class="retro-window employee-panel">
+                                    // Presenta un mensaje cuando el filtro no devuelve clientes.
+                                    if (!hay) {
+                        %>
+                        <tr>
+                            <td colspan="8" class="employee-empty">No se encontraron clientes.</td>
+                        </tr>
+                        <%
+                                    }
+                                }
+                            } catch (SQLException e) {
+                        %>
+                        <tr>
+                            <td colspan="8">No fue posible cargar los clientes: <%= h(e.getMessage()) %></td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <%
+            // Carga la información completa únicamente cuando se seleccionó un cliente válido.
+            if (idDetalle > 0) {
+                String sqlDetalle =
+                        "SELECT id_usuario, ced_usuario, primer_nombre_usuario, segundo_nombre_usuario, " +
+                        "primer_apellido_usuario, segundo_apellido_usuario, " +
+                        "TO_CHAR(fecha_registro, 'YYYY-MM-DD') fecha_registro " +
+                        "FROM Usuario " +
+                        "WHERE id_usuario = ? " +
+                        "AND (TO_CHAR(rol) = '1' OR UPPER(TO_CHAR(rol)) = 'CLIENTE')";
+
+                try (
+                    Connection con = ConexionDB.obtenerConexion();
+                    PreparedStatement ps = con.prepareStatement(sqlDetalle)
+                ) {
+                    // PreparedStatement envía el ID separado del SQL y evita concatenarlo directamente.
+                    ps.setInt(1, idDetalle);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+        %>
+        <section class="retro-window employee-panel">
                             <div class="window-header"><span>Cliente_<%= idDetalle %>.details</span><span>_ [] X</span></div>
                             <div class="employee-summary" style="padding:20px">
                                 <h2><%= h(rs.getString("primer_nombre_usuario")) %> <%= h(rs.getString("segundo_nombre_usuario")) %> <%= h(rs.getString("primer_apellido_usuario")) %> <%= h(rs.getString("segundo_apellido_usuario")) %></h2>
@@ -114,36 +182,108 @@
                                     <h3>Telefonos</h3>
                                     <div style="display:grid;gap:10px">
                                         <%
-    String sqlTelefonos="SELECT t.desc_tipo_telefono,ut.telefono FROM UsuarioTelefono ut JOIN tipo_telefonos t ON t.id_tipo_telefono=ut.id_tipo_telefono WHERE ut.id_usuario=? ORDER BY t.desc_tipo_telefono";
-    try(PreparedStatement pt=con.prepareStatement(sqlTelefonos)){pt.setInt(1,idDetalle);try(ResultSet rt=pt.executeQuery()){boolean hay=false;while(rt.next()){hay=true;
-%><div style="display:flex;gap:24px;flex-wrap:wrap;padding:12px;background:#fff7ec;border:2px solid #000">
+                                            // Consulta todos los teléfonos asociados al cliente seleccionado.
+                                            String sqlTelefonos =
+                                                    "SELECT t.desc_tipo_telefono, ut.telefono " +
+                                                    "FROM UsuarioTelefono ut " +
+                                                    "JOIN tipo_telefonos t " +
+                                                    "ON t.id_tipo_telefono = ut.id_tipo_telefono " +
+                                                    "WHERE ut.id_usuario = ? " +
+                                                    "ORDER BY t.desc_tipo_telefono";
+
+                                            try (PreparedStatement pt = con.prepareStatement(sqlTelefonos)) {
+                                                pt.setInt(1, idDetalle);
+
+                                                try (ResultSet rt = pt.executeQuery()) {
+                                                    boolean hay = false;
+
+                                                    // Muestra cada teléfono junto con su tipo.
+                                                    while (rt.next()) {
+                                                        hay = true;
+                                        %>
+                                        <div style="display:flex;gap:24px;flex-wrap:wrap;padding:12px;background:#fff7ec;border:2px solid #000">
                                             <span><strong>Tipo:</strong> <%= h(rt.getString("desc_tipo_telefono")) %></span>
                                             <span><strong>Teléfono:</strong> <%= h(rt.getString("telefono")) %></span>
                                         </div>
-                                        <%}if(!hay){%><p>Sin telefonos registrados.</p><%}}}%>
+                                        <%
+                                                    }
+
+                                                    if (!hay) {
+                                        %>
+                                        <p>Sin telefonos registrados.</p>
+                                        <%
+                                                    }
+                                                }
+                                            }
+                                        %>
                                     </div>
                                 </section>
                                 <section>
                                     <h3>Correos electronicos</h3>
                                     <div style="display:grid;gap:10px">
                                         <%
-    String sqlCorreos="SELECT t.desc_tipo_email,ue.email FROM UsuarioEmail ue JOIN tipo_email t ON t.id_tipo_email=ue.id_tipo_email WHERE ue.id_usuario=? ORDER BY t.desc_tipo_email";
-    try(PreparedStatement pe=con.prepareStatement(sqlCorreos)){pe.setInt(1,idDetalle);try(ResultSet re=pe.executeQuery()){boolean hay=false;while(re.next()){hay=true;
-%><div style="display:flex;gap:24px;flex-wrap:wrap;padding:12px;background:#fff7ec;border:2px solid #000">
+                                            // Consulta todos los correos electrónicos asociados al cliente.
+                                            String sqlCorreos =
+                                                    "SELECT t.desc_tipo_email, ue.email " +
+                                                    "FROM UsuarioEmail ue " +
+                                                    "JOIN tipo_email t ON t.id_tipo_email = ue.id_tipo_email " +
+                                                    "WHERE ue.id_usuario = ? " +
+                                                    "ORDER BY t.desc_tipo_email";
+
+                                            try (PreparedStatement pe = con.prepareStatement(sqlCorreos)) {
+                                                pe.setInt(1, idDetalle);
+
+                                                try (ResultSet re = pe.executeQuery()) {
+                                                    boolean hay = false;
+
+                                                    // Muestra cada dirección de correo junto con su tipo.
+                                                    while (re.next()) {
+                                                        hay = true;
+                                        %>
+                                        <div style="display:flex;gap:24px;flex-wrap:wrap;padding:12px;background:#fff7ec;border:2px solid #000">
                                             <span><strong>Tipo:</strong> <%= h(re.getString("desc_tipo_email")) %></span>
                                             <span><strong>Correo:</strong> <%= h(re.getString("email")) %></span>
                                         </div>
-                                        <%}if(!hay){%><p>Sin correos registrados.</p><%}}}%>
+                                        <%
+                                                    }
+
+                                                    if (!hay) {
+                                        %>
+                                        <p>Sin correos registrados.</p>
+                                        <%
+                                                    }
+                                                }
+                                            }
+                                        %>
                                     </div>
                                 </section>
                             </div>
-                            <div style="padding:0 20px 20px"><a class="retro-button" href="empleado-historial-clientes.jsp?cliente=<%= idDetalle %>">VER HISTORIAL DE ALQUILERES</a> <a class="employee-clear" href="empleado-usuarios.jsp">Cerrar detalle</a></div>
+                            <div style="padding:0 20px 20px">
+                                <a class="retro-button" href="empleado-historial-clientes.jsp?cliente=<%= idDetalle %>">VER HISTORIAL DE ALQUILERES</a>
+                                <a class="employee-clear" href="empleado-usuarios.jsp">Cerrar detalle</a>
+                            </div>
                         </section>
-                        <%      }else{%><div class="employee-alert employee-alert-error">El cliente seleccionado no existe.</div><%}
-        }
-    }catch(SQLException e){%><div class="employee-alert employee-alert-error">No fue posible cargar el detalle: <%= h(e.getMessage()) %></div><%}
-} %>
-    </main><%@ include file="footer.jsp" %><script src="${pageContext.request.contextPath}/js/script.js"></script>
+        <%
+                        } else {
+        %>
+        <div class="employee-alert employee-alert-error">El cliente seleccionado no existe.</div>
+        <%
+                        }
+                    }
+                } catch (SQLException e) {
+        %>
+        <%-- Informa el error sin interrumpir la construcción del resto de la página. --%>
+        <div class="employee-alert employee-alert-error">
+            No fue posible cargar el detalle: <%= h(e.getMessage()) %>
+        </div>
+        <%
+                }
+            }
+        %>
+    </main>
+
+    <%@ include file="footer.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/script.js"></script>
 </body>
 
 </html>

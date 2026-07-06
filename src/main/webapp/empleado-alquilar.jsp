@@ -3,14 +3,15 @@
 <%-- Inserta Alquiler y actualiza Vhs dentro de la misma transacción para que ambos estados coincidan. --%>
 
 <%
-    Object idEmpleadoSesion = session.getAttribute("idUsuario");
-    String rolEmpleadoSesion = String.valueOf(session.getAttribute("rolUsuario"));
-    if (idEmpleadoSesion == null ||
-            !("2".equals(rolEmpleadoSesion) || "EMPLEADO".equalsIgnoreCase(rolEmpleadoSesion))) {
-        response.sendRedirect("login.jsp");
-        return;
+    Object idEmpleadoSesionObj = session.getAttribute("idUsuario");
+    int idEmpleadoSesion = 0;
+    if (idEmpleadoSesionObj != null) {
+        try {
+            idEmpleadoSesion = Integer.parseInt(String.valueOf(idEmpleadoSesionObj));
+        } catch (NumberFormatException e) {
+            idEmpleadoSesion = 0;
+        }
     }
-    int idEmpleadoActual = Integer.parseInt(String.valueOf(idEmpleadoSesion));
 
     String paso = request.getParameter("paso");
     if (paso == null) paso = "1";
@@ -66,6 +67,10 @@
         int dias = Integer.parseInt(request.getParameter("dias"));
 
         try (Connection con = ConexionDB.obtenerConexion()) {
+            if (idEmpleadoSesion <= 0) {
+                throw new SQLException("No hay un empleado autenticado para registrar el alquiler.");
+            }
+
             con.setAutoCommit(false);
 
             // 1. Calcular FECHA_LIMITE (ejemplo: fecha actual + días de alquiler)
@@ -148,8 +153,7 @@
         </section>
         <% } %>
 
-        <!-- PASO 2: Buscar cliente -->
-        <!-- PASO 2: Buscar cliente -->
+            <!-- PASO 2: Buscar cliente -->
         <% if ("2".equals(paso) && idCliente == 0) { %>
         <section class="retro-window employee-panel">
             <div class="window-header"><span>Buscar_Cliente.search</span><span>_ [] X</span></div>

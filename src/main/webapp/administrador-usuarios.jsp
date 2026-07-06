@@ -47,7 +47,7 @@
         <%@ include file="logo.jsp" %>
         <ul class="nav-links">
             <li><a href="index.jsp">Inicio</a></li>
-            <li><a href="catalogo.jsp">Catálogo</a></li>
+            <li><a href="catalogo.jsp">Catalogo</a></li>
             <li><a href="novedades.jsp">Novedades</a></li>
             <li><a href="contactanos.jsp">Contactanos</a></li>
         </ul>
@@ -63,7 +63,7 @@
 
         <div class="retro-window employee-panel">
             <form method="GET" class="employee-toolbar">
-                <input type="text" name="buscar" class="retro-search" placeholder="Buscar cédula..." value="<%= busqueda != null ? busqueda : "" %>">
+                <input type="text" name="buscar" class="retro-search" placeholder="Buscar cedula..." value="<%= busqueda != null ? busqueda : "" %>">
                 <button type="submit" class="retro-button">BUSCAR</button>
                 <a href="administrador-usuarios.jsp" class="employee-clear">LIMPIAR</a>
             </form>
@@ -73,7 +73,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Cédula</th>
+                            <th>Cedula</th>
                             <th>Nombre</th>
                             <th>Rol</th>
                             <th>Acción</th>

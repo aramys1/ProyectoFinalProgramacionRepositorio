@@ -217,7 +217,7 @@ INSERT INTO USUARIO (
     'ADMIN',      -- SEGUNDO_NOMBRE
     'ADMIN',      -- PRIMER_APELLIDO
     'ADMIN',      -- SEGUNDO_APELLIDO
-    '3',          -- ROL (Asumiendo que 3 es ADMIN, cámbialo si es otro)
+    '3',          -- ROL
     'admin'       -- CONTRASENA
 );
 
