@@ -44,7 +44,7 @@
         catch (Exception ignored) { }
         if ("quitar".equals(accion)) {
             carrito.remove(Integer.valueOf(idPelicula));
-            mensaje = "Pelicula eliminada del carrito.";
+            mensaje = "Película eliminada del carrito.";
         } else if ("vaciar".equals(accion)) {
             carrito.clear();
             mensaje = "Carrito vaciado.";
@@ -104,7 +104,7 @@
                 }
             }
         } else if ("agregar".equals(accion)) {
-            if (carrito.contains(idPelicula)) error = "La pelicula ya esta en el carrito.";
+            if (carrito.contains(idPelicula)) error = "La película ya está en el carrito.";
             else if (carrito.size() >= 3) error = "El carrito permite un maximo de 3 peliculas.";
             else {
                 // Una copia es válida si está físicamente disponible y no tiene alquiler abierto.
@@ -116,8 +116,8 @@
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next() && rs.getInt(1) > 0) {
                             carrito.add(idPelicula);
-                            mensaje = "Pelicula agregada al carrito.";
-                        } else error = "La pelicula seleccionada no tiene copias disponibles.";
+                            mensaje = "Película agregada al carrito.";
+                        } else error = "La película seleccionada no tiene copias disponibles.";
                     }
                 } catch (SQLException e) { error = "No fue posible consultar la disponibilidad: " + e.getMessage(); }
             }
@@ -140,7 +140,7 @@
         <%@ include file="logo.jsp" %>
         <ul class="nav-links">
             <li><a href="index.jsp">Inicio</a></li>
-            <li><a href="catalogo.jsp">Catalogo</a></li>
+            <li><a href="catalogo.jsp">Catálogo</a></li>
             <li><a href="cliente-perfil.jsp">Mi Perfil</a></li>
             <li><a href="cliente-historial.jsp">Mi Historial</a></li>
         </ul>
@@ -160,10 +160,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Pelicula</th>
+                            <th>Película</th>
                             <th>Precio dia</th>
                             <th>Disponibles</th>
-                            <th>Accion</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>

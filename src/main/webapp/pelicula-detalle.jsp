@@ -1,28 +1,37 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*,com.conexion.ConexionDB" %>
 <%-- LEFT JOIN conserva películas sin copias; SUM cuenta Vhs disponibles que no tienen alquiler abierto. --%>
-<%! private String h(String valor) { if (valor == null) return ""; return
-valor.replace("&", "&amp;").replace("<", "&lt;") .replace(">",
-"&gt;").replace("\"", "&quot;").replace("'", "&#39;"); } %> <% int idPelicula =
-0; try { idPelicula = Integer.parseInt(request.getParameter("id")); } catch
-(Exception ignored) { } String titulo=null, imagen=null, anio=null,
-sinopsis=null; java.math.BigDecimal precio=null; int disponibles=0; String sql =
-"SELECT
-p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,TO_CHAR(p.fecha_estreno,'YYYY')
-anio," + "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS "
-+ "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS
-NULL) THEN 1 ELSE 0 END) disponibles " + "FROM Peliculas p LEFT JOIN Vhs v ON
-v.id_pelicula=p.id_pelicula WHERE p.id_pelicula=? " + "GROUP BY
-p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,p.fecha_estreno"; try
-(Connection con=ConexionDB.obtenerConexion(); PreparedStatement
-ps=con.prepareStatement(sql)) { ps.setInt(1,idPelicula); try (ResultSet
-rs=ps.executeQuery()) { if (rs.next()) { titulo=rs.getString("titulo");
-imagen=rs.getString("imagen_url"); sinopsis=rs.getString("sinopsis");
-precio=rs.getBigDecimal("precio_unidad"); anio=rs.getString("anio");
-disponibles=rs.getInt("disponibles"); }} } catch (SQLException ignored) { }
-boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
-("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
-"CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))));
+<%!
+    private String h(String valor) {
+        if (valor == null) return "";
+        return valor.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
+%>
+<%
+    int idPelicula = 0;
+    try { idPelicula = Integer.parseInt(request.getParameter("id")); } catch (Exception ignored) { }
+    String titulo=null, imagen=null, anio=null, sinopsis=null;
+    java.math.BigDecimal precio=null;
+    int disponibles=0;
+    String sql = "SELECT p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,TO_CHAR(p.fecha_estreno,'YYYY') anio," +
+            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS " +
+            "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL) THEN 1 ELSE 0 END) disponibles " +
+            "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula=p.id_pelicula WHERE p.id_pelicula=? " +
+            "GROUP BY p.titulo,p.imagen_url,p.sinopsis,p.precio_unidad,p.fecha_estreno";
+    try (Connection con=ConexionDB.obtenerConexion(); PreparedStatement ps=con.prepareStatement(sql)) {
+        ps.setInt(1,idPelicula);
+        try (ResultSet rs=ps.executeQuery()) {
+            if (rs.next()) {
+                titulo=rs.getString("titulo"); imagen=rs.getString("imagen_url");
+                sinopsis=rs.getString("sinopsis"); precio=rs.getBigDecimal("precio_unidad");
+                anio=rs.getString("anio"); disponibles=rs.getInt("disponibles");
+            }
+        }
+    } catch (SQLException ignored) { }
+    boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
+            ("1".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
+             "CLIENTE".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))));
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -33,7 +42,7 @@ boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
     <title>
-        <%= titulo == null ? "Pelicula" : h(titulo) %> | Rewind &amp; Relive
+        <%= titulo == null ? "Película" : h(titulo) %> | Rewind &amp; Relive
     </title>
 </head>
 
@@ -41,7 +50,7 @@ boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
     <nav class="navbar retro-window">
         <%@ include file="logo.jsp" %>
         <ul class="nav-links">
-            <li><a href="catalogo.jsp">Catalogo</a></li>
+            <li><a href="catalogo.jsp">Catálogo</a></li>
             <li><a href="novedades.jsp">Novedades</a></li>
             <li><a href="contactanos.jsp">Contactanos</a></li>
             <% if (clienteAutenticado) { %>
@@ -49,14 +58,14 @@ boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
                 <a href="cliente-carrito.jsp" class="retro-button">Mi Carrito</a>
             </li>
             <% } else if (session.getAttribute("idUsuario") == null) { %>
-            <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
+            <li><a href="login.jsp" class="retro-button">Iniciar sesión</a></li>
             <% } %>
         </ul>
     </nav>
     <main class="movie-detail-page">
         <% if (titulo == null) { %>
         <div class="employee-alert employee-alert-error">
-            No se encontro la pelicula solicitada.
+            No se encontró la película solicitada.
         </div>
         <% } else { %>
         <section class="movie-detail-hero">
@@ -70,9 +79,9 @@ boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
                 <% } %>
             </article>
             <article class="movie-detail-copy">
-                <p class="employee-kicker">Ficha de pelicula</p>
+                <p class="employee-kicker">Ficha de película</p>
                 <h1><%= h(titulo) %></h1>
-                <p class="movie-detail-meta"><%= h(anio) %> | $<%= precio %> / dia</p>
+                <p class="movie-detail-meta"><%= h(anio) %> | $<%= precio %> / día</p>
                 <p class="movie-synopsis"><%= h(sinopsis) %></p>
                 <p><strong>Copias disponibles:</strong> <%= disponibles %></p>
                 <div class="employee-form-actions">
@@ -88,7 +97,7 @@ boolean clienteAutenticado = session.getAttribute("idUsuario") != null &&
                     </button>
                     <% } else { %><button class="retro-button" type="button" disabled>
                         DISPONIBLE SOLO PARA CLIENTES</button><% } %>
-                    <a class="retro-button employee-cancel" href="catalogo.jsp">VOLVER AL CATALOGO</a>
+                    <a class="retro-button employee-cancel" href="catalogo.jsp">VOLVER AL CATÁLOGO</a>
                 </div>
             </article>
         </section>

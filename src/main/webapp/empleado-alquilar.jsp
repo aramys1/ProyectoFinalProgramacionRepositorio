@@ -33,7 +33,7 @@
                 idCliente = rs.getInt("id_usuario");
                 nombreCliente = rs.getString("primer_nombre_usuario") + " " + rs.getString("primer_apellido_usuario");
             } else {
-                mensajeError = "Cliente no encontrado. Verifique la cedula.";
+                mensajeError = "Cliente no encontrado. Verifique la cédula.";
             }
         } catch (Exception e) {
             mensajeError = "Error: " + e.getMessage();
@@ -50,7 +50,7 @@
                     idTarjeta = rs.getInt("id_tarjeta");
                     String num = rs.getString("numero");
                     // Se asigna el número tal cual viene de la base de datos
-                    tarjetaCliente = (num != null) ? num : "Sin numero registrado";
+                    tarjetaCliente = (num != null) ? num : "Sin número registrado";
                 } else {
                     tarjetaCliente = "Sin tarjeta registrada";
                 }
@@ -117,7 +117,7 @@
         <ul class="nav-links">
             <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
             <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-            <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
+            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
             <li><a href="empleado-inventario.jsp">Inventario</a></li>
             <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
         </ul>
@@ -156,7 +156,7 @@
             <div style="padding: 30px;">
                 <form method="get" action="empleado-alquilar.jsp">
                     <input type="hidden" name="paso" value="2">
-                    <label>Cedula del cliente:</label><br><br>
+                    <label>Cédula del cliente:</label><br><br>
                     <input type="text" name="cedula" class="retro-search" placeholder="Ej: 8-1032-1714" style="width:300px;" required>
                     <button type="submit" class="retro-button">BUSCAR</button>
                 </form>
@@ -181,7 +181,7 @@
 
                     <p><strong>Empleado responsable:</strong> #<%= idEmpleadoActual %></p>
 
-                    <label>Buscar pelicula:</label><br><br>
+                    <label>Buscar película:</label><br><br>
                     <input type="text" id="buscarPelicula" class="retro-search" placeholder="Escribe el titulo..." style="width:300px;" oninput="filtrarPeliculas()">
 
                     <br><br>

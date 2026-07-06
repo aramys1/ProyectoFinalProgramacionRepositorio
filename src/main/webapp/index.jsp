@@ -32,11 +32,11 @@
     <nav class="navbar retro-window">
         <%@ include file="logo.jsp" %>
         <ul class="nav-links">
-            <li><a href="catalogo.jsp">Catalogo</a></li>
+            <li><a href="catalogo.jsp">Catálogo</a></li>
             <li><a href="novedades.jsp">Novedades</a></li>
             <li><a href="contactanos.jsp">Contactanos</a></li>
             <% if (session.getAttribute("idUsuario") == null) { %>
-            <li><a href="login.jsp" class="retro-button">Iniciar Sesion</a></li>
+            <li><a href="login.jsp" class="retro-button">Iniciar sesión</a></li>
             <% } %>
         </ul>
     </nav>
@@ -110,7 +110,7 @@
                 <%      }if(!hay){%><p class="employee-empty">Todavía no hay películas publicadas.</p><%}
                 }catch(SQLException e){%><p class="employee-empty">No fue posible cargar los últimos lanzamientos.</p><%}%>
         </div>
-        <a href="catalogo.jsp" class="catalog-link">VER CATALOGO COMPLETO &gt;</a>
+        <a href="catalogo.jsp" class="catalog-link">VER CATÁLOGO COMPLETO &gt;</a>
     </section>
 </div>
 

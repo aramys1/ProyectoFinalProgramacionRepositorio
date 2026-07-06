@@ -1,19 +1,28 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 <%-- Dashboard: COUNT se ejecuta en Oracle para obtener activos, vencimientos y retrasos sin transferir filas completas. --%>
-<%! private int contar(Connection con, String sql) throws SQLException { try
-(PreparedStatement ps = con.prepareStatement(sql); ResultSet rs =
-ps.executeQuery()) { return rs.next() ? rs.getInt(1) : 0; } } %> <% int
-totalActivos = 0; int devolucionesHoy = 0; int totalRetrasos = 0; String
-errorDashboard = null; String fechaHoy = new
-java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()); try
-(Connection con = ConexionDB.obtenerConexion()) { totalActivos = contar(con,
-"SELECT COUNT(*) FROM Alquiler " + "WHERE fecha_devolucion IS NULL AND
-UPPER(estado_alquiler) <> 'DEVUELTO'"); devolucionesHoy = contar(con, "SELECT
-COUNT(*) FROM Alquiler " + "WHERE TRUNC(fecha_limite) = TRUNC(SYSDATE) AND
-fecha_devolucion IS NULL"); totalRetrasos = contar(con, "SELECT COUNT(*) FROM
-Alquiler " + "WHERE fecha_devolucion IS NULL AND fecha_limite <
-TRUNC(SYSDATE)"); } catch (SQLException e) { errorDashboard = e.getMessage(); }
+<%!
+    private int contar(Connection con, String sql) throws SQLException {
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+%>
+<%
+    int totalActivos = 0;
+    int devolucionesHoy = 0;
+    int totalRetrasos = 0;
+    String errorDashboard = null;
+    String fechaHoy = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+
+    try (Connection con = ConexionDB.obtenerConexion()) {
+        totalActivos = contar(con, "SELECT COUNT(*) FROM Alquiler WHERE fecha_devolucion IS NULL AND UPPER(estado_alquiler) <> 'DEVUELTO'");
+        devolucionesHoy = contar(con, "SELECT COUNT(*) FROM Alquiler WHERE TRUNC(fecha_limite)=TRUNC(SYSDATE) AND fecha_devolucion IS NULL");
+        totalRetrasos = contar(con, "SELECT COUNT(*) FROM Alquiler WHERE fecha_devolucion IS NULL AND fecha_limite<TRUNC(SYSDATE)");
+    } catch (SQLException e) {
+        errorDashboard = e.getMessage();
+    }
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -28,7 +37,7 @@ TRUNC(SYSDATE)"); } catch (SQLException e) { errorDashboard = e.getMessage(); }
 
 <body>
     <nav class="navbar retro-window employee-nav">
-        <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><JSP include file="logo.jsp" %>
+        <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
             <ul class="nav-links">
                 <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
                 <li><a href="empleado-alquileres.jsp">Alquileres</a></li>

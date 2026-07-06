@@ -31,7 +31,7 @@
         <ul class="nav-links">
             <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
             <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-            <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
+            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
             <li><a href="empleado-inventario.jsp">Inventario</a></li>
             <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
             <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
@@ -47,7 +47,7 @@
         <section class="retro-window employee-panel">
             <div class="window-header"><span>usuarios_alquileres.view</span><span>_ [] X</span></div>
             <form class="employee-toolbar employee-toolbar-compact" method="get">
-                <input type="text" name="buscar" class="retro-search" value="<%= h(buscar) %>" placeholder="Buscar cliente o cedula">
+                <input type="text" name="buscar" class="retro-search" value="<%= h(buscar) %>" placeholder="Buscar cliente o cédula">
                 <button type="submit" class="retro-button">FILTRAR</button><a href="empleado-usuarios.jsp" class="employee-clear">Limpiar</a>
             </form>
             <div class="employee-table-wrap">
@@ -56,12 +56,12 @@
                         <tr>
                             <th>ID</th>
                             <th>Usuario</th>
-                            <th>Cedula</th>
+                            <th>Cédula</th>
                             <th>Rol</th>
                             <th>Alquileres activos</th>
                             <th>Historial total</th>
                             <th>Peliculas actuales</th>
-                            <th>Accion</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,7 +105,7 @@
                             <div class="employee-summary" style="padding:20px">
                                 <h2><%= h(rs.getString("primer_nombre_usuario")) %> <%= h(rs.getString("segundo_nombre_usuario")) %> <%= h(rs.getString("primer_apellido_usuario")) %> <%= h(rs.getString("segundo_apellido_usuario")) %></h2>
                                 <p><strong>ID:</strong> #<%= rs.getInt("id_usuario") %></p>
-                                <p><strong>Cedula:</strong> <%= h(rs.getString("ced_usuario")) %></p>
+                                <p><strong>Cédula:</strong> <%= h(rs.getString("ced_usuario")) %></p>
                                 <p><strong>Fecha de registro:</strong> <%= h(rs.getString("fecha_registro")) %></p>
                                 <p><strong>Rol:</strong> Cliente</p>
                             </div>
@@ -118,7 +118,7 @@
     try(PreparedStatement pt=con.prepareStatement(sqlTelefonos)){pt.setInt(1,idDetalle);try(ResultSet rt=pt.executeQuery()){boolean hay=false;while(rt.next()){hay=true;
 %><div style="display:flex;gap:24px;flex-wrap:wrap;padding:12px;background:#fff7ec;border:2px solid #000">
                                             <span><strong>Tipo:</strong> <%= h(rt.getString("desc_tipo_telefono")) %></span>
-                                            <span><strong>Telefono:</strong> <%= h(rt.getString("telefono")) %></span>
+                                            <span><strong>Teléfono:</strong> <%= h(rt.getString("telefono")) %></span>
                                         </div>
                                         <%}if(!hay){%><p>Sin telefonos registrados.</p><%}}}%>
                                     </div>

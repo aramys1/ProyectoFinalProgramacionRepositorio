@@ -37,7 +37,7 @@
         <ul class="nav-links">
             <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
             <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-            <li><a href="empleado-devolucion.jsp">Devolucion</a></li>
+            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
             <li><a href="empleado-inventario.jsp">Inventario</a></li>
             <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
             <li><a href="empleado-alquilar.jsp">Nuevo Alquiler</a></li>
@@ -47,7 +47,7 @@
         <section class="employee-header">
             <p class="employee-kicker">Alquileres.database</p>
             <h1>Alquileres registrados</h1>
-            <p><%= verHistorial ? "Registro de alquileres que ya fueron devueltos." : "Consulta de los alquileres pendientes de devolucion." %></p>
+            <p><%= verHistorial ? "Registro de alquileres que ya fueron devueltos." : "Consulta de los alquileres pendientes de devolución." %></p>
             <br>
             <br>
             <a class="retro-button" href="empleado-alquileres.jsp?vista=<%= verHistorial ? "activos" : "historial" %>">
@@ -60,7 +60,7 @@
             <div class="window-header"><span>Alquileres.table</span><span>_ [] X</span></div>
             <form class="employee-toolbar" method="get">
                 <input type="hidden" name="vista" value="<%= verHistorial ? "historial" : "activos" %>">
-                <input type="text" name="buscar" class="retro-search" placeholder="ID, cliente o pelicula" value="<%= h(buscar) %>">
+                <input type="text" name="buscar" class="retro-search" placeholder="ID, cliente o película" value="<%= h(buscar) %>">
                 <select name="estado" class="retro-search select-filter">
                     <option value="">Todos los estados</option>
                     <option value="PENDIENTE" <%= "PENDIENTE".equals(filtroEstado) ? "selected" : "" %>>Pendiente</option>
@@ -78,14 +78,14 @@
                         <tr>
                             <th>ID</th>
                             <th>Cliente</th>
-                            <th>Pelicula</th>
+                            <th>Película</th>
                             <th>VHS</th>
                             <th>Alquiler</th>
                             <th>Vence</th>
-                            <th>Devolucion</th>
+                            <th>Devolución</th>
                             <th>Empleado</th>
                             <th>Estado</th>
-                            <th>Accion</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
