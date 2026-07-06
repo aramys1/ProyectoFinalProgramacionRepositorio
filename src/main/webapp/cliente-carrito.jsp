@@ -18,7 +18,8 @@
     Object idSesion = session.getAttribute("idUsuario");
     String rolSesion = String.valueOf(session.getAttribute("rolUsuario"));
     if (idSesion == null || !("1".equals(rolSesion) || "CLIENTE".equalsIgnoreCase(rolSesion))) {
-        response.sendRedirect("login.jsp"); return;
+        response.sendRedirect("login.jsp");
+        return;
     }
     int idUsuario = Integer.parseInt(String.valueOf(idSesion));
     // Impide que una cuenta herede el carrito de otra al iniciar sesión en el mismo navegador.
@@ -87,20 +88,33 @@
                                 if(!rs.next()) throw new SQLException("Una de las películas ya no tiene copias disponibles.");
                                 idVhs=rs.getInt(1);
                             }
-                            insertar.setInt(1,diasSeleccionados); insertar.setInt(2,idUsuario); insertar.setInt(3,idVhs); insertar.setInt(4,idEmpleado);
+                            insertar.setInt(1, diasSeleccionados);
+                            insertar.setInt(2, idUsuario);
+                            insertar.setInt(3, idVhs);
+                            insertar.setInt(4, idEmpleado);
                             insertar.executeUpdate();
-                            ocupar.setInt(1,idVhs); ocupar.executeUpdate();
+                            ocupar.setInt(1, idVhs);
+                            ocupar.executeUpdate();
                         }
                     }
                     con.commit(); // Solo vacía el carrito después de confirmar en Oracle.
-                    int cantidad=carrito.size();
+                    int cantidad = carrito.size();
                     carrito.clear();
-                    mensaje="Alquiler confirmado por "+diasSeleccionados+" día(s). Películas alquiladas: "+cantidad+".";
-                } catch(Exception e) {
-                    if(con!=null) try{con.rollback();}catch(SQLException ignored){}
-                    error="No fue posible completar el alquiler: "+e.getMessage();
+                    mensaje = "Alquiler confirmado por " + diasSeleccionados
+                            + " día(s). Películas alquiladas: " + cantidad + ".";
+                } catch (Exception e) {
+                    if (con != null) {
+                        try {
+                            con.rollback();
+                        } catch (SQLException ignored) { }
+                    }
+                    error = "No fue posible completar el alquiler: " + e.getMessage();
                 } finally {
-                    if(con!=null) try{con.close();}catch(SQLException ignored){}
+                    if (con != null) {
+                        try {
+                            con.close();
+                        } catch (SQLException ignored) { }
+                    }
                 }
             }
         } else if ("agregar".equals(accion)) {
@@ -117,9 +131,13 @@
                         if (rs.next() && rs.getInt(1) > 0) {
                             carrito.add(idPelicula);
                             mensaje = "Película agregada al carrito.";
-                        } else error = "La película seleccionada no tiene copias disponibles.";
+                        } else {
+                            error = "La película seleccionada no tiene copias disponibles.";
+                        }
                     }
-                } catch (SQLException e) { error = "No fue posible consultar la disponibilidad: " + e.getMessage(); }
+                } catch (SQLException e) {
+                    error = "No fue posible consultar la disponibilidad: " + e.getMessage();
+                }
             }
         }
     }
@@ -151,8 +169,13 @@
             <h1>Mi carrito</h1>
             <p>Peliculas seleccionadas y disponibilidad actual en la base de datos.</p>
         </section>
-        <% if (mensaje != null) { %><div class="employee-alert employee-alert-ok"><%= h(mensaje) %></div><% } %>
-        <% if (error != null) { %><div class="employee-alert employee-alert-error"><%= h(error) %></div><% } %>
+        <% if (mensaje != null) { %>
+        <div class="employee-alert employee-alert-ok"><%= h(mensaje) %></div>
+        <% } %>
+
+        <% if (error != null) { %>
+        <div class="employee-alert employee-alert-error"><%= h(error) %></div>
+        <% } %>
         <section class="retro-window employee-panel">
             <div class="window-header"><span>carrito_actual.table</span><span>_ [] X</span></div>
             <div class="employee-table-wrap">
@@ -168,38 +191,70 @@
                     </thead>
                     <tbody>
                         <%
-                // Acumula el precio diario de todas las películas visibles en el carrito.
-                java.math.BigDecimal total = java.math.BigDecimal.ZERO;
-                if (carrito.isEmpty()) {
-            %><tr>
+                            // Acumula el precio diario de las películas visibles en el carrito.
+                            java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+
+                            if (carrito.isEmpty()) {
+                        %>
+                        <tr>
                             <td colspan="5" class="employee-empty">El carrito esta vacio.</td>
-                        </tr><%
-                } else {
-                    StringBuilder marcas = new StringBuilder();
-                    for (int i=0; i<carrito.size(); i++) marcas.append(i == 0 ? "?" : ",?");
-                    String sql = "SELECT p.id_pelicula,p.titulo,p.precio_unidad," +
-                            "SUM(CASE WHEN UPPER(v.estado_fisico_vhs)='DISPONIBLE' AND NOT EXISTS " +
-                            "(SELECT 1 FROM Alquiler a WHERE a.id_vhs=v.id_vhs AND a.fecha_devolucion IS NULL) THEN 1 ELSE 0 END) disponibles " +
-                            "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula=p.id_pelicula " +
-                            "WHERE p.id_pelicula IN (" + marcas + ") GROUP BY p.id_pelicula,p.titulo,p.precio_unidad ORDER BY p.titulo";
-                    try (Connection con = ConexionDB.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
-                        for (int i=0; i<carrito.size(); i++) ps.setInt(i+1, carrito.get(i));
-                        try (ResultSet rs = ps.executeQuery()) { int numero=1; while (rs.next()) {
-                            java.math.BigDecimal precio = rs.getBigDecimal("precio_unidad"); total = total.add(precio);
-            %><tr>
+                        </tr>
+                        <%
+                            } else {
+                                StringBuilder marcas = new StringBuilder();
+                                for (int i = 0; i < carrito.size(); i++) {
+                                    marcas.append(i == 0 ? "?" : ",?");
+                                }
+
+                                String sql =
+                                        "SELECT p.id_pelicula, p.titulo, p.precio_unidad, " +
+                                        "SUM(CASE WHEN UPPER(v.estado_fisico_vhs) = 'DISPONIBLE' " +
+                                        "AND NOT EXISTS (SELECT 1 FROM Alquiler a " +
+                                        "WHERE a.id_vhs = v.id_vhs AND a.fecha_devolucion IS NULL) " +
+                                        "THEN 1 ELSE 0 END) disponibles " +
+                                        "FROM Peliculas p LEFT JOIN Vhs v ON v.id_pelicula = p.id_pelicula " +
+                                        "WHERE p.id_pelicula IN (" + marcas + ") " +
+                                        "GROUP BY p.id_pelicula, p.titulo, p.precio_unidad ORDER BY p.titulo";
+
+                                try (
+                                    Connection con = ConexionDB.obtenerConexion();
+                                    PreparedStatement ps = con.prepareStatement(sql)
+                                ) {
+                                    for (int i = 0; i < carrito.size(); i++) {
+                                        ps.setInt(i + 1, carrito.get(i));
+                                    }
+
+                                    try (ResultSet rs = ps.executeQuery()) {
+                                        int numero = 1;
+                                        while (rs.next()) {
+                                            java.math.BigDecimal precio = rs.getBigDecimal("precio_unidad");
+                                            total = total.add(precio);
+                        %>
+                        <tr>
                             <td><%= numero++ %></td>
                             <td><%= h(rs.getString("titulo")) %></td>
                             <td>$<%= precio %></td>
                             <td><span class="status-badge <%= rs.getInt("disponibles") > 0 ? "status-ok" : "status-danger" %>"><%= rs.getInt("disponibles") %></span></td>
                             <td>
-                                <form method="post"><input type="hidden" name="accion" value="quitar"><input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>"><button class="cart-item-remove" type="submit">Quitar</button></form>
+                                <form method="post">
+                                    <input type="hidden" name="accion" value="quitar">
+                                    <input type="hidden" name="id_pelicula" value="<%= rs.getInt("id_pelicula") %>">
+                                    <button class="cart-item-remove" type="submit">Quitar</button>
+                                </form>
                             </td>
-                        </tr><%      }}
-                    } catch (SQLException e) { %><tr>
+                        </tr>
+                        <%
+                                        }
+                                    }
+                                } catch (SQLException e) {
+                        %>
+                        <tr>
                             <td colspan="5">No fue posible cargar el carrito: <%= h(e.getMessage()) %></td>
-                        </tr><% }
-                }
-            %>
+                        </tr>
+                        <%
+                                }
+                            }
+                        %>
                     </tbody>
                 </table>
             </div>
@@ -208,13 +263,30 @@
             <a class="cart-action-button cart-action-add" href="catalogo.jsp">Agregar películas</a>
             <% if (!carrito.isEmpty()) { %>
             <label class="cart-days-control">Días
-                <input id="rentalDays" class="cart-days-input" type="number" name="dias" value="<%=diasSeleccionados%>" min="1" max="30" required form="rentForm">
+                <input id="rentalDays" class="cart-days-input" type="number" name="dias"
+                       value="<%= diasSeleccionados %>" min="1" max="30" required form="rentForm">
             </label>
-            <form id="rentForm" method="post"><input type="hidden" name="accion" value="alquilar"><button class="cart-action-button cart-action-rent" type="submit">ALQUILAR</button></form>
-            <form method="post"><input type="hidden" name="accion" value="vaciar"><button class="cart-action-button cart-action-empty" type="submit">Vaciar carrito</button></form><% } %>
-            <span class="account-limit" data-daily-total="<%=total%>"><strong>Total por día: $<%= total.setScale(2, java.math.RoundingMode.HALF_UP) %></strong>
-                <% if(!carrito.isEmpty()){%> | Total por <span id="rentalDaysLabel"><%=diasSeleccionados%></span> día(s): $<span id="rentalTotal"><%=total.multiply(new java.math.BigDecimal(diasSeleccionados)).setScale(2,java.math.RoundingMode.HALF_UP)%></span><%}%>
-            | Espacios disponibles: <%= 3-carrito.size() %> / 3</span>
+            <form id="rentForm" method="post">
+                <input type="hidden" name="accion" value="alquilar">
+                <button class="cart-action-button cart-action-rent" type="submit">ALQUILAR</button>
+            </form>
+            <form method="post">
+                <input type="hidden" name="accion" value="vaciar">
+                <button class="cart-action-button cart-action-empty" type="submit">Vaciar carrito</button>
+            </form>
+            <% } %>
+
+            <span class="account-limit" data-daily-total="<%= total %>">
+                <strong>Total por día: $<%= total.setScale(2, java.math.RoundingMode.HALF_UP) %></strong>
+                <% if (!carrito.isEmpty()) { %>
+                | Total por <span id="rentalDaysLabel"><%= diasSeleccionados %></span> día(s):
+                $<span id="rentalTotal"><%=
+                    total.multiply(new java.math.BigDecimal(diasSeleccionados))
+                            .setScale(2, java.math.RoundingMode.HALF_UP)
+                %></span>
+                <% } %>
+                | Espacios disponibles: <%= 3 - carrito.size() %> / 3
+            </span>
         </section>
     </main>
     <%@ include file="footer.jsp" %>

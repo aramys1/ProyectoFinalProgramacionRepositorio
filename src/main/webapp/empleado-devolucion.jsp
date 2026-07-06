@@ -111,29 +111,150 @@
     }
 %>
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-<title>Registrar devolución | Rewind &amp; Relive</title></head><body>
-<nav class="navbar retro-window employee-nav">
-<% request.setAttribute("adminPanelLogo", Boolean.TRUE); %><%@ include file="logo.jsp" %>
-<ul class="nav-links"><li><a href="empleado-dashboard.jsp">Dashboard</a></li><li><a href="empleado-alquileres.jsp">Alquileres</a></li><li><a href="empleado-devolucion.jsp">Devolución</a></li><li><a href="empleado-inventario.jsp">Inventario</a></li><li><a href="empleado-usuarios.jsp">Usuarios</a></li><li><a href="empleado-alquilar.jsp">Nuevo alquiler</a></li></ul>
-</nav>
-<main class="employee-page">
-<section class="employee-header"><p class="employee-kicker">Registro_Devolucion.exe</p><h1>Registrar devolución</h1><p>Busca al cliente, selecciona su alquiler activo y registra el estado de la copia.</p></section>
-<% if(mensaje!=null){%><div class="employee-alert employee-alert-ok"><%=h(mensaje)%></div><%}%>
-<% if(error!=null){%><div class="employee-alert employee-alert-error"><%=h(error)%></div><%}%>
-<section class="employee-split"><article class="retro-window employee-panel"><div class="window-header"><span>Buscar_Cliente.form</span><span>_ [] X</span></div>
-<form class="employee-form" method="get"><label>Cédula del cliente</label><div class="employee-inline-form"><input name="cedula" class="retro-search" value="<%=h(cedula)%>" required><button class="retro-button">BUSCAR</button></div></form>
-<% if(cedula!=null&&!cedula.isBlank()&&mensaje==null){
-String activos="SELECT a.id_alquiler,p.titulo,a.id_vhs,TO_CHAR(a.fecha_alquiler,'YYYY-MM-DD') fecha_alquiler,TO_CHAR(a.fecha_limite,'YYYY-MM-DD') fecha_limite FROM Alquiler a JOIN Usuario u ON u.id_usuario=a.id_usuario_cliente JOIN Vhs v ON v.id_vhs=a.id_vhs JOIN Peliculas p ON p.id_pelicula=v.id_pelicula WHERE u.ced_usuario=? AND a.fecha_devolucion IS NULL ORDER BY a.fecha_alquiler DESC";
-try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(activos)){ps.setString(1,cedula);try(ResultSet rs=ps.executeQuery()){boolean hay=false;%>
-<form class="employee-form" method="get"><input type="hidden" name="cedula" value="<%=h(cedula)%>"><div class="employee-table-wrap"><table class="employee-table"><thead><tr><th></th><th>ID</th><th>Película</th><th>VHS</th><th>Alquiler</th><th>Vence</th></tr></thead><tbody>
-<%while(rs.next()){hay=true;%><tr><td><input type="radio" name="id" value="<%=rs.getInt("id_alquiler")%>" required></td><td>#<%=rs.getInt("id_alquiler")%></td><td><%=h(rs.getString("titulo"))%></td><td>#<%=rs.getInt("id_vhs")%></td><td><%=h(rs.getString("fecha_alquiler"))%></td><td><%=h(rs.getString("fecha_limite"))%></td></tr><%}%>
-<%if(!hay){%><tr><td colspan="6">No tiene alquileres activos.</td></tr><%}%></tbody></table></div><%if(hay){%><button class="retro-button">SELECCIONAR</button><%}%></form>
-<%}}catch(SQLException e){%><div class="employee-alert employee-alert-error"><%=h(e.getMessage())%></div><%}}%>
-</article>
-<%if(cliente!=null){%><article class="retro-window employee-panel"><div class="window-header"><span>Procesar_Devolucion.form</span><span>_ [] X</span></div><form class="employee-form" method="post"><input type="hidden" name="accion" value="devolver"><input type="hidden" name="id" value="<%=idAlquiler%>"><input type="hidden" name="cedula" value="<%=h(cedula)%>"><div class="employee-summary"><p><strong>Cliente:</strong> <%=h(cliente)%></p><p><strong>Película:</strong> <%=h(pelicula)%></p><p><strong>VHS:</strong> #<%=idVhsDetalle%> - <%=h(estadoActualVhs)%></p><p><strong>Fecha límite:</strong> <%=h(fechaLimite)%></p><p><strong>Retraso:</strong> <%=retrasado?"Sí":"No"%></p></div><label>Estado al devolver</label><select name="estado_vhs" class="retro-search" required><option value="DISPONIBLE">Buen estado / Disponible</option><option value="DANADO">Dañado</option></select><button class="retro-button employee-submit">PROCESAR DEVOLUCIÓN</button></form></article><%}%>
-</section><%if(mensaje!=null){%><a href="empleado-alquileres.jsp?vista=historial" class="retro-button">VER HISTORIAL</a><%}%>
-</main><%@ include file="footer.jsp" %><script src="${pageContext.request.contextPath}/js/script.js"></script></body></html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <title>Registrar devolución | Rewind &amp; Relive</title>
+</head>
+
+<body>
+    <nav class="navbar retro-window employee-nav">
+        <% request.setAttribute("adminPanelLogo", Boolean.TRUE); %>
+        <%@ include file="logo.jsp" %>
+        <ul class="nav-links">
+            <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
+            <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
+            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
+            <li><a href="empleado-inventario.jsp">Inventario</a></li>
+            <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
+            <li><a href="empleado-alquilar.jsp">Nuevo alquiler</a></li>
+        </ul>
+    </nav>
+
+    <main class="employee-page">
+        <section class="employee-header">
+            <p class="employee-kicker">Registro_Devolucion.exe</p>
+            <h1>Registrar devolución</h1>
+            <p>Busca al cliente, selecciona su alquiler activo y registra el estado de la copia.</p>
+        </section>
+
+        <% if (mensaje != null) { %>
+        <div class="employee-alert employee-alert-ok"><%= h(mensaje) %></div>
+        <% } %>
+
+        <% if (error != null) { %>
+        <div class="employee-alert employee-alert-error"><%= h(error) %></div>
+        <% } %>
+
+        <section class="employee-split">
+            <article class="retro-window employee-panel">
+                <div class="window-header">
+                    <span>Buscar_Cliente.form</span><span>_ [] X</span>
+                </div>
+                <form class="employee-form" method="get">
+                    <label>Cédula del cliente</label>
+                    <div class="employee-inline-form">
+                        <input name="cedula" class="retro-search" value="<%= h(cedula) %>" required>
+                        <button class="retro-button">BUSCAR</button>
+                    </div>
+                </form>
+
+                <%
+                    if (cedula != null && !cedula.isBlank() && mensaje == null) {
+                        String activos =
+                                "SELECT a.id_alquiler, p.titulo, a.id_vhs, " +
+                                "TO_CHAR(a.fecha_alquiler, 'YYYY-MM-DD') fecha_alquiler, " +
+                                "TO_CHAR(a.fecha_limite, 'YYYY-MM-DD') fecha_limite " +
+                                "FROM Alquiler a " +
+                                "JOIN Usuario u ON u.id_usuario = a.id_usuario_cliente " +
+                                "JOIN Vhs v ON v.id_vhs = a.id_vhs " +
+                                "JOIN Peliculas p ON p.id_pelicula = v.id_pelicula " +
+                                "WHERE u.ced_usuario = ? AND a.fecha_devolucion IS NULL " +
+                                "ORDER BY a.fecha_alquiler DESC";
+
+                        try (
+                            Connection con = ConexionDB.obtenerConexion();
+                            PreparedStatement ps = con.prepareStatement(activos)
+                        ) {
+                            ps.setString(1, cedula);
+
+                            try (ResultSet rs = ps.executeQuery()) {
+                                boolean hay = false;
+                %>
+                <form class="employee-form" method="get">
+                    <input type="hidden" name="cedula" value="<%= h(cedula) %>">
+                    <div class="employee-table-wrap">
+                        <table class="employee-table">
+                            <thead>
+                                <tr><th></th><th>ID</th><th>Película</th><th>VHS</th><th>Alquiler</th><th>Vence</th></tr>
+                            </thead>
+                            <tbody>
+                                <% while (rs.next()) { hay = true; %>
+                                <tr>
+                                    <td><input type="radio" name="id" value="<%= rs.getInt("id_alquiler") %>" required></td>
+                                    <td>#<%= rs.getInt("id_alquiler") %></td>
+                                    <td><%= h(rs.getString("titulo")) %></td>
+                                    <td>#<%= rs.getInt("id_vhs") %></td>
+                                    <td><%= h(rs.getString("fecha_alquiler")) %></td>
+                                    <td><%= h(rs.getString("fecha_limite")) %></td>
+                                </tr>
+                                <% } %>
+
+                                <% if (!hay) { %>
+                                <tr><td colspan="6">No tiene alquileres activos.</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% if (hay) { %><button class="retro-button">SELECCIONAR</button><% } %>
+                </form>
+                <%
+                            }
+                        } catch (SQLException e) {
+                %>
+                <div class="employee-alert employee-alert-error"><%= h(e.getMessage()) %></div>
+                <%
+                        }
+                    }
+                %>
+            </article>
+
+            <% if (cliente != null) { %>
+            <article class="retro-window employee-panel">
+                <div class="window-header"><span>Procesar_Devolucion.form</span><span>_ [] X</span></div>
+                <form class="employee-form" method="post">
+                    <input type="hidden" name="accion" value="devolver">
+                    <input type="hidden" name="id" value="<%= idAlquiler %>">
+                    <input type="hidden" name="cedula" value="<%= h(cedula) %>">
+                    <div class="employee-summary">
+                        <p><strong>Cliente:</strong> <%= h(cliente) %></p>
+                        <p><strong>Película:</strong> <%= h(pelicula) %></p>
+                        <p><strong>VHS:</strong> #<%= idVhsDetalle %> - <%= h(estadoActualVhs) %></p>
+                        <p><strong>Fecha límite:</strong> <%= h(fechaLimite) %></p>
+                        <p><strong>Retraso:</strong> <%= retrasado ? "Sí" : "No" %></p>
+                    </div>
+                    <label>Estado al devolver</label>
+                    <select name="estado_vhs" class="retro-search" required>
+                        <option value="DISPONIBLE">Buen estado / Disponible</option>
+                        <option value="DANADO">Dañado</option>
+                    </select>
+                    <button class="retro-button employee-submit">PROCESAR DEVOLUCIÓN</button>
+                </form>
+            </article>
+            <% } %>
+        </section>
+
+        <% if (mensaje != null) { %>
+        <a href="empleado-alquileres.jsp?vista=historial" class="retro-button">VER HISTORIAL</a>
+        <% } %>
+    </main>
+
+    <%@ include file="footer.jsp" %>
+    <script src="${pageContext.request.contextPath}/js/script.js"></script>
+</body>
+
+</html>

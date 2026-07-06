@@ -81,30 +81,29 @@
     </section>
     <% } %>
 
-<%-- Accesos privados mostrados exclusivamente a empleados autenticados. --%>
-<% if (session.getAttribute("idUsuario") != null &&
-        ("2".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
-         "EMPLEADO".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
-<section class="demo-access-section">
-    <div class="demo-access-inner">
-        <article class="retro-window demo-access-card">
-            <div class="window-header"><span>empleado.menu</span><span>_ [] X</span></div>
-            <div class="demo-access-body">
-                <h2>Panel de empleado</h2>
-                <p>Accede a las funciones principales para operar alquileres, devoluciones e inventario.</p>
-                <div class="demo-access-actions">
-                    <a class="retro-button" href="empleado-dashboard.jsp">Dashboard</a>
-                    <a class="retro-button" href="empleado-alquileres.jsp">Alquileres</a>
-                    <a class="retro-button" href="empleado-devolucion.jsp">Devolucion</a>
-                    <a class="retro-button" href="empleado-inventario.jsp">Inventario</a>
-                    <a class="retro-button" href="empleado-alquilar.jsp">Alquilar</a>
+    <%-- Accesos privados mostrados exclusivamente a empleados autenticados. --%>
+    <% if (session.getAttribute("idUsuario") != null &&
+            ("2".equals(String.valueOf(session.getAttribute("rolUsuario"))) ||
+             "EMPLEADO".equalsIgnoreCase(String.valueOf(session.getAttribute("rolUsuario"))))) { %>
+    <section class="demo-access-section">
+        <div class="demo-access-inner">
+            <article class="retro-window demo-access-card">
+                <div class="window-header"><span>empleado.menu</span><span>_ [] X</span></div>
+                <div class="demo-access-body">
+                    <h2>Panel de empleado</h2>
+                    <p>Accede a las funciones principales para operar alquileres, devoluciones e inventario.</p>
+                    <div class="demo-access-actions">
+                        <a class="retro-button" href="empleado-dashboard.jsp">Dashboard</a>
+                        <a class="retro-button" href="empleado-alquileres.jsp">Alquileres</a>
+                        <a class="retro-button" href="empleado-devolucion.jsp">Devolucion</a>
+                        <a class="retro-button" href="empleado-inventario.jsp">Inventario</a>
+                        <a class="retro-button" href="empleado-alquilar.jsp">Alquilar</a>
+                    </div>
                 </div>
-            </div>
-        </article>
-
-    </div>
-</section>
-<% } %>
+            </article>
+        </div>
+    </section>
+    <% } %>
 
 <%-- Tres películas más recientes obtenidas directamente de Oracle. --%>
 <div class="content-section">
@@ -113,14 +112,28 @@
         <div class="release-grid catalog-grid">
             <%
                 // Consulta compacta: película, año y géneros relacionados.
-                String sqlLanzamientos="SELECT p.id_pelicula,p.titulo,p.imagen_url,"+
-                        "TO_CHAR(p.fecha_estreno,'YYYY') anio,"+
-                        "(SELECT LISTAGG(g.desc_genero,' / ') WITHIN GROUP(ORDER BY pg.prioridad) FROM PeliculasGeneros pg "+
-                        "JOIN Genero g ON g.id_genero=pg.id_genero WHERE pg.id_pelicula=p.id_pelicula) generos "+
-                        "FROM Peliculas p ORDER BY p.id_pelicula DESC FETCH FIRST 3 ROWS ONLY";
+                String sqlLanzamientos =
+                        "SELECT p.id_pelicula, p.titulo, p.imagen_url, " +
+                        "TO_CHAR(p.fecha_estreno, 'YYYY') anio, " +
+                        "(SELECT LISTAGG(g.desc_genero, ' / ') " +
+                        "WITHIN GROUP (ORDER BY pg.prioridad) " +
+                        "FROM PeliculasGeneros pg " +
+                        "JOIN Genero g ON g.id_genero = pg.id_genero " +
+                        "WHERE pg.id_pelicula = p.id_pelicula) generos " +
+                        "FROM Peliculas p " +
+                        "ORDER BY p.id_pelicula DESC FETCH FIRST 3 ROWS ONLY";
+
                 // Aunque no recibe filtros, PreparedStatement mantiene el mismo patrón seguro del proyecto.
-                try(Connection con=ConexionDB.obtenerConexion();PreparedStatement ps=con.prepareStatement(sqlLanzamientos);ResultSet rs=ps.executeQuery()){
-                    boolean hay=false;while(rs.next()){hay=true;String imagen=rs.getString("imagen_url");
+                try (
+                    Connection con = ConexionDB.obtenerConexion();
+                    PreparedStatement ps = con.prepareStatement(sqlLanzamientos);
+                    ResultSet rs = ps.executeQuery()
+                ) {
+                    boolean hay = false;
+
+                    while (rs.next()) {
+                        hay = true;
+                        String imagen = rs.getString("imagen_url");
             %>
             <article class="retro-window release-card">
                 <div class="window-header"><span>PELÍCULA_<%=rs.getInt("id_pelicula")%>.vhs</span><span>_ [] X</span></div>
@@ -132,8 +145,20 @@
                     <a href="pelicula-detalle.jsp?id=<%=rs.getInt("id_pelicula")%>" class="retro-button">VER MÁS</a>
                 </div>
             </article>
-            <%      }if(!hay){%><p class="employee-empty">Todavía no hay películas publicadas.</p><%}
-                }catch(SQLException e){%><p class="employee-empty">No fue posible cargar los últimos lanzamientos.</p><%}%>
+            <%
+                    }
+
+                    if (!hay) {
+            %>
+            <p class="employee-empty">Todavía no hay películas publicadas.</p>
+            <%
+                    }
+                } catch (SQLException e) {
+            %>
+            <p class="employee-empty">No fue posible cargar los últimos lanzamientos.</p>
+            <%
+                }
+            %>
         </div>
         <a href="catalogo.jsp" class="catalog-link">VER CATÁLOGO COMPLETO &gt;</a>
     </section>
@@ -224,7 +249,7 @@
 
 <%@ include file="footer.jsp" %>
 
-                <script src="${pageContext.request.contextPath}/js/script.js?v=4"></script>
+<script src="${pageContext.request.contextPath}/js/script.js?v=4"></script>
 </body>
 
 </html>

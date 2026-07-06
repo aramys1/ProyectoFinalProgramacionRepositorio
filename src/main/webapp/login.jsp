@@ -4,6 +4,7 @@
 <%@ page import="java.sql.*, com.conexion.ConexionDB" %>
 
 <%
+    request.setCharacterEncoding("UTF-8");
     String errorLogin = "";
 
     /* Si ya existe una sesión, redirige sin consultar nuevamente Oracle. */
