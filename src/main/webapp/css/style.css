@@ -1179,6 +1179,69 @@ form button {
   margin-top: 12px;
 }
 
+.devolucion-panel {
+  margin-bottom: 0;
+}
+
+.devolucion-form {
+  padding: 24px;
+}
+
+.devolucion-search-panel .devolucion-form:first-of-type {
+  padding-bottom: 18px;
+}
+
+.devolucion-active-form {
+  padding-top: 0;
+}
+
+.devolucion-search-panel .employee-inline-form {
+  grid-template-columns: minmax(0, 1fr) 104px;
+  gap: 14px;
+}
+
+.devolucion-form .retro-search,
+.devolucion-form .retro-button {
+  min-height: 44px;
+  font-family: "Courier Prime", monospace;
+}
+
+.devolucion-form .retro-search {
+  padding: 9px 12px;
+  font-weight: 900;
+}
+
+.devolucion-form .employee-table-wrap {
+  margin: 4px 0 18px;
+}
+
+.devolucion-summary {
+  margin-bottom: 22px;
+  padding: 18px;
+  border: 2px solid #000;
+  background: #fff7ec;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.devolucion-summary p {
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px dashed #9e6a42;
+}
+
+.devolucion-summary p:last-child {
+  border-bottom: 0;
+}
+
+.devolucion-state-select {
+  margin-bottom: 4px;
+}
+
+.devolucion-submit {
+  min-height: 50px;
+  margin-top: 18px;
+}
+
 .employee-row-actions {
   display: flex;
   gap: 8px;
@@ -1221,6 +1284,14 @@ form button {
   }
 
   .employee-inline-form {
+    grid-template-columns: 1fr;
+  }
+
+  .devolucion-form {
+    padding: 18px;
+  }
+
+  .devolucion-search-panel .employee-inline-form {
     grid-template-columns: 1fr;
   }
 }

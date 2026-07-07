@@ -31,9 +31,9 @@
         String estadoVhs = request.getParameter("estado_vhs");
 
         if (!("DISPONIBLE".equals(estadoVhs) || "DANADO".equals(estadoVhs))) {
-            error = "Seleccione un estado válido para el VHS.";
+            error = "Seleccione un estado v\u00E1lido para el VHS.";
         } else if (idAlquiler < 1 || cedula == null || cedula.isBlank()) {
-            error = "El alquiler o la cédula del cliente no son válidos.";
+            error = "El alquiler o la c\u00E9dula del cliente no son v\u00E1lidos.";
         } else {
             try (Connection con = ConexionDB.obtenerConexion()) {
                 con.setAutoCommit(false);
@@ -72,13 +72,14 @@
                     }
 
                     con.commit();
-                    mensaje = "Devolución registrada. El VHS quedó como " + estadoVhs + ".";
+                    String estadoVisible = "DANADO".equals(estadoVhs) ? "DA\u00D1ADO" : estadoVhs;
+                    mensaje = "Devoluci\u00F3n registrada. El VHS qued\u00F3 como " + estadoVisible + ".";
                 } catch (Exception e) {
                     con.rollback();
                     error = e.getMessage();
                 }
             } catch (SQLException e) {
-                error = "No fue posible procesar la devolución: " + e.getMessage();
+                error = "No fue posible procesar la devoluci\u00F3n: " + e.getMessage();
             }
         }
     }
@@ -118,7 +119,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-    <title>Registrar devolución | Rewind &amp; Relive</title>
+    <title>Registrar devoluci&oacute;n | Rewind &amp; Relive</title>
 </head>
 
 <body>
@@ -128,7 +129,7 @@
         <ul class="nav-links">
             <li><a href="empleado-dashboard.jsp">Dashboard</a></li>
             <li><a href="empleado-alquileres.jsp">Alquileres</a></li>
-            <li><a href="empleado-devolucion.jsp">Devolución</a></li>
+            <li><a href="empleado-devolucion.jsp">Devoluci&oacute;n</a></li>
             <li><a href="empleado-inventario.jsp">Inventario</a></li>
             <li><a href="empleado-usuarios.jsp">Usuarios</a></li>
             <li><a href="empleado-alquilar.jsp">Nuevo alquiler</a></li>
@@ -138,7 +139,7 @@
     <main class="employee-page">
         <section class="employee-header">
             <p class="employee-kicker">Registro_Devolucion.exe</p>
-            <h1>Registrar devolución</h1>
+            <h1>Registrar devoluci&oacute;n</h1>
             <p>Busca al cliente, selecciona su alquiler activo y registra el estado de la copia.</p>
         </section>
 
@@ -151,12 +152,12 @@
         <% } %>
 
         <section class="employee-split">
-            <article class="retro-window employee-panel">
+            <article class="retro-window employee-panel devolucion-panel devolucion-search-panel">
                 <div class="window-header">
                     <span>Buscar_Cliente.form</span><span>_ [] X</span>
                 </div>
-                <form class="employee-form" method="get">
-                    <label>Cédula del cliente</label>
+                <form class="employee-form devolucion-form" method="get">
+                    <label>C&eacute;dula del cliente</label>
                     <div class="employee-inline-form">
                         <input name="cedula" class="retro-search" value="<%= h(cedula) %>" required>
                         <button class="retro-button">BUSCAR</button>
@@ -185,12 +186,12 @@
                             try (ResultSet rs = ps.executeQuery()) {
                                 boolean hay = false;
                 %>
-                <form class="employee-form" method="get">
+                <form class="employee-form devolucion-form devolucion-active-form" method="get">
                     <input type="hidden" name="cedula" value="<%= h(cedula) %>">
                     <div class="employee-table-wrap">
                         <table class="employee-table">
                             <thead>
-                                <tr><th></th><th>ID</th><th>Película</th><th>VHS</th><th>Alquiler</th><th>Vence</th></tr>
+                                <tr><th></th><th>ID</th><th>Pel&iacute;cula</th><th>VHS</th><th>Alquiler</th><th>Vence</th></tr>
                             </thead>
                             <tbody>
                                 <% while (rs.next()) { hay = true; %>
@@ -224,33 +225,29 @@
             </article>
 
             <% if (cliente != null) { %>
-            <article class="retro-window employee-panel">
+            <article class="retro-window employee-panel devolucion-panel devolucion-process-panel">
                 <div class="window-header"><span>Procesar_Devolucion.form</span><span>_ [] X</span></div>
-                <form class="employee-form" method="post">
+                <form class="employee-form devolucion-form" method="post">
                     <input type="hidden" name="accion" value="devolver">
                     <input type="hidden" name="id" value="<%= idAlquiler %>">
                     <input type="hidden" name="cedula" value="<%= h(cedula) %>">
-                    <div class="employee-summary">
+                    <div class="employee-summary devolucion-summary">
                         <p><strong>Cliente:</strong> <%= h(cliente) %></p>
-                        <p><strong>Película:</strong> <%= h(pelicula) %></p>
-                        <p><strong>VHS:</strong> #<%= idVhsDetalle %> - <%= h(estadoActualVhs) %></p>
-                        <p><strong>Fecha límite:</strong> <%= h(fechaLimite) %></p>
-                        <p><strong>Retraso:</strong> <%= retrasado ? "Sí" : "No" %></p>
+                        <p><strong>Pel&iacute;cula:</strong> <%= h(pelicula) %></p>
+                        <p><strong>VHS:</strong> #<%= idVhsDetalle %> - <%= h("DANADO".equals(estadoActualVhs) ? "DA\u00D1ADO" : estadoActualVhs) %></p>
+                        <p><strong>Fecha l&iacute;mite:</strong> <%= h(fechaLimite) %></p>
+                        <p><strong>Retraso:</strong> <%= retrasado ? "S&iacute;" : "No" %></p>
                     </div>
                     <label>Estado al devolver</label>
-                    <select name="estado_vhs" class="retro-search" required>
+                    <select name="estado_vhs" class="retro-search devolucion-state-select" required>
                         <option value="DISPONIBLE">Buen estado / Disponible</option>
-                        <option value="DANADO">Dañado</option>
+                        <option value="DANADO">Da&ntilde;ado</option>
                     </select>
-                    <button class="retro-button employee-submit">PROCESAR DEVOLUCIÓN</button>
+                    <button class="retro-button employee-submit devolucion-submit">PROCESAR DEVOLUCI&Oacute;N</button>
                 </form>
             </article>
             <% } %>
         </section>
-
-        <% if (mensaje != null) { %>
-        <a href="empleado-alquileres.jsp?vista=historial" class="retro-button">VER HISTORIAL</a>
-        <% } %>
     </main>
 
     <%@ include file="footer.jsp" %>
