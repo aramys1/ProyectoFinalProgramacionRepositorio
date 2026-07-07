@@ -85,7 +85,7 @@
             psAlquiler.setInt(1, dias);           // Para el cálculo de FECHA_LIMITE
             psAlquiler.setInt(2, idClienteConf);  // ID_USUARIO_CLIENTE
             psAlquiler.setInt(3, idVhs);          // ID_VHS
-            psAlquiler.setInt(4, idEmpleadoActual); // Empleado autenticado
+            psAlquiler.setInt(4, idEmpleadoSesion); // Empleado autenticado
 
             psAlquiler.executeUpdate();
 
@@ -183,7 +183,7 @@
                     <input type="hidden" name="accion" value="confirmar">
                     <input type="hidden" name="id_cliente" value="<%= idCliente %>">
 
-                    <p><strong>Empleado responsable:</strong> #<%= idEmpleadoActual %></p>
+                    <p><strong>Empleado responsable:</strong> #<%= idEmpleadoSesion %></p>
 
                     <label>Buscar película:</label><br><br>
                     <input type="text" id="buscarPelicula" class="retro-search" placeholder="Escribe el titulo..." style="width:300px;" oninput="filtrarPeliculas()">
