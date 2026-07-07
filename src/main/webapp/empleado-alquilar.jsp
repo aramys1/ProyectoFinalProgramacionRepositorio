@@ -13,6 +13,10 @@
         }
     }
 
+    // Compatibilidad: algunas versiones anteriores de la plantilla usan `idEmpleadoActual`
+    // Creamos un alias para evitar errores de compilación si aún existe esa referencia.
+    int idEmpleadoActual = idEmpleadoSesion;
+
     String paso = request.getParameter("paso");
     if (paso == null) paso = "1";
 
